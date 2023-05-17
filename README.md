@@ -1,4 +1,4 @@
-# Japari Park
+# Japari Park (development)
 
 [<img src='cover.jpeg' width='250'/>](cover.jpeg)
 
