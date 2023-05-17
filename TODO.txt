@@ -9,9 +9,9 @@
 GitHub:
 - CI/CD
 - Docs / wiki.
-- Issues.
-- Branch protection rules.
-- Tags.
++ Issues.
++ Branch protection rules.
++ Tags.
 
 
 Фронтенд:
