@@ -1,10 +1,17 @@
 - Послушать лекции CS50-Web.
 + Сгенерировать gitignore.
-- Реализовать базу CI/CD.
 - Подтянуть OOP.
 - Стиль кода и документация: как и чем.
 - Теория и примеры REST API.
 - Теория асинхронных вычислений, AsyncIO.
+
+
+GitHub:
+- CI/CD
+- Docs / wiki.
+- Issues.
+- Branch protection rules.
+- Tags.
 
 
 Фронтенд:
