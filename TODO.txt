@@ -1,17 +1,34 @@
 - Послушать лекции CS50-Web.
 + Сгенерировать gitignore.
 - Подтянуть OOP.
-- Стиль кода и документация: как и чем.
++ Стиль кода; wemake-python-styleguide.
 - Теория и примеры REST API.
 - Теория асинхронных вычислений, AsyncIO.
++ Настроить IDE.
+- Релизы, билды и пакеты.
+- Глобальные переменные и настройки python, лицензии и прочее.
+
+
+Git:
+- Hooks
+
+
+Документация:
++ База - как и чем.
++ reStructuredText
+- doctest
++ Sphinx & autodoc + pycharm/tools
+- Автоматическая генерация на коммите.
+- Синхронизация с GitHub Pages.
 
 
 GitHub:
 - CI/CD
-- Docs / wiki.
 + Issues.
 + Branch protection rules.
 + Tags.
+- Releases
+- Packages
 
 
 Фронтенд:
@@ -49,7 +66,7 @@ GitHub:
 
 
 Прочее:
-- Теория и системы мониторинга.
+- Теория систем мониторинга.
 
 
 
