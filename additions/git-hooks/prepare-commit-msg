@@ -1,0 +1,41 @@
+#!/bin/python
+
+import re
+import sys
+from subprocess import check_output
+
+print('[ Git prepare-commit-msg ]')
+
+commit_msg_filepath = sys.argv[1]
+
+current_branch = (
+    check_output(
+        ["git", "symbolic-ref", "--short", "HEAD"]
+    ).decode("utf-8").strip()
+)
+
+
+# Protect master
+if current_branch == 'master':
+    allowed_branches = ['development']
+    pattern = """Merge branch "|'([a-z0-9-_]+)"|'"""
+    # Seek for the " Merge branch 'foo' "
+    with open(commit_msg_filepath, 'r') as f:
+        text = f.read()
+        if match := re.search(pattern, text, flags=re.I):
+            merging_branch = match.group(1)
+            if not merging_branch in allowed_branches:
+                print("Protection: Not allowed to merge this branch into master!")
+                sys.exit(1)
+            else:
+                print("Protection: Merge into master is allowed.")
+
+
+# Insert the branch name into commit
+# TODO: git commit -m ... resulting in message appended
+with open(commit_msg_filepath, 'r+') as f:
+    existing = f.read()
+    f.seek(0, 0)
+    f.write(f"\n\nCommitted on branch '{current_branch}'\n{existing}")
+
+sys.exit(0)
