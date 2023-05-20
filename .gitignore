@@ -1,10 +1,19 @@
-# Locals
 diagram.json
+issues_guide.png
+GithubWiki/
+testingend/
+
+### Sphinx ###
+SphinxDocs/build/
+SphinxDocs/source/generated/
+SphinxDocs/source/_templates/
+SphinxDocs/source/_static/
 
 
-# Auto:
-# Created by https://www.toptal.com/developers/gitignore/api/python,pycharm,visualstudiocode,linux,flask,django,test,venv
-# Edit at https://www.toptal.com/developers/gitignore?templates=python,pycharm,visualstudiocode,linux,flask,django,test,venv
+
+#~~~ Auto generated ~~~#
+# Edit at
+# https://www.toptal.com/developers/gitignore?templates=python,pycharm,visualstudiocode,linux,flask,django,test,venv
 
 ### Django ###
 *.log
