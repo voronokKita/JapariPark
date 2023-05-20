@@ -10,7 +10,9 @@
 
 
 Git:
-- Hooks
++ Hooks
++ Ограничения на работу с master.
+- Ограничения с удалённым master.
 
 
 Документация:
@@ -18,8 +20,8 @@ Git:
 + reStructuredText
 - doctest
 + Sphinx & autodoc + pycharm/tools
-- Автоматическая генерация на коммите.
-- Синхронизация с GitHub Pages.
++ Автоматическая генерация.
+- Размещение на GitHub Pages.
 
 
 GitHub:
