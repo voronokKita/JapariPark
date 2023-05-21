@@ -1,16 +1,14 @@
 name: Base master branch tests
 
 on:
-  # Triggers the workflow on push & commit request events
+  # Triggers the workflow on push request events
   # but only for the "master" branch
   push:
     branches: [ "master" ]
-  commit:
-    branches: [ "master" ]
-
-  permissions: read-all
-
+    
   workflow_dispatch:
+
+permissions: read-all
 
 jobs:
   build:
@@ -41,8 +39,9 @@ jobs:
 
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
 
-  test:
+  tests:
     needs: build
+    runs-on: ubuntu-22.04
 
     steps:
       - run: echo "🍏 This job's status is ${{ job.status }}."
