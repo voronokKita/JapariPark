@@ -1,0 +1,9 @@
+# ~~~~~~~~~~~~~~~~~~ #
+# python>=3.11,<3.12 #
+# pipenv>=2022.12.19 #
+# ~~~~~~~~~~~~~~~~~~ #
+wemake-python-styleguide
+Sphinx
+autodoc
+myst-parser
+pytest
