@@ -1,0 +1,53 @@
+#!/bin/python
+#
+# A hook script to prepare the commit log message.
+# Called by "git commit" with the name of the file that has the
+# commit message, followed by the description of the commit
+# message's source.  The hook's purpose is to edit the commit
+# message file.  If the hook fails with a non-zero status,
+# the commit is aborted.
+#
+import re
+import sys
+from subprocess import check_output
+
+print('[ Git prepare-commit-msg ]')
+
+commit_msg_filepath = sys.argv[1]
+
+current_branch = (
+    check_output(
+        ["git", "symbolic-ref", "--short", "HEAD"]
+    ).decode("utf-8").strip()
+)
+
+commentary = ''
+with open(commit_msg_filepath, 'r') as f:
+    commentary = f.read()
+
+
+# Filter lazy commentary
+if len(commentary) < 10 or '#' not in commentary:
+    print("Protection: Do not use lazy comments please.")
+    sys.exit(1)
+
+
+# Protect master
+if current_branch == 'master':
+    allowed_branches = ['development']
+    pattern = """Merge branch "|'([a-z0-9-_]+)"|'"""
+    # Seek for the " Merge branch 'foo' "
+    if match := re.search(pattern, commentary, flags=re.I):
+        merging_branch = match.group(1)
+        if not merging_branch in allowed_branches:
+            print("Protection: Not allowed to merge this branch into master!")
+            sys.exit(1)
+        else:
+            print("Protection: Merge into master is allowed.")
+
+
+# Insert the branch name into commit
+with open(commit_msg_filepath, 'w') as f:
+    f.write(f"\n\nCommitted on branch '{current_branch}'\n{commentary}")
+
+sys.exit(0)

@@ -1,6 +1,6 @@
 # Japari Park (development)
 
-[<img src='cover.jpeg' width='250'/>](cover.jpeg)
+[<img src='cover2.png' width='250'/>](cover2.png)
 
 There will be a social network. <br>
 Ideas: <br>
