@@ -1,8 +1,10 @@
-name: Base master branch tests
+name: Tests for the development branch
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "development" ]
+  pull_request:
+    branches: [ "development" ]
 
   workflow_dispatch:
 
@@ -10,7 +12,7 @@ permissions: read-all
 
 jobs:
   test:
-    name: Global Tests
+    name: Tests
     runs-on: ubuntu-22.04
 
     steps:
@@ -21,8 +23,6 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
       - run: echo "💡 The '${{ github.repository }}' repository has been cloned to the runner."
-      - name: List files in the repository
-        run: ls ${{ github.workspace }}
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v3
