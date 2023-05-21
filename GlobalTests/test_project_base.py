@@ -28,12 +28,12 @@ class TestBase:
             PROJECT_DIR / 'Development History.txt',
             PROJECT_DIR / 'cover.jpeg',
             PROJECT_DIR / 'README.md',
+            PROJECT_DIR / '.gitignore',
             PROJECT_DIR / 'Pipfile',
+            PROJECT_DIR / 'requirements.txt',
+            PROJECT_DIR / 'requirements_test.txt',
 
-            PROJECT_DIR / 'Frontend',
-            PROJECT_DIR / 'Backend',
-
-            PROJECT_DIR / 'SphinxDocs',
+            PROJECT_DIR / 'setup.cfg',
         }
         for path in files:
             assert path.exists() is True
