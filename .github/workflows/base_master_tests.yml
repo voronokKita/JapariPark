@@ -34,19 +34,15 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip --version
-      - name: Install pipenv
+      - name: Instal packages
         run: |
-          pip install pipenv --user
-          pipenv --version
-      - name: Instal pipenv packages
-        run: |
-          pipenv install pytest
-          pipenv run pytest --version
+          pip install -r requirements.txt
+          pytest --version
 
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
 
       - name: Run fundamental tests with pytest
         run: |
-          pipenv run pytest ./GlobalTests
+          pytest ./GlobalTests
 
       - run: echo "🍏 This job's status is '${{ job.status }}'."
