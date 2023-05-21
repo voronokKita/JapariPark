@@ -11,8 +11,8 @@ on:
 permissions: read-all
 
 jobs:
-  test:
-    name: Tests
+  test_dev:
+    name: Tests for the development
     runs-on: ubuntu-22.04
 
     steps:
