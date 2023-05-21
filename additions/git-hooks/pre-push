@@ -26,6 +26,7 @@ for line in sys.stdin:
     print('TO:', l[2])
     local = l[0].removeprefix('refs/heads/')
     remote = l[2].removeprefix('refs/heads/')
+    # It will be ok for other refs
     if remote == 'master' and local != 'master':
         print('Protection: You can push to the master only from the master!')
         sys.exit(1)
