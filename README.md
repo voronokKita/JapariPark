@@ -1,4 +1,4 @@
-# Japari Park (development)
+# Japari Park (planning)
 
 [<img src='cover2.png' width='250'/>](cover2.png)
 

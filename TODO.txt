@@ -1,12 +1,39 @@
+# Notes
+## Releases
+X.Y.devN      # Developmental release
+X.YaN         # Alpha release
+X.YbN         # Beta release
+X.YrcN        # Release Candidate
+X.Y           # Final release
+X.Y.postN     # Post-release
+X.YaN.postM   # Post-release of an alpha release
+X.YaN.devM    # Developmental release of an alpha release
+v5.9-beta.3   # Nice example
+X.Y+ubuntu-N  # Local version segments
+
+1.0b2+linux.post345.dev456  # Ultimate
+
+
 - Послушать лекции CS50-Web.
 + Сгенерировать gitignore.
-- Подтянуть OOP.
+- Подтянуть OOP
+  * абстрактные классы
+  * дескрипторы https://habr.com/ru/articles/122082/
+  * enum
 + Стиль кода; wemake-python-styleguide.
 - Теория и примеры REST API.
 - Теория асинхронных вычислений, AsyncIO.
 + Настроить IDE.
-- Релизы, билды и пакеты.
-- Глобальные переменные и настройки python, лицензии и прочее.
++ Релизы, билды и пакеты.
++ Глобальные переменные и настройки python, лицензии и прочее.
+- Python best practices.
+- Python slots
+  * дублировать указанные в родительском классе слоты у наследника не нужно (сотрёт)
+  * если требуется динамическое присвоение новых переменных, добавьте значение '__dict__' к последовательности строк в объявлении атрибута __slots__
+- pypy / cython / cpython
+- pyproject.toml https://pypi.org/classifiers/ | https://packaging.python.org/en/latest/specifications/declaring-project-metadata/#declaring-project-metadata
+- Лицензия https://choosealicense.com/
+- doctests
 
 
 Git:
@@ -18,20 +45,20 @@ Git:
 Документация:
 + База - как и чем.
 + reStructuredText
-- doctest
 + Sphinx & autodoc + pycharm/tools
 + Автоматическая генерация.
 - Размещение на GitHub Pages.
 
 
 GitHub:
-- CI/CD
++ CI
+- CD
 + GitHub Actions.
 + Issues.
 + Branch protection rules.
 + Tags.
 - Releases
-- Packages
++ Packages
 
 
 Фронтенд:
