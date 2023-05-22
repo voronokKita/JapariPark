@@ -1,7 +1,7 @@
 """Some base tests."""
 
 import pytest
-from .context import PROJECT_DIR
+from GlobalTests.context import PROJECT_DIR
 
 
 def test_pytest_works():
