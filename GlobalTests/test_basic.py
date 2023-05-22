@@ -1,14 +1,7 @@
 """Some base tests."""
 
-import sys
 import pytest
-import pathlib
-
-PROJECT_DIR = pathlib.Path(__file__).resolve().parents[1]
-
-as_str = PROJECT_DIR.as_posix()
-if as_str not in sys.path:
-    sys.path.insert(0, as_str)
+from .context import PROJECT_DIR
 
 
 def test_pytest_works():
