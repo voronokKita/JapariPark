@@ -5,7 +5,7 @@ from flask import Flask
 
 from friends.constants import (
     FLASK_WORKDIR, MANAGER_DIR,
-    HOST, PORT, MAX_CONTENT_LENGTH,
+    MAX_CONTENT_LENGTH,
 )
 
 
@@ -29,6 +29,4 @@ FLASK.config.update(
     PROPAGATE_EXCEPTIONS=True,
     LOGGER_NAME='flask_app_logger',
     MAX_CONTENT_LENGTH=MAX_CONTENT_LENGTH,
-    HOST=HOST,
-    PORT=PORT,
 )

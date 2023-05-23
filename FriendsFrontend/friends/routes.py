@@ -3,7 +3,7 @@
 from friends.config import FLASK
 
 
-@FLASK.route('/ping', methods=['GET'])
+@FLASK.route('/friends/ping', methods=['GET'])
 def ping():
     """
     Ping-pong.

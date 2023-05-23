@@ -1,0 +1,1 @@
+"""Japari Park: Friends - tests."""
