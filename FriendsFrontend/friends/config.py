@@ -1,28 +1,28 @@
-"""Flask's configurations."""
+"""Japari Park: Friends - configurations."""
 
 import sys
 from flask import Flask
 
-from flask_app.constants import (
-    FLASK_DIR, FRONTEND_WORKDIR,
+from friends.constants import (
+    FLASK_WORKDIR, MANAGER_DIR,
     HOST, PORT, MAX_CONTENT_LENGTH,
 )
 
 
 # check up for the paths
-flask_path_posix = FLASK_DIR.as_posix()
+manager_as_posix = MANAGER_DIR.as_posix()
+if manager_as_posix not in sys.path:
+    sys.path.insert(0, manager_as_posix)
+
+flask_path_posix = FLASK_WORKDIR.as_posix()
 if flask_path_posix not in sys.path:
     sys.path.insert(0, flask_path_posix)
 
-workdir_as_posix = FRONTEND_WORKDIR.as_posix()
-if workdir_as_posix not in sys.path:
-    sys.path.insert(0, workdir_as_posix)
-
 
 # configure flask
-FLASK_APP = Flask('JapariParkFrontend')
+FLASK = Flask('FriendsFrontend')
 
-FLASK_APP.config.update(
+FLASK.config.update(
     ENV='development',
     DEBUG=True,
     TESTING=True,

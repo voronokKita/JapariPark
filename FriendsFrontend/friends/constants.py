@@ -1,11 +1,11 @@
-"""All the flask's constants and exceptions are here."""
+"""Friends' frontend constants and exceptions are here."""
 
 import sys
 from pathlib import Path
 
 
-FLASK_DIR = Path(__file__).resolve().parent
-FRONTEND_WORKDIR = FLASK_DIR.parent
+FLASK_WORKDIR = Path(__file__).resolve().parent
+MANAGER_DIR = FLASK_WORKDIR.parent
 
 
 TESTING = False

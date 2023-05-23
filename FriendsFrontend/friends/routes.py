@@ -1,9 +1,9 @@
-"""Frontend router."""
+"""Japari Park: Friends - url router."""
 
-from flask_app.config import FLASK_APP
+from friends.config import FLASK
 
 
-@FLASK_APP.route('/ping', methods=['GET'])
+@FLASK.route('/ping', methods=['GET'])
 def ping():
     """
     Ping-pong.
