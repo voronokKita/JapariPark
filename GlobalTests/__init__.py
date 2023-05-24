@@ -1,1 +1,1 @@
-"""Global tests of the entire project."""
+"""Global tests of the entire Japari Park project."""

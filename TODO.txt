@@ -64,9 +64,10 @@ GitHub:
 Фронтенд:
 - NGINX
 - Gunicorn
-- Flask
++ Flask
 - Docker Compose
 - Tests
+- HTML meta tags
 
 
 Бэкенд:

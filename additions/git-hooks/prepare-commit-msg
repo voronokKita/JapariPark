@@ -34,13 +34,13 @@ if len(commentary) < 10 or '#' not in commentary:
 
 # Protect master
 if current_branch == 'master':
-    allowed_branches = ['development']
-    pattern = """Merge branch "|'([a-z0-9-_]+)"|'"""
+    allowed_branches = ['development', 'master']
+    pattern = "Merge branch '([a-z0-9-_]+)'"
     # Seek for the " Merge branch 'foo' "
     if match := re.search(pattern, commentary, flags=re.I):
         merging_branch = match.group(1)
         if not merging_branch in allowed_branches:
-            print("Protection: Not allowed to merge this branch into master!")
+            print(f"Protection: Not allowed to merge this branch ({merging_branch}) into master!")
             sys.exit(1)
         else:
             print("Protection: Merge into master is allowed.")
