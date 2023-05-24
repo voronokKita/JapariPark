@@ -7,7 +7,6 @@ from pathlib import Path
 FLASK_WORKDIR = Path(__file__).resolve().parent
 MANAGER_DIR = FLASK_WORKDIR.parent
 
-
 TESTING = False
 PRODUCTION_TESTING = False
 for arg in sys.argv:

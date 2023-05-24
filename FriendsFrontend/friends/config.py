@@ -20,7 +20,7 @@ if flask_path_posix not in sys.path:
 
 
 # configure flask
-FLASK = Flask('FriendsFrontend')
+FLASK = Flask('FriendsFrontend', root_path=flask_path_posix)
 
 FLASK.config.update(
     ENV='development',
