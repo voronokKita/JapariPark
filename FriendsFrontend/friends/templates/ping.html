@@ -1,0 +1,23 @@
+{% extends 'base_layout.html' %}
+
+{% block page_head %}
+  <link rel='stylesheet' href="{{ url_for('static', filename='css/ping.css') }}">
+{% endblock %}
+
+{% block title %}
+  Ping
+{% endblock %}
+
+{% block body_content %}
+  <h1 id='header'>Ping the Friends</h1>
+{% endblock %}
+
+{% block main_content %}
+<main>
+  <p id='msg'>~~~ pong ~~~</p>
+</main>
+{% endblock %}
+
+{% block page_scripts %}
+<script src="{{ url_for('static', filename='scripts/ping.js') }}"></script>
+{% endblock %}

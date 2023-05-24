@@ -30,7 +30,7 @@ do
     continue
   elif echo "$ell" | grep -q ".py"
   then
-    output=$(flake8 $ell)
+    output=$(pipenv run flake8 $ell)
     if [ -z "$output" ]
     then
       echo "flake8 [OK] -- $ell"
