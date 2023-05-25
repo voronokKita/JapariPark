@@ -19,13 +19,13 @@ RUN apk update \
     && apk add --no-cache doas \
     && apk add --no-cache curl \
     && apk add --no-cache vim \
-    && echo 'permit persist :wheel' >> /etc/doas.d/doas.conf
+    && echo "permit persist :wheel" >> /etc/doas.d/doas.conf
 
 
 # Import $ROOT_PASS and $USER_PASS
 COPY ./.dockerenv .
 RUN source .dockerenv \
-    && echo 'root:$ROOT_PASS' | chpasswd
+    && echo root:$ROOT_PASS | chpasswd
 
 
 # Set up a new user
@@ -33,35 +33,41 @@ ENV GID=1001
 ENV UID=1000
 ENV USER=luckybot
 
-RUN addgroup "$GID" \
+RUN addgroup $GID \
     && adduser \
         --disabled-password \
         --no-create-home \
         --gecos "" \
-        --ingroup "$GID" \
-        --uid "$UID" \
-        "$USER"
+        --ingroup $GID \
+        --uid $UID \
+        $USER
 
 # Setup user's password;
-# Add to the administrators group;
-# Add to the network connections management;
-# And permissions for the 'doas' to user's group:
-RUN echo "$USER":"$USER_PASS" | chpasswd \
-    && addgroup "$USER" wheel \
-    && addgroup "$USER" netdev \
-    && echo 'permit persist :$GID' >> /etc/doas.d/doas.conf
+# add to the administrators group;
+# add to the network connections management;
+# and permissions for the 'doas' to user's group:
+RUN echo $USER:$USER_PASS | chpasswd \
+    && addgroup $USER wheel \
+    && addgroup $USER netdev \
+    && echo "permit persist :$GID" >> /etc/doas.d/doas.conf
 
 
-# Copy the project
-COPY . .
+# Copy the project files
+COPY ./manage.py .
+
+# Make a docker-flag-file;
+# and resolve files permissions:
+RUN touch indocker \
+    && chown -R $USER:$GID /FriendsFrontend
+# skip chmod -R a=rwx /FriendsFrontend
+
+
+# Make dirs for the future volumes
+RUN mkdir tests friends
 
 # Get the venv from builder
 COPY --from=builder /FriendsFrontend/venv /FriendsFrontend/venv
 ENV PATH="/FriendsFrontend/venv/bin:$PATH"
-
-# Resolve files permissions
-RUN chown "$USER":"$GID" /FriendsFrontend
-Run chmod -R a=rwx /FriendsFrontend
 
 
 # Cleaning

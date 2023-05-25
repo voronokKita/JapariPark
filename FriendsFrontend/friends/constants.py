@@ -18,7 +18,7 @@ for arg in sys.argv:
         break
 
 
-HOST = '127.0.0.1'
+HOST = '0.0.0.0'
 PORT = 5000
 
 MAX_CONTENT_LENGTH = 15 * 1024 * 1024

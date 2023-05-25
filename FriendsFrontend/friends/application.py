@@ -7,4 +7,4 @@ from friends.config import FLASK
 
 def run_test_server():
     """Run flask's wsgi test-server."""
-    FLASK.run(HOST, PORT)
+    FLASK.run(host=HOST, port=PORT)

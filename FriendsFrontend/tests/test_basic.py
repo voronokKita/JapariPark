@@ -10,9 +10,6 @@ class TestFriendsBase:
         """Test base files not removed somehow."""
         flaskapp_dir = MANAGER_DIR / 'friends'
         files = {
-            MANAGER_DIR / 'requirements.txt',
-            MANAGER_DIR / 'Pipfile',
-
             MANAGER_DIR / 'manage.py',
             MANAGER_DIR / 'tests',
 
