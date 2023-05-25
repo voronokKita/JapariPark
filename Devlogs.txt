@@ -68,7 +68,30 @@
 # 05.24 wed
 
 Закончил базовое flask-application.
+Начал работать над фронтенд контейнером:
+```
+docker build -t friends_img:0.1 .
+docker run --detach \
+        -it \
+        --name Friends \
+        --restart=on-failure:2 \
+        --mount type=bind,src="$(pwd)"/tests,dst=/FriendsFrontend/tests,ro \
+        --mount type=bind,src="$(pwd)"/friends,dst=/FriendsFrontend/friends,ro \
+        --publish 5000:5000 \
+        friends_img:0.1
+```
+Застрял с созданием пользователя и выдачей прав - проблема буквально на каждом шагу.
 
+
+# 05.25 tue
+Docker:
++ разрулил права
++ оптимизировал Dockerfile
++ bind mount volume && chmod files
++ specific enviroment tests inside a container
++ открыл порты
+
+Расширил CI-тесты.
 
 
 
