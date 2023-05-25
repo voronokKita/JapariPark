@@ -19,6 +19,6 @@ for arg in sys.argv:
 
 
 HOST = '127.0.0.1'
-PORT = 5656
+PORT = 5000
 
 MAX_CONTENT_LENGTH = 15 * 1024 * 1024

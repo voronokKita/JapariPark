@@ -65,6 +65,7 @@ GitHub:
 - NGINX
 - Gunicorn
 + Flask
+- Docker mount volume
 - Docker Compose
 - Tests
 - HTML meta tags

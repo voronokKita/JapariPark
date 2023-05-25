@@ -1,0 +1,5 @@
+Pipfile.lock
+.idea/
+.pytest_cache/
+Dockerfile
+.dockerignore

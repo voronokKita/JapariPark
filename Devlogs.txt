@@ -68,7 +68,19 @@
 # 05.24 wed
 
 Закончил базовое flask-application.
+Начал работать над фронтенд контейнером:
+```
+docker build -t friends_img .
+docker run -dtp 5000:5000 friends_img
+```
+Застрял с созданием пользователя и выдачей прав - проблема буквально на каждом шагу.
 
+
+# 05.25 tue
+Docker.
+Доделать: стандартизировать echo в Dockerfile.
+          mount volume && chmod files
+          enviroment tests inside the container
 
 
 

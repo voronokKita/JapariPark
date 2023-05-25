@@ -2,6 +2,7 @@ diagram.json
 issues_guide.png
 GithubWiki/
 testingend/
+.dockerenv
 
 ### Sphinx ###
 SphinxDocs/build/
