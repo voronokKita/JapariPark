@@ -88,8 +88,10 @@ Docker:
 + разрулил права
 + оптимизировал Dockerfile
 + bind mount volume && chmod files
-- enviroment tests inside the container
-+ ports
++ specific enviroment tests inside a container
++ открыл порты
+
+Расширил CI-тесты.
 
 
 
