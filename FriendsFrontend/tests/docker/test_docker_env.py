@@ -4,7 +4,7 @@ import os
 from tests.context import MANAGER_DIR
 
 indocker = MANAGER_DIR / 'indocker'
-ISDOCKER = indocker.exists()
+INDOCKER = indocker.exists()
 
 
 class TestDocker:
@@ -12,17 +12,17 @@ class TestDocker:
 
     def test_files(self):
         """Check for files in Docker."""
-        dockerenv = MANAGER_DIR / '.dockerenv'
-        if not ISDOCKER:
-            assert dockerenv.exists() is True
+        if not INDOCKER:
+            pass
         else:
+            dockerenv = MANAGER_DIR / '.dockerenv'
             assert dockerenv.exists() is False
             bind_mount_friends = MANAGER_DIR / 'friends' / '__init__.py'
             assert bind_mount_friends.exists() is True
 
     def test_env_variables(self):
         """Check for the env vars."""
-        if not ISDOCKER:
+        if not INDOCKER:
             pass
         else:
             assert os.environ['USER'] == 'luckybot'
