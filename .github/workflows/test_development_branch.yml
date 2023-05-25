@@ -32,7 +32,7 @@ jobs:
 
       - name: Instal packages
         run: |
-          pip install pytest
+          pip install -r requirements_test.txt
           pytest --version
 
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
