@@ -7,3 +7,4 @@ Sphinx
 autodoc
 myst-parser
 pytest
+Flask>=2.3.0, <3.0.0

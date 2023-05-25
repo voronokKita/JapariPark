@@ -30,10 +30,6 @@ jobs:
           python-version: "3.11"
       - run: python --version
 
-      - name: Up pip
-        run: |
-          python -m pip install --upgrade pip
-          pip --version
       - name: Instal packages
         run: |
           pip install -r requirements_test.txt
@@ -41,7 +37,7 @@ jobs:
 
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
 
-      - name: Run fundamental tests with pytest
-        run: pytest ./GlobalTests
+      - name: Run tests with pytest
+        run: pytest
 
       - run: echo "🍏 This job's status is '${{ job.status }}'."
