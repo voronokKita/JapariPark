@@ -27,7 +27,7 @@ X.Y+ubuntu-N  # Local version segments
 + Релизы, билды и пакеты.
 + Глобальные переменные и настройки python, лицензии и прочее.
 - Python best practices.
-- Python slots
++ Python slots
   * дублировать указанные в родительском классе слоты у наследника не нужно (сотрёт)
   * если требуется динамическое присвоение новых переменных, добавьте значение '__dict__' к последовательности строк в объявлении атрибута __slots__
 - pypy / cython / cpython
@@ -57,18 +57,23 @@ GitHub:
 + Issues.
 + Branch protection rules.
 + Tags.
-- Releases
++ Releases
 + Packages
+- Test Docker
 
 
 Фронтенд:
 - NGINX
 - Gunicorn
 + Flask
-- Docker mount volume
-- Docker Compose
-- Tests
+- Именованный хост; прояснить нюансы подключения к Docker
++ Docker mount volume
++ Docker Compose
++ Tests
 - HTML meta tags
+- Compose это вторичная вещь,
+  вся полнота функционала должна быть реализована
+  в командах docker build & run
 
 
 Бэкенд:
