@@ -18,7 +18,14 @@ for arg in sys.argv:
         break
 
 
-HOST = '0.0.0.0'
+tmp = MANAGER_DIR / 'indocker'
+INDOCKER = tmp.exists()
+
+
+if INDOCKER:
+    HOST = '0.0.0.0'
+else:
+    HOST = '127.0.0.1'
 PORT = 5000
 
 MAX_CONTENT_LENGTH = 15 * 1024 * 1024

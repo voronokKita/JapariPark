@@ -1,0 +1,79 @@
+name: japaripark
+
+networks:
+  front_net:
+    driver: bridge
+  back_net:
+    driver: bridge
+  admin_net:
+    driver: bridge
+
+configs:
+  front_conf:
+    file: "./FriendsFrontend/configs/config_frontend.cfg"
+
+secrets:
+  front_secret:
+    file: "./FriendsFrontend/secrets/.frontend_secrets.json"
+
+services:
+  friends_frontend:
+    container_name: Friends
+    stdin_open: true
+    tty: true
+
+    build:
+      context: ./FriendsFrontend
+      dockerfile: Dockerfile
+    deploy:
+      endpoint_mode: vip
+      mode: global
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 2
+
+    volumes:
+      - type: bind
+        source: "./FriendsFrontend/tests"
+        target: "/FriendsFrontend/tests"
+        read_only: true
+      - type: bind
+        source: "./FriendsFrontend/friends"
+        target: "/FriendsFrontend/friends"
+        read_only: true
+
+    ports:
+      #- "5000:5000"
+      - target: 5000
+        host_ip: japaripark.net
+        published: "5000"
+
+    configs:
+      - source: front_conf
+        target: /configs/front
+    secrets:
+      - source: front_secret
+        target: /secrets/front
+
+    networks:
+      back_net:
+        priority: 1
+        aliases:
+          - web-frontend
+      front_net:
+        priority: 0
+        aliases:
+          - friends
+          - japari-friends
+    #external_links:
+    #  - backend
+    #extra_hosts:
+    #  backend: "1.1.1.1"
+
+    healthcheck:
+      test: curl -fs "http://japaripark.net:5000/friends/ping" || echo 1
+      interval: 180s
+      timeout: 10s
+      retries: 2
+      start_period: 20s

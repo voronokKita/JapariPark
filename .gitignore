@@ -4,6 +4,9 @@ GithubWiki/
 testingend/
 .dockerenv
 
+FriendsFrontend/configs/
+FriendsFrontend/secrets/
+
 ### Sphinx ###
 SphinxDocs/build/
 SphinxDocs/source/generated/
