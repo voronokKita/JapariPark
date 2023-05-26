@@ -96,7 +96,7 @@ Docker:
 
 # 05.26 fri
 
-Compose. Stoped at top-level https://docs.docker.com/compose/compose-file/05-services/
+Done with Compose.
 Modified the diagram.
 
 Нужно попробовать писать документацию в декларативном, требовательном стилие must do this:
