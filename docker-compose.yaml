@@ -1,0 +1,43 @@
+name: japaripark
+
+networks:
+  front_net:
+    driver: bridge
+  back_net:
+    driver: bridge
+
+configs:
+  front_conf:
+    file: "./FriendsFrontend/configs/config_frontend.cfg"
+
+#secrets:
+#  server-certificate:
+#    external: true
+
+services:
+  friends_frontend:
+    container_name: Friends
+    stdin_open: true
+    tty: true
+    build:
+      context: ./FriendsFrontend
+      dockerfile: Dockerfile
+    volumes:
+      - "./FriendsFrontend/tests:/FriendsFrontend/tests:ro"
+      - "./FriendsFrontend/friends:/FriendsFrontend/friends:ro"
+    ports:
+      - "5000:5000"
+    configs:
+      - source: front_conf
+        target: /configs/front
+    #secrets:
+    #  - server-certificate
+    networks:
+      - front_net
+      - back_net
+    healthcheck:
+      test: curl -sS http://localhost:5000/friends/ping || echo 1
+      interval: 180s
+      timeout: 10s
+      retries: 2
+      start_period: 20s

@@ -82,5 +82,6 @@ USER luckybot
 ENV PATH="/FriendsFrontend/venv/bin:$PATH"
 
 
-# Debug
-ENTRYPOINT ["tail", "-f", "/dev/null"]
+# ~debug~ ENTRYPOINT ["tail", "-f", "/dev/null"]
+
+ENTRYPOINT ["/bin/sh", "-c", "pytest && python -OO manage.py"]

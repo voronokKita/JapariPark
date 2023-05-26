@@ -57,18 +57,23 @@ GitHub:
 + Issues.
 + Branch protection rules.
 + Tags.
-- Releases
++ Releases
 + Packages
+- Test Docker
 
 
 Фронтенд:
 - NGINX
 - Gunicorn
 + Flask
-- Docker mount volume
+- Именованный хост; прояснить нюансы подключения к Docker
++ Docker mount volume
 - Docker Compose
-- Tests
++ Tests
 - HTML meta tags
+- Compose это вторичная вещь,
+  вся полнота функционала должна быть реализована
+  в командах docker build & run
 
 
 Бэкенд:
