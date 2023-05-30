@@ -16,6 +16,6 @@ BASE_DIR = helpers.base_dir.get_path()
 
 
 if __name__ == '__main__':
-    context = helpers.parse_argv.get_context()
+    context = helpers.context.get_context()
     if context.werkzeug:
         friends.main.run_werkzeug_server()

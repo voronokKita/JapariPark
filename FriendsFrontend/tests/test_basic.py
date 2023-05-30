@@ -15,7 +15,7 @@ class TestFriendsBase:
 
             helpers_dir,
             helpers_dir / 'base_dir.py',
-            helpers_dir / 'parse_argv.py',
+            helpers_dir / 'context.py',
 
             flaskapp_dir,
             flaskapp_dir / '__init__.py',
