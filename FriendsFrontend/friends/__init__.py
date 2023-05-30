@@ -1,6 +1,5 @@
-"""Japari Park: Friends - the frontend flask application."""
+"""Japari Park: Friends - the frontend application on Flask."""
 
-from friends import constants, config, routes, application
-
+from friends import main
 
 __all__ = []

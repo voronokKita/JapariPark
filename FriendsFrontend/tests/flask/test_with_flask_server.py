@@ -2,7 +2,7 @@
 
 import pytest
 
-from friends.config import FLASK
+from friends.main import APPLICATION
 
 
 class TestFlaskApp:
@@ -10,7 +10,7 @@ class TestFlaskApp:
 
     @pytest.fixture(scope='class')
     def client(self):
-        yield FLASK.test_client()
+        yield APPLICATION.test_client()
 
     def test_flask_app_ping(self, client):
         """Simple text response."""

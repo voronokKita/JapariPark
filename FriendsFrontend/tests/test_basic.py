@@ -1,5 +1,4 @@
 """Japari Park: Friends - basic tests."""
-
 from tests.context import MANAGER_DIR
 
 
@@ -9,13 +8,19 @@ class TestFriendsBase:
     def test_friends_structure(self):
         """Test base files not removed somehow."""
         flaskapp_dir = MANAGER_DIR / 'friends'
+        helpers_dir = MANAGER_DIR / 'helpers'
         files = {
             MANAGER_DIR / 'manage.py',
             MANAGER_DIR / 'tests',
 
+            helpers_dir,
+            helpers_dir / 'base_dir.py',
+            helpers_dir / 'parse_argv.py',
+
             flaskapp_dir,
             flaskapp_dir / '__init__.py',
-            flaskapp_dir / 'application.py',
+            flaskapp_dir / 'wsgi.py',
+            flaskapp_dir / 'main.py',
             flaskapp_dir / 'config.py',
             flaskapp_dir / 'routes.py',
             flaskapp_dir / 'constants.py',
@@ -31,7 +36,4 @@ class TestFriendsBase:
         from friends import constants
         from friends import config
         from friends import routes
-        from friends import application
-
-        from friends.constants import TESTING, PRODUCTION_TESTING
-        assert any((TESTING, PRODUCTION_TESTING))
+        from friends import main
