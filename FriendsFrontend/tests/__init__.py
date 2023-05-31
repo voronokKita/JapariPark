@@ -1,5 +1,6 @@
 """Japari Park: Friends - tests."""
 
-from tests import context, docker, flask
+import helpers.base_dir
+import helpers.context
 
 __all__ = []

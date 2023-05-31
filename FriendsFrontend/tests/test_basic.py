@@ -1,5 +1,7 @@
 """Japari Park: Friends - basic tests."""
-from tests.context import MANAGER_DIR
+from helpers import base_dir
+
+MANAGER_WORKDIR = base_dir.get_path()
 
 
 class TestFriendsBase:
@@ -7,15 +9,12 @@ class TestFriendsBase:
 
     def test_friends_structure(self):
         """Test base files not removed somehow."""
-        flaskapp_dir = MANAGER_DIR / 'friends'
-        helpers_dir = MANAGER_DIR / 'helpers'
+        flaskapp_dir = MANAGER_WORKDIR / 'friends'
         files = {
-            MANAGER_DIR / 'manage.py',
-            MANAGER_DIR / 'tests',
+            MANAGER_WORKDIR / 'manage.py',
+            MANAGER_WORKDIR / 'tests',
 
-            helpers_dir,
-            helpers_dir / 'base_dir.py',
-            helpers_dir / 'context.py',
+            MANAGER_WORKDIR / 'helpers' / 'context.py',
 
             flaskapp_dir,
             flaskapp_dir / '__init__.py',
@@ -32,6 +31,8 @@ class TestFriendsBase:
 
     def test_friends_simple_errors(self):
         """Test import works and a test-constant is set."""
+        from helpers import context
+
         import friends
         from friends import constants
         from friends import config

@@ -1,4 +1,4 @@
-"""Proces an absolute path to the Friends directory."""
+"""Process an absolute path to the Friends directory."""
 import sys
 from pathlib import Path
 
@@ -12,8 +12,8 @@ if base_dir_str not in sys.path:
 
 def get_path() -> Path:
     """
-    Get a Friends path.
+    Get a FriendsFrontend path.
 
-    :return: a PosixPath object with a path to the project root
+    :return: a PosixPath object
     """
     return BASE_DIR

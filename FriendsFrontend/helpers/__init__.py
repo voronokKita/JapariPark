@@ -1,5 +1,3 @@
-"""Things to help in management of Friends frontend."""
-
-from helpers import context, base_dir
+"""Things to help manage the Friends frontend."""
 
 __all__ = []

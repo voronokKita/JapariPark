@@ -1,8 +1,6 @@
 """Test the Flask app with its test-server."""
-
 import pytest
-
-from friends.main import APPLICATION
+from friends.main import APPLICATION as app
 
 
 class TestFlaskApp:
@@ -10,7 +8,7 @@ class TestFlaskApp:
 
     @pytest.fixture(scope='class')
     def client(self):
-        yield APPLICATION.test_client()
+        yield app.test_client()
 
     def test_flask_app_ping(self, client):
         """Simple text response."""
