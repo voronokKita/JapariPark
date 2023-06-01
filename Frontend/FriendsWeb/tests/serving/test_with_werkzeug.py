@@ -6,10 +6,13 @@ from friends.main import APPLICATION as app
 
 
 class TestFlaskApp:
+    """Test the Flask app with its test-server."""
+
     __slots__ = ()
 
     @pytest.fixture(scope='class')
     def client(self):
+        """Get werkzeug client."""
         yield app.test_client()
 
     def test_flask_app_ping(self, client):

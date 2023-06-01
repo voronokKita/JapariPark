@@ -1,9 +1,9 @@
 FROM python:3.11-alpine3.18 as builder
 
-WORKDIR /FriendsFrontend
+WORKDIR /FriendsWeb
 
-RUN python -m venv /FriendsFrontend/venv
-ENV PATH="/FriendsFrontend/venv/bin:$PATH"
+RUN python -m venv /FriendsWeb/venv
+ENV PATH="/FriendsWeb/venv/bin:$PATH"
 
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
@@ -12,7 +12,7 @@ RUN pip install -r requirements.txt
 
 FROM python:3.11-alpine3.18
 
-WORKDIR /FriendsFrontend
+WORKDIR /FriendsWeb
 
 # Add some tools
 RUN apk update \
@@ -58,19 +58,19 @@ COPY ./manage.py .
 # Make a docker-flag-file;
 # and resolve files permissions:
 RUN touch indocker \
-    && chown -R $USER:$GID /FriendsFrontend
-# skip chmod -R a=rwx /FriendsFrontend
+    && chown -R $USER:$GID /FriendsWeb
+# chmod -R a=rwx /FriendsWeb
 
 
 # Make dirs for the future volumes
 RUN mkdir tests friends
 
 # Get the venv from builder
-COPY --from=builder /FriendsFrontend/venv /FriendsFrontend/venv
-ENV PATH="/FriendsFrontend/venv/bin:$PATH"
+COPY --from=builder /FriendsWeb/venv /FriendsWeb/venv
+ENV PATH="/FriendsWeb/venv/bin:$PATH"
 
 
-# Cleaning
+# !Important - Cleaning
 RUN unset ROOT_PASS USER_PASS \
     && history -c \
     && rm .dockerenv
@@ -78,10 +78,10 @@ RUN unset ROOT_PASS USER_PASS \
 
 # Login as the user
 USER luckybot
-# don't forget a venv path
-ENV PATH="/FriendsFrontend/venv/bin:$PATH"
+# don't forget the venv path
+ENV PATH="/FriendsWeb/venv/bin:$PATH"
 
 
 # ~debug~ ENTRYPOINT ["tail", "-f", "/dev/null"]
 
-ENTRYPOINT ["/bin/sh", "-c", "pytest && python -OO manage.py"]
+ENTRYPOINT ["/bin/sh", "-c", "python manage.py test ./tests/base && python -OO manage.py"]

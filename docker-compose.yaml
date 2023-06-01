@@ -9,21 +9,21 @@ networks:
     driver: bridge
 
 configs:
-  front_conf:
-    file: "./FriendsFrontend/configs/config_frontend.cfg"
+  friends_web_conf:
+    file: "./Frontend/FriendsWeb/configs/config_frontend.cfg"
 
 secrets:
-  front_secret:
-    file: "./FriendsFrontend/secrets/.frontend_secrets.json"
+  friends_web_secret:
+    file: "./Frontend/FriendsWeb/secrets/.frontend_secrets.json"
 
 services:
-  friends_frontend:
-    container_name: Friends
+  friends_web:
+    container_name: FriendsWeb
     stdin_open: true
     tty: true
 
     build:
-      context: ./FriendsFrontend
+      context: ./Frontend/FriendsWeb
       dockerfile: Dockerfile
     deploy:
       endpoint_mode: vip
@@ -35,40 +35,44 @@ services:
 
     volumes:
       - type: bind
-        source: "./FriendsFrontend/tests"
-        target: "/FriendsFrontend/tests"
+        source: "./Frontend/FriendsWeb/tests"
+        target: "/FriendsWeb/tests"
         read_only: true
       - type: bind
-        source: "./FriendsFrontend/helpers"
-        target: "/FriendsFrontend/helpers"
+        source: "./Frontend/FriendsWeb/helpers"
+        target: "/FriendsWeb/helpers"
         read_only: true
       - type: bind
-        source: "./FriendsFrontend/friends"
-        target: "/FriendsFrontend/friends"
+        source: "./Frontend/FriendsWeb/friends"
+        target: "/FriendsWeb/friends"
         read_only: true
 
     ports:
-      #- "5000:5000"
+#       - "5000:5000"
       - target: 5000
         host_ip: japaripark.net
         published: "5000"
 
     configs:
-      - source: front_conf
-        target: /configs/front
+      - source: friends_web_conf
+        target: /configs/friends
     secrets:
-      - source: front_secret
-        target: /secrets/front
+      - source: friends_web_secret
+        target: /secrets/friends
 
     networks:
+      admin_net:
+        priority: 2
+        aliases:
+          - friends-web
       back_net:
         priority: 1
         aliases:
-          - web-frontend
+          - friends-web
       front_net:
         priority: 0
         aliases:
-          - friends
+          - friends-web
           - japari-friends
     #external_links:
     #  - backend

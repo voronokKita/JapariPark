@@ -1,5 +1,4 @@
 """To give the individual tests some context."""
-
 import sys
 import pathlib
 

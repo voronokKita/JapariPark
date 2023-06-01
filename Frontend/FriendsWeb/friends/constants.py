@@ -1,4 +1,4 @@
-"""Friends' frontend constants and exceptions are here."""
+"""Friends Web - constants and exceptions are here."""
 from helpers import base_dir
 
 

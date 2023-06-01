@@ -1,21 +1,21 @@
 #!/bin/python
-#
-# A hook script to verify what is about to be pushed.  Called by "git
-# push" after it has checked the remote status, but before anything has been
-# pushed. If this script exits with a non-zero status nothing will be pushed.
-#
-# This hook is called with the following parameters:
-#
-# $1 -- Name of the remote to which the push is being done
-# $2 -- URL to which the push is being done
-#
-# If pushing without using a named remote those arguments will be equal.
-#
-# Information about the commits which are being pushed is supplied as lines to
-# the standard input in the form:
-#
-#   <local ref> <local oid> <remote ref> <remote oid>
-#
+"""
+A hook script to verify what is about to be pushed.  Called by "git
+push" after it has checked the remote status, but before anything has been
+pushed. If this script exits with a non-zero status nothing will be pushed.
+
+This hook is called with the following parameters:
+
+$1 -- Name of the remote to which the push is being done
+$2 -- URL to which the push is being done
+
+If pushing without using a named remote those arguments will be equal.
+
+Information about the commits which are being pushed is supplied as lines to
+the standard input in the form:
+
+  <local ref> <local oid> <remote ref> <remote oid>
+"""
 import sys
 
 print('[ Git pre-push ]')
@@ -26,7 +26,7 @@ for line in sys.stdin:
     print('TO:', l[2])
     local = l[0].removeprefix('refs/heads/')
     remote = l[2].removeprefix('refs/heads/')
-    # It will be ok for other refs
+    # It will be OK(0) for non-heads refs
     if remote == 'master' and local != 'master':
         print('Protection: You can push to the master only from the master!')
         sys.exit(1)

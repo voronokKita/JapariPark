@@ -30,7 +30,7 @@ jobs:
           python-version: "3.11"
       - run: python --version
 
-      - name: Instal packages
+      - name: Install packages
         run: |
           pip install -r requirements_test.txt
           pytest --version

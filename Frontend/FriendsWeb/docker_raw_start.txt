@@ -1,0 +1,11 @@
+docker build -t friends_img .
+
+docker run --detach \
+        -it \
+        --name Friends \
+        --restart=on-failure:2 \
+        --mount type=bind,src="$(pwd)"/tests,dst=/FriendsWeb/tests,ro \
+        --mount type=bind,src="$(pwd)"/helpers,dst=/FriendsWeb/helpers,ro \
+        --mount type=bind,src="$(pwd)"/friends,dst=/FriendsWeb/friends,ro \
+        --publish 5000:5000 \
+        friends_img
