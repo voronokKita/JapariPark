@@ -1,5 +1,5 @@
 """Japari Park - basic tests."""
-from GlobalTests.context import PROJECT_DIR
+from tests.context import PROJECT_DIR
 
 
 class TestBase:
@@ -8,7 +8,7 @@ class TestBase:
     __slots__ = ()
 
     def test_base_files(self):
-        """Test core files not removed somehow."""
+        """Test that core files not removed somehow."""
         files = {
             PROJECT_DIR / 'TODO.txt',
             PROJECT_DIR / 'Devlogs.txt',
@@ -20,6 +20,8 @@ class TestBase:
             PROJECT_DIR / '.gitignore',
             PROJECT_DIR / 'pyproject.toml',
 
+            PROJECT_DIR / 'docker-compose.yaml',
+
             PROJECT_DIR / 'Pipfile',
             PROJECT_DIR / 'requirements.txt',
             PROJECT_DIR / 'requirements_test.txt',
@@ -27,7 +29,7 @@ class TestBase:
             PROJECT_DIR / 'setup.cfg',
             PROJECT_DIR / '.github' / 'workflows',
 
-            PROJECT_DIR / 'FriendsFrontend',
+            PROJECT_DIR / 'Frontend',
             PROJECT_DIR / 'Backend',
             PROJECT_DIR / 'Database',
             PROJECT_DIR / 'SphinxDocs',

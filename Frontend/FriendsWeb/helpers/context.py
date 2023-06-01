@@ -2,8 +2,7 @@
 import sys
 from pathlib import Path
 
-from helpers import base_dir
-from helpers import command_args
+from helpers import base_dir, command_args
 
 BASE_DIR = base_dir.get_path()
 
@@ -82,7 +81,7 @@ class Context:
 
         options.noproxy == must serve through Gunicorn without NGINX
 
-        without options == normal dev-mode Gunicorn + NGINX
+        without options == normal dev-mode, Gunicorn + NGINX
 
         :param options: argparse.Namespace(lite=bool, noproxy=bool)
         """

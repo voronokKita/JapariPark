@@ -1,5 +1,4 @@
-"""Japari Park: Friends - url router."""
-
+"""Japari Park: Friends Web - urls."""
 from flask import render_template
 
 from friends.config import APPLICATION as app
@@ -8,10 +7,9 @@ from friends.config import APPLICATION as app
 @app.route('/friends/ping', methods=['GET'])
 def ping():
     """
-    Ping-pong.
+    Ping-pong lite.
 
-    Returns:
-        tuple[str,int]: plain text, 200-OK
+    :returns: tuple[str,int]: plain text, 200-OK
     """
     return 'pong', 200
 
@@ -21,7 +19,6 @@ def ping_html():
     """
     Ping-pong.
 
-    Returns:
-        tuple[str,int]: the ping.html page, 200-OK
+    :returns: tuple[str,int]: the ping.html page, 200-OK
     """
     return render_template('ping.html'), 200

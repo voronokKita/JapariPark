@@ -4,7 +4,6 @@ import argparse
 from helpers import base_dir
 
 BASE_DIR = base_dir.get_path()
-VERSION = tuple(BASE_DIR.parent.glob('version-*'))[0].name
 
 
 # top
@@ -13,11 +12,6 @@ top_parser = argparse.ArgumentParser(
     description='Friends - an application for web-clients of Japari Park.',
     epilog='[End of Help]',
     add_help=True,
-)
-top_parser.add_argument(
-    '-v', '--version',
-    action='version',
-    version=VERSION,
 )
 subparsers = top_parser.add_subparsers(
     title='this program should support 3 commands:',

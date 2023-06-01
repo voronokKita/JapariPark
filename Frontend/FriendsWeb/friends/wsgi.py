@@ -7,6 +7,6 @@ def get_app():
     """
     Let it be.
 
-    :return: a Flask application
+    :return: a Flask application instance
     """
     return app

@@ -1,20 +1,24 @@
-"""Japari Park: Friends - basic tests."""
+"""Japari Park: Friends Web - basic tests."""
 import context
+
 from helpers import base_dir
+from helpers.context import get_context
+import friends
 
 MANAGER_WORKDIR = base_dir.get_path()
 
 
 class TestFriendsBase:
+    """Japari Park: Friends Web - basic tests."""
+
     __slots__ = ()
 
     def test_friends_structure(self):
-        """Test base files not removed somehow."""
+        """Test that base files not removed somehow."""
         flaskapp_dir = MANAGER_WORKDIR / 'friends'
         files = {
             MANAGER_WORKDIR / 'manage.py',
             MANAGER_WORKDIR / 'tests',
-
             MANAGER_WORKDIR / 'helpers' / 'context.py',
 
             flaskapp_dir,
@@ -30,12 +34,8 @@ class TestFriendsBase:
         for path in files:
             assert path.exists() is True
 
-    def test_friends_simple_errors(self):
-        """Test import works and a test-constant is set."""
-        from helpers import context
-
-        import friends
-        from friends import constants
-        from friends import config
-        from friends import routes
-        from friends import main
+    def test_friends_context(self):
+        """Test a test-context is set."""
+        program_context = get_context()
+        assert program_context.autotest is True
+        assert program_context.development is True

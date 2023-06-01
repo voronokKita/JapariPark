@@ -12,7 +12,7 @@ if base_dir_str not in sys.path:
 
 def get_path() -> Path:
     """
-    Get a FriendsFrontend path.
+    Get a FriendsWeb path.
 
     :return: an absolute path to the manager.py folder
     """

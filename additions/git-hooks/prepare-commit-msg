@@ -1,12 +1,12 @@
 #!/bin/python
-#
-# A hook script to prepare the commit log message.
-# Called by "git commit" with the name of the file that has the
-# commit message, followed by the description of the commit
-# message's source.  The hook's purpose is to edit the commit
-# message file.  If the hook fails with a non-zero status,
-# the commit is aborted.
-#
+"""
+A hook script to prepare the commit log message.
+Called by "git commit" with the name of the file that has the
+commit message, followed by the description of the commit
+message's source.  The hook's purpose is to edit the commit
+message file.  If the hook fails with a non-zero status,
+the commit is aborted.
+"""
 import re
 import sys
 from subprocess import check_output
@@ -21,7 +21,6 @@ current_branch = (
     ).decode("utf-8").strip()
 )
 
-commentary = ''
 with open(commit_msg_filepath, 'r') as f:
     commentary = f.read()
 
@@ -39,7 +38,7 @@ if current_branch == 'master':
     # Seek for the " Merge branch 'foo' "
     if match := re.search(pattern, commentary, flags=re.I):
         merging_branch = match.group(1)
-        if not merging_branch in allowed_branches:
+        if merging_branch not in allowed_branches:
             print(f"Protection: Not allowed to merge this branch ({merging_branch}) into master!")
             sys.exit(1)
         else:
