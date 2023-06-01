@@ -70,10 +70,16 @@ def run(path: Path = None, max_layer='functional'):
     if path:
         run_path(path)
         return
+      
+    terminal = False
+    if sys.stdout.isatty():
+        terminal = True
+        tsize = os.get_terminal_size()
 
-    tsize = os.get_terminal_size()
     for layer in get_pyramid():
-        print(f'\n[ TESTING LAYER {layer["name"]} ]'.center(tsize.columns))
+        if terminal:
+            print(f'\n[ TESTING LAYER {layer["name"]} ]'.center(tsize.columns))
+            
         process = subprocess.run(
             [sys.executable, '-m', 'pytest', layer['path'].as_posix()],
             shell=False, cwd=BASE_DIR.as_posix(),
