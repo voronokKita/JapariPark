@@ -39,6 +39,10 @@ services:
         target: "/FriendsFrontend/tests"
         read_only: true
       - type: bind
+        source: "./FriendsFrontend/helpers"
+        target: "/FriendsFrontend/helpers"
+        read_only: true
+      - type: bind
         source: "./FriendsFrontend/friends"
         target: "/FriendsFrontend/friends"
         read_only: true

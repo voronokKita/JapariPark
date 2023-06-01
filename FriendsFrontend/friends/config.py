@@ -1,28 +1,28 @@
 """Japari Park: Friends - configurations."""
-
-import sys
 from flask import Flask
 
-from friends.constants import (
-    FLASK_WORKDIR, MANAGER_DIR,
-    MAX_CONTENT_LENGTH,
-)
+from friends.constants import MAX_CONTENT_LENGTH, FLASK_DIR
 
 
-# check up for the paths
-manager_as_posix = MANAGER_DIR.as_posix()
-if manager_as_posix not in sys.path:
-    sys.path.insert(0, manager_as_posix)
+# TODO a normal argument parser and startup scripts
 
-flask_path_posix = FLASK_WORKDIR.as_posix()
-if flask_path_posix not in sys.path:
-    sys.path.insert(0, flask_path_posix)
+''' Configure the environment
+Examples:
+  python manage.py runwith gunicorn
+  python manage.py testwith werkzeug
+  python manage.py testwith gunicorn nginx
+  python manage.py e2e-tests
+  python manage.py production
+
+  python manage.py == testwith werkzeug
+'''
+ENVIRONMENT = 'test with werkzeug'
 
 
-# configure flask
-FLASK = Flask('FriendsFrontend', root_path=flask_path_posix)
+# Configure Flask
+APPLICATION = Flask('FriendsFrontend', root_path=FLASK_DIR.as_posix())
 
-FLASK.config.update(
+APPLICATION.config.update(
     ENV='development',
     DEBUG=True,
     TESTING=True,

@@ -2,10 +2,10 @@
 
 from flask import render_template
 
-from friends.config import FLASK
+from friends.config import APPLICATION as app
 
 
-@FLASK.route('/friends/ping', methods=['GET'])
+@app.route('/friends/ping', methods=['GET'])
 def ping():
     """
     Ping-pong.
@@ -16,7 +16,7 @@ def ping():
     return 'pong', 200
 
 
-@FLASK.route('/friends/ping-html', methods=['GET'])
+@app.route('/friends/ping-html', methods=['GET'])
 def ping_html():
     """
     Ping-pong.
