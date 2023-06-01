@@ -23,6 +23,13 @@ class Context:
       With flexible settings for testing and debuggers.
     - Normal operation, for E2E testing or production;
       With the right settings.
+
+    :ivar bool indocker: running in a container?
+    :ivar bool autotest: running automated tests?
+    :ivar Path or None testpath: an absolute path to tests
+    :ivar bool development: running in dev. environment?
+    :ivar bool gunicorn: serving through Gunicorn?
+    :ivar bool nginx: proxying through NGINX?
     """
 
     __slots__ = (

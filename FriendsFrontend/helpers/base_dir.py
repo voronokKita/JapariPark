@@ -14,6 +14,6 @@ def get_path() -> Path:
     """
     Get a FriendsFrontend path.
 
-    :return: a PosixPath object
+    :return: an absolute path to the manager.py folder
     """
     return BASE_DIR

@@ -1,5 +1,4 @@
 """Japari Park - basic tests."""
-
 from GlobalTests.context import PROJECT_DIR
 
 

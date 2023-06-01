@@ -1,4 +1,5 @@
 """Japari Park: Friends - basic tests."""
+import context
 from helpers import base_dir
 
 MANAGER_WORKDIR = base_dir.get_path()

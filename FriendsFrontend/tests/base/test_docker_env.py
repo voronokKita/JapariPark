@@ -1,6 +1,7 @@
 """Test the Docker environment."""
 import os
 
+import context
 from helpers import base_dir, context
 
 MANAGER_WORKDIR = base_dir.get_path()

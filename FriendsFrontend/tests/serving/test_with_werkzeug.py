@@ -1,5 +1,7 @@
 """Test the Flask app with its test-server."""
 import pytest
+
+import context
 from friends.main import APPLICATION as app
 
 
