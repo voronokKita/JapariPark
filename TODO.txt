@@ -34,6 +34,7 @@ X.Y+ubuntu-N  # Local version segments
 - pyproject.toml https://pypi.org/classifiers/ | https://packaging.python.org/en/latest/specifications/declaring-project-metadata/#declaring-project-metadata
 - Лицензия https://choosealicense.com/
 - doctests
+- Теория систем мониторинга.
 
 
 Git:
@@ -52,14 +53,13 @@ Git:
 
 GitHub:
 + CI
-- CD
 + GitHub Actions.
 + Issues.
 + Branch protection rules.
 + Tags.
 + Releases
 + Packages
-- Test Docker
+- Test Docker on master branch
 
 
 Фронтенд:
@@ -67,7 +67,7 @@ GitHub:
 - NGINX
 - Gunicorn
 + Flask
-- Именованный хост; прояснить нюансы подключения к Docker
++ Именованный хост; прояснить нюансы подключения к Docker
 + Docker mount volume
 + Docker Compose
 + Tests
@@ -101,7 +101,3 @@ GitHub:
 - Что это и как?
 - CDN?
 - Асинхронная подгрузка медиа во фронтенд?
-
-
-Прочее:
-- Теория систем мониторинга.
