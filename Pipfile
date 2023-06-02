@@ -9,6 +9,8 @@ Sphinx = "*"
 autodoc = "*"
 myst-parser = "*"
 pytest = "*"
+requests = "*"
+werkzeug = "*"
 Flask = ">=2.3.0,<3.0.0"
 gunicorn = ">=20.1.0,<21.0.0"
 
