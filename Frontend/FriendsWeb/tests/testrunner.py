@@ -78,7 +78,8 @@ def run(path: Path = None, max_layer='functional'):
 
     for layer in get_pyramid():
         if terminal:
-            print(f'\n[ TESTING LAYER {layer["name"]} ]'.center(tsize.columns))
+            print()
+            print(f'[[ TESTING LAYER {layer["name"]} ]]'.center(tsize.columns))
 
         process = subprocess.run(
             [sys.executable, '-m', 'pytest', layer['path'].as_posix()],
