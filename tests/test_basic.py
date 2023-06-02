@@ -24,7 +24,6 @@ class TestBase:
 
             PROJECT_DIR / 'Pipfile',
             PROJECT_DIR / 'requirements.txt',
-            PROJECT_DIR / 'requirements_test.txt',
 
             PROJECT_DIR / 'setup.cfg',
             PROJECT_DIR / '.github' / 'workflows',

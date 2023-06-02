@@ -1,11 +1,19 @@
-docker build -t friends_img .
+docker docker build . --file Dockerfile --tag friends_web
 
 docker run --detach \
         -it \
-        --name Friends \
+        --name FriendsWeb \
         --restart=on-failure:2 \
         --mount type=bind,src="$(pwd)"/tests,dst=/FriendsWeb/tests,ro \
         --mount type=bind,src="$(pwd)"/helpers,dst=/FriendsWeb/helpers,ro \
         --mount type=bind,src="$(pwd)"/friends,dst=/FriendsWeb/friends,ro \
         --publish 5000:5000 \
-        friends_img
+        --network=front_net \
+        --network=back_net \
+        --network=admin_net \
+        --health-cmd='curl -fs "http://0.0.0.0:5000/friends/ping" || echo 1' \
+        --health-interval=180s \
+        --health-retries=2 \
+        --health-timeout=10s \
+        --health-start-period=20s \
+        friends_web

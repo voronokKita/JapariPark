@@ -12,20 +12,6 @@ RUN pip install -r requirements.txt
 FROM python:3.11-alpine3.18
 WORKDIR /FriendsWeb
 
-# Add some tools
-RUN apk update \
-    && apk add --no-cache doas \
-    && apk add --no-cache curl \
-    && apk add --no-cache vim \
-    && echo "permit persist :wheel" >> /etc/doas.d/doas.conf
-
-
-# Import $ROOT_PASS and $USER_PASS
-COPY ./.dockerenv .
-RUN source .dockerenv \
-    && echo root:$ROOT_PASS | chpasswd
-
-
 # Set up a new user
 ENV GID=1001
 ENV UID=1000
@@ -40,14 +26,9 @@ RUN addgroup $GID \
         --uid $UID \
         $USER
 
-# Setup user's password;
-# add to the administrators group;
+# Add to the administrators group;
 # add to the network connections management;
-# and permissions for the 'doas' to user's group:
-RUN echo $USER:$USER_PASS | chpasswd \
-    && addgroup $USER wheel \
-    && addgroup $USER netdev \
-    && echo "permit persist :$GID" >> /etc/doas.d/doas.conf
+RUN addgroup $USER wheel && addgroup $USER netdev
 
 
 # Copy the project files
@@ -57,7 +38,6 @@ COPY ./manage.py .
 # and resolve files permissions:
 RUN touch indocker \
     && chown -R $USER:$GID /FriendsWeb
-# chmod -R a=rwx /FriendsWeb
 
 
 # Make dirs for the future volumes
@@ -68,19 +48,11 @@ COPY --from=builder /FriendsWeb/venv /FriendsWeb/venv
 ENV PATH="/FriendsWeb/venv/bin:$PATH"
 
 
-# !Important - Cleaning
-RUN unset ROOT_PASS USER_PASS \
-    && history -c \
-    && rm .dockerenv
-
-
 # Login as the user
 USER luckybot
 # don't forget the venv path
 ENV PATH="/FriendsWeb/venv/bin:$PATH"
 
 
-# ~debug~ ENTRYPOINT ["tail", "-f", "/dev/null"]
-
-# Enty with base tests
+# Entry with base tests
 ENTRYPOINT ["/bin/sh", "-c", "python manage.py test ./tests/base && python -OO manage.py"]
