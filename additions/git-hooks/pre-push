@@ -30,8 +30,5 @@ for line in sys.stdin:
     if remote == 'master' and local != 'master':
         print('Protection: You can push to the master only from the master!')
         sys.exit(1)
-    elif remote == 'development' and local != 'development':
-        print('Protection: You can push to the dev only from the dev!')
-        sys.exit(1)
     else:
         sys.exit(0)

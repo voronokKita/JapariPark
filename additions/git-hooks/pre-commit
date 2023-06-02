@@ -40,7 +40,7 @@ do
       errors=$((1 + errors))
     fi
   else
-    echo "flake8 [SKIPPED] -- $ell"
+    echo "flake8 [skipped] -- $ell"
   fi
 done
 
