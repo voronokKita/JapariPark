@@ -28,22 +28,13 @@ jobs:
         with:
           python-version: "3.11"
           cache: "pip"
-          # cache-dependency-path: "requirements_test.txt"
 
       - name: Install packages
         run: pip install pytest
-        # run: pip install -r requirements_test.txt
 
       - run: echo "⚙️ The workflow is now ready to test code on the runner."
-
       - name: Run base tests
         run: pytest ./tests
-
-      #- name: Run Frontend test pyramid
-      #  run: python ./Frontend/FriendsWeb/manage.py test
-
-      #- name: Run linter
-      #  run: flake8
 
       - run: echo "🍏 Job's status is '${{ job.status }}'."
       
@@ -59,4 +50,20 @@ jobs:
           cache: "pip"
       - run: pip install wemake-python-styleguide
       - run: flake8
+      - run: echo "Status code - '${{ job.status }}'."
+      
+  test_friends_web:
+    name: Friends Web tests
+    runs-on: ubuntu-22.04
+    
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with: 
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: "./Frontend/FriendsWeb/requirements.txt"
+      - run: pip install -r ./Frontend/FriendsWeb/requirements.txt
+      - name: Run a testing pyramid
+        run: python ./Frontend/FriendsWeb/manage.py test
       - run: echo "Status code - '${{ job.status }}'."
