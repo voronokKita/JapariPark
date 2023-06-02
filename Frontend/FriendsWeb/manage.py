@@ -20,5 +20,7 @@ if __name__ == '__main__':
         testrunner.run(context.testpath)
     elif not context.gunicorn:
         friends.main.run_werkzeug_server()
+    elif context.gunicorn:
+        friends.main.run_gunicorn_server()
 
 sys.exit(0)
