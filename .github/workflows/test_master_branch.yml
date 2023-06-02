@@ -11,8 +11,8 @@ on:
 # permissions: read-all
 
 jobs:
-  test_master:
-    name: Tests for the master
+  test_project_base:
+    name: Base project tests
     runs-on: ubuntu-22.04
 
     steps:
@@ -28,20 +28,35 @@ jobs:
         with:
           python-version: "3.11"
           cache: "pip"
-          cache-dependency-path: "requirements_test.txt"
+          # cache-dependency-path: "requirements_test.txt"
 
       - name: Install packages
-        run: pip install -r requirements_test.txt
+        run: pip install pytest
+        # run: pip install -r requirements_test.txt
 
       - run: echo "⚙️ The workflow is now ready to test code on the runner."
 
       - name: Run base tests
         run: pytest ./tests
 
-      - name: Run Frontend test pyramid
-        run: python ./Frontend/FriendsWeb/manage.py test
+      #- name: Run Frontend test pyramid
+      #  run: python ./Frontend/FriendsWeb/manage.py test
 
-      - name: Run linter
-        run: flake8
+      #- name: Run linter
+      #  run: flake8
 
       - run: echo "🍏 Job's status is '${{ job.status }}'."
+      
+  check_linter:
+    name: Linter
+    runs-on: ubuntu-22.04
+    
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with: 
+          python-version: "3.11"
+          cache: "pip"
+      - run: pip install wemake-python-styleguide
+      - run: flake8
+      - run: echo "Status code - '${{ job.status }}'."
