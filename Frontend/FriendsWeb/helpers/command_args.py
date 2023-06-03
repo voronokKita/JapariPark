@@ -52,6 +52,13 @@ dev_parser.add_argument(
     required=False,
     help='serve through Gunicorn without NGINX',
 )
+dev_parser.add_argument(
+    '--liteproxy',
+    action='store_true',
+    default=False,
+    required=False,
+    help='serve through Werkzeug with NGINX',
+)
 
 # Command: auto testing
 test_parser = subparsers.add_parser(

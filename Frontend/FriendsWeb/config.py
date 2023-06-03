@@ -25,7 +25,7 @@ GUNICORN_OPTIONS = {
     'workers': 2,
     'timeout': 1,
 }
-if CONTEXT.gunicorn and CONTEXT.nginx:
+if CONTEXT.dev_normal():
     bind = ('unix:{P}/friends.sock'.
             format(P=CONTEXT.gunicorn_dir.as_posix()))
     GUNICORN_OPTIONS.update({'bind': bind})

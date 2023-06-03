@@ -10,15 +10,16 @@ APPLICATION.config.update(
     LOGGER_NAME='friends_flask_logger',
 )
 
-if CONTEXT.development or CONTEXT.autotest:
-    APPLICATION.config.update(
-        ENV='development',
-        DEBUG=True,
-        TESTING=True,
-    )
-else:
+
+if not CONTEXT.development:
     APPLICATION.config.update(
         ENV='production',
         DEBUG=False,
         TESTING=False,
+    )
+else:
+    APPLICATION.config.update(
+        ENV='development',
+        DEBUG=True,
+        TESTING=True,
     )

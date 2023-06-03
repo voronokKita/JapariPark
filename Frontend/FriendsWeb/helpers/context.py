@@ -11,6 +11,15 @@ class ContextError(Exception):
     """Error: context is changed."""
 
 
+def in_dev_context(func):
+    """Return False if not in a development env or in autotests."""
+    def wrapper(self, *args, **kwargs):
+        if self.development and not self.autotest:
+            return func(self, *args, **kwargs)
+        return False
+    return wrapper
+
+
 class Context:
     """
     Context of the working program.
@@ -72,6 +81,26 @@ class Context:
             D=self.development, E=self.gunicorn, F=self.nginx,
         )
 
+    @in_dev_context
+    def dev_lite(self):
+        """Return True if in a dev --lite env."""
+        return not self.gunicorn and not self.nginx
+
+    @in_dev_context
+    def dev_noproxy(self):
+        """Return True if in a dev --noproxy env."""
+        return self.gunicorn and not self.nginx
+
+    @in_dev_context
+    def dev_liteproxy(self):
+        """Return True if in a dev --liteproxy env."""
+        return self.nginx and not self.gunicorn
+
+    @in_dev_context
+    def dev_normal(self):
+        """Return True if in a dev env."""
+        return self.gunicorn and self.nginx
+
     def _set_paths(self):
         self.manager_workdir = MANAGER_WORKDIR
         self.flask_dir = MANAGER_WORKDIR / 'friends'
@@ -106,6 +135,8 @@ class Context:
 
         options.noproxy == must serve through Gunicorn without NGINX
 
+        options.liteproxy == must serve through Werkzeug with NGINX
+
         without options == normal dev-mode, Gunicorn + NGINX
 
         :param options: argparse.Namespace(lite=bool, noproxy=bool)
@@ -120,6 +151,9 @@ class Context:
         elif options.noproxy:
             self.gunicorn = True
             self.nginx = False
+        elif options.liteproxy:
+            self.gunicorn = False
+            self.nginx = True
         else:
             self.gunicorn = True
             self.nginx = True
