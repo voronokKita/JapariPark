@@ -4,7 +4,11 @@ from pathlib import Path
 
 from helpers import base_dir, command_args
 
-BASE_DIR = base_dir.get_path()
+MANAGER_WORKDIR = base_dir.get_path()
+
+
+class ContextError(Exception):
+    """Error: context is changed."""
 
 
 class Context:
@@ -29,14 +33,21 @@ class Context:
     :ivar bool development: running in dev. environment?
     :ivar bool gunicorn: serving through Gunicorn?
     :ivar bool nginx: proxying through NGINX?
+    :ivar Path manager_workdir: an absolute path to the manager.py folder
+    :ivar Path flask_dir: an absolute path to the flask app folder
+    :ivar Path gunicorn_dir: an absolute path to the server config folder
+    :ivar Path nginx_dir: an absolute path to the proxy-server config folder
     """
 
     __slots__ = (
         'indocker', 'autotest', 'testpath',
         'development', 'gunicorn', 'nginx',
+        'manager_workdir', 'flask_dir',
+        'gunicorn_dir', 'nginx_dir',
     )
 
     def __init__(self):
+        self._set_paths()
         self._in_docker()
 
         if 'manage.py' not in sys.argv[0]:
@@ -61,9 +72,23 @@ class Context:
             D=self.development, E=self.gunicorn, F=self.nginx,
         )
 
+    def _set_paths(self):
+        self.manager_workdir = MANAGER_WORKDIR
+        self.flask_dir = MANAGER_WORKDIR / 'friends'
+        self.gunicorn_dir = MANAGER_WORKDIR / 'servers' / 'gunicornd'
+        self.nginx_dir = MANAGER_WORKDIR / 'servers' / 'nginxd'
+
+        if not all((
+            self.manager_workdir.exists(),
+            self.flask_dir.exists(),
+            self.gunicorn_dir.exists(),
+            self.nginx_dir.exists(),
+        )):
+            raise ContextError('ERROR: paths are changed')
+
     def _in_docker(self):
         """Check out for a container flag."""
-        self.indocker = Path(BASE_DIR, 'indocker').exists()
+        self.indocker = Path(self.manager_workdir, 'indocker').exists()
 
     def _context_production(self):
         """Working in a normal mode: Gunicorn + NGINX."""
@@ -113,7 +138,7 @@ class Context:
         if path != '' and path[0] == '/':
             self.testpath = Path(path).resolve()
         elif path != '' and path[:2] == './':
-            self.testpath = Path(BASE_DIR, Path(path)).resolve()
+            self.testpath = Path(self.manager_workdir, Path(path)).resolve()
         else:
             self.testpath = None
 

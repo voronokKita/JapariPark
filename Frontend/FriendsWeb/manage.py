@@ -6,6 +6,7 @@ __license__ = 'TODO'
 
 import sys
 
+import config
 import friends
 from helpers import base_dir
 from helpers.context import get_context

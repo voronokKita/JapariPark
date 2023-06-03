@@ -1,4 +1,4 @@
-docker docker build . --file Dockerfile --tag friends_web
+docker build --file Dockerfile --tag friends_web .
 
 docker run --detach \
         -it \

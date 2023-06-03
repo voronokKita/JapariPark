@@ -6,7 +6,7 @@ from helpers import base_dir
 BASE_DIR = base_dir.get_path()
 
 
-# top
+# Top
 top_parser = argparse.ArgumentParser(
     prog='friends/manage.py',
     description='Friends - an application for web-clients of Japari Park.',
@@ -21,7 +21,7 @@ subparsers = top_parser.add_subparsers(
     help='= production, development or automated tests',
 )
 
-# command: production env
+# Command: production env
 prod_parser = subparsers.add_parser(
     name='run',
     help='- normal mode, for E2E testing or production',
@@ -29,7 +29,7 @@ prod_parser = subparsers.add_parser(
     epilog='[End of Help]',
 )
 
-# command: development manual testing
+# Command: development manual testing
 dev_parser = subparsers.add_parser(
     name='dev',
     help='- manual testing (development), with flexible settings',
@@ -53,7 +53,7 @@ dev_parser.add_argument(
     help='serve through Gunicorn without NGINX',
 )
 
-# command: auto testing
+# Command: auto testing
 test_parser = subparsers.add_parser(
     name='test',
     help='- automatic testing',

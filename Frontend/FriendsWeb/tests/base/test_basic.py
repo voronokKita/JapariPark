@@ -1,11 +1,7 @@
 """Japari Park: Friends Web - basic tests."""
 import context
-
-from helpers import base_dir
-from helpers.context import get_context
+from helpers.context import CONTEXT
 import friends
-
-MANAGER_WORKDIR = base_dir.get_path()
 
 
 class TestFriendsBase:
@@ -15,27 +11,26 @@ class TestFriendsBase:
 
     def test_friends_structure(self):
         """Test that base files not removed somehow."""
-        flaskapp_dir = MANAGER_WORKDIR / 'friends'
         files = {
-            MANAGER_WORKDIR / 'manage.py',
-            MANAGER_WORKDIR / 'tests',
-            MANAGER_WORKDIR / 'helpers' / 'context.py',
+            CONTEXT.manager_workdir / 'manage.py',
+            CONTEXT.manager_workdir / 'config.py',
+            CONTEXT.manager_workdir / 'tests',
+            CONTEXT.manager_workdir / 'helpers' / 'context.py',
 
-            flaskapp_dir,
-            flaskapp_dir / '__init__.py',
-            flaskapp_dir / 'wsgi.py',
-            flaskapp_dir / 'main.py',
-            flaskapp_dir / 'config.py',
-            flaskapp_dir / 'routes.py',
-            flaskapp_dir / 'constants.py',
-            flaskapp_dir / 'static',
-            flaskapp_dir / 'templates',
+            CONTEXT.flask_dir,
+            CONTEXT.flask_dir / '__init__.py',
+            CONTEXT.flask_dir / 'wsgi.py',
+            CONTEXT.flask_dir / 'main.py',
+            CONTEXT.flask_dir / 'config.py',
+            CONTEXT.flask_dir / 'routes.py',
+            CONTEXT.flask_dir / 'constants.py',
+            CONTEXT.flask_dir / 'static',
+            CONTEXT.flask_dir / 'templates',
         }
         for path in files:
             assert path.exists() is True
 
     def test_friends_context(self):
-        """Test a test-context is set."""
-        program_context = get_context()
-        assert program_context.autotest is True
-        assert program_context.development is True
+        """Test that the test-context is set."""
+        assert CONTEXT.autotest is True
+        assert CONTEXT.development is True

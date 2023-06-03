@@ -1,0 +1,10 @@
+server {
+    listen 5050;
+    japaripark.net 127.0.0.1;
+}
+
+location / {
+  include proxy_params;
+  proxy_pass http://unix:/home/kita/Main/Code/Misc/JapariPark/Frontend/FriendsWeb/friends/app.sock;
+    }
+}

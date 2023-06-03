@@ -3,11 +3,11 @@ import sys
 from pathlib import Path
 
 
-BASE_DIR = Path(__file__).resolve().parents[1]
+MANAGER_WORKDIR = Path(__file__).resolve().parents[1]
 
-base_dir_str = BASE_DIR.as_posix()
-if base_dir_str not in sys.path:
-    sys.path.insert(0, base_dir_str)
+posix = MANAGER_WORKDIR.as_posix()
+if posix not in sys.path:
+    sys.path.insert(0, posix)
 
 
 def get_path() -> Path:
@@ -16,4 +16,4 @@ def get_path() -> Path:
 
     :return: an absolute path to the manager.py folder
     """
-    return BASE_DIR
+    return MANAGER_WORKDIR

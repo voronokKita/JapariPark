@@ -6,9 +6,13 @@ import subprocess
 import requests
 
 from context import BASE_DIR
-from friends.constants import HOST
+from config import BASE_IP, BASE_PORT
 
-TEST_PORT_TWO = 5002
+
+TEST_PORTS = [
+    BASE_PORT + 10,
+    BASE_PORT + 11,
+]
 
 
 class TestThroughGunicorn:
@@ -17,31 +21,32 @@ class TestThroughGunicorn:
     __slots__ = ()
 
     @pytest.fixture(scope='class')
-    def server(self):
+    def server_port(self):
         """Run a server from a separate process."""
-        command = f'gunicorn friends.wsgi:app -w 1 -b {HOST}:{TEST_PORT_TWO}'
+        port = TEST_PORTS.pop()
+        command = f'gunicorn friends.wsgi:app -w 1 -b {BASE_IP}:{port}'
         gunicorn_process = subprocess.Popen(
             command.split(),
             shell=False,
             cwd=BASE_DIR.as_posix(),
         )
-        time.sleep(1.1)
-        yield True
+        time.sleep(1.01)
+        yield port
         gunicorn_process.terminate()
 
-    def test_flask_app_ping(self, server):
+    def test_flask_app_ping(self, server_port):
         """Simple text response."""
         response = requests.get(
-            f'http://{HOST}:{TEST_PORT_TWO}/friends/ping',
+            f'http://{BASE_IP}:{server_port}/friends/ping',
             timeout=5,
         )
         assert response.status_code == 200
         assert response.text == 'pong'
 
-    def test_flask_app_ping_html(self, server):
+    def test_flask_app_ping_html(self, server_port):
         """Complex html+css+js response."""
         response = requests.get(
-            f'http://{HOST}:{TEST_PORT_TWO}/friends/ping-html',
+            f'http://{BASE_IP}:{server_port}/friends/ping-html',
             timeout=5,
         )
         assert response.status_code == 200
