@@ -8,13 +8,6 @@ networks:
   admin_net:
     driver: bridge
 
-configs:
-  friends_web_conf:
-    file: "./Frontend/FriendsWeb/configs/config_frontend.cfg"
-
-secrets:
-  friends_web_secret:
-    file: "./Frontend/FriendsWeb/secrets/.frontend_secrets.json"
 
 services:
   friends_web:
@@ -52,13 +45,6 @@ services:
       - target: 5000
         host_ip: japaripark.net
         published: "5000"
-
-    configs:
-      - source: friends_web_conf
-        target: /configs/friends
-    secrets:
-      - source: friends_web_secret
-        target: /secrets/friends
 
     networks:
       admin_net:

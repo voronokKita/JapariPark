@@ -18,7 +18,7 @@ import sys
 import subprocess
 from pathlib import Path
 
-from helpers import base_dir
+import base_dir
 
 BASE_DIR = base_dir.get_path()
 NO_TESTS_EXIT_CODE = 5
@@ -62,8 +62,6 @@ def run(path: Path = None, max_layer='functional'):
 
     Can specify another **max_layer** to stop.
 
-    Will make a call to `sys.exit()` if some test returns an error.
-
     :param path: a path to give to pytest
     :param max_layer: a layer of the testing pyramid to stop
     """
@@ -72,6 +70,7 @@ def run(path: Path = None, max_layer='functional'):
         return
 
     terminal = False
+    tsize = None
     if sys.stdout.isatty():
         terminal = True
         tsize = os.get_terminal_size()
@@ -81,12 +80,6 @@ def run(path: Path = None, max_layer='functional'):
             print()
             print(f'[[ TESTING LAYER {layer["name"]} ]]'.center(tsize.columns))
 
-        process = subprocess.run(
-            [sys.executable, '-m', 'pytest', layer['path'].as_posix()],
-            shell=False, cwd=BASE_DIR.as_posix(),
-        )
-        if 0 < process.returncode < NO_TESTS_EXIT_CODE:
-            sys.exit(process.returncode)
-
+        run_path(layer['path'])
         if layer['name'] == max_layer:
             break

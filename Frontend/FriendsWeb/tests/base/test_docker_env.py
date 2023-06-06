@@ -1,18 +1,14 @@
 """Test the Docker environment."""
 import os
 
-import context
-from helpers import base_dir
-from helpers.context import get_context
-
-MANAGER_WORKDIR = base_dir.get_path()
-PROGRAM_CONTEXT = get_context()
+import base_dir
+from helpers.context import CONTEXT
 
 
 def in_docker(func):
     """Skip if not in a container."""
     def wrapper(*args, **kwargs):
-        return func(*args, **kwargs) if PROGRAM_CONTEXT.indocker else None
+        return func(*args, **kwargs) if CONTEXT.indocker else True
     return wrapper
 
 
@@ -24,10 +20,10 @@ class TestDocker:
     @in_docker
     def test_files(self):
         """Check for files in Docker."""
-        dockerenv = MANAGER_WORKDIR / '.dockerenv'
+        dockerenv = CONTEXT.manager_workdir / '.dockerenv'
         assert dockerenv.exists() is False
-        bind_mount_friends = MANAGER_WORKDIR / 'friends' / '__init__.py'
-        assert bind_mount_friends.exists() is True
+        bind_mount_app = CONTEXT.manager_workdir / 'friends' / '__init__.py'
+        assert bind_mount_app.exists() is True
 
     @in_docker
     def test_env_variables(self):

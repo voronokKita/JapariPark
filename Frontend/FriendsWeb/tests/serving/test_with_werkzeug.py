@@ -1,45 +1,22 @@
-"""Test the Flask app with its test-server."""
+"""Test the Flask app with Werkzeug server."""
 import pytest
-import threading
-import time
-
 import requests
-from werkzeug.serving import make_server
 
-import context
-from friends.constants import HOST
+import base_dir
+from config import WERKZEUG_TEST_PORT
+from helpers.context import CONTEXT
 from friends.main import APPLICATION as app
-
-TEST_PORT_ONE = 5001
-
-
-class WerkzeugThread(threading.Thread):
-    """A thread to easily manage server's start and stop."""
-
-    server = make_server(host=HOST, port=TEST_PORT_ONE, app=app, processes=1)
-
-    def __int__(self):
-        threading.Thread.__init__(self)
-
-    def run(self):
-        """Code to run in thread."""
-        self.server.serve_forever()
-
-    def merge(self):
-        """Shutdown the server and join the thread."""
-        self.server.shutdown()
-        threading.Thread.join(self, 5)
 
 
 class TestWithTestClient:
-    """Test the Flask app with its test-server."""
+    """Test the Flask app with its test-client."""
 
     __slots__ = ()
 
-    @pytest.fixture(scope='class')
+    @pytest.fixture(scope='function')
     def client(self):
         """Get a test client."""
-        yield app.test_client()
+        return app.test_client()
 
     def test_flask_app_ping(self, client):
         """Simple text response."""
@@ -62,28 +39,25 @@ class TestThroughBaseWSGIServer:
 
     __slots__ = ()
 
-    @pytest.fixture(scope='class')
-    def server(self):
-        """Run a server from a separate thread."""
-        server = WerkzeugThread()
-        server.start()
-        time.sleep(0.2)
-        yield True
-        server.merge()
-
-    def test_flask_app_ping(self, server):
+    def test_flask_app_ping(self, werkzeug_server):
         """Simple text response."""
+        if CONTEXT.in_github_ci:
+            return True
+
         response = requests.get(
-            f'http://{HOST}:{TEST_PORT_ONE}/friends/ping',
+            f'http://127.0.0.1:{WERKZEUG_TEST_PORT}/friends/ping',
             timeout=5,
         )
         assert response.status_code == 200
         assert response.text == 'pong'
 
-    def test_flask_app_ping_html(self, server):
+    def test_flask_app_ping_html(self, werkzeug_server):
         """Complex html+css+js response."""
+        if CONTEXT.in_github_ci:
+            return True
+
         response = requests.get(
-            f'http://{HOST}:{TEST_PORT_ONE}/friends/ping-html',
+            f'http://127.0.0.1:{WERKZEUG_TEST_PORT}/friends/ping-html',
             timeout=5,
         )
         assert response.status_code == 200

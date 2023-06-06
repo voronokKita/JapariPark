@@ -2,5 +2,12 @@ Pipfile.lock
 .idea/
 .pytest_cache/
 __pycache__/
-Dockerfile
-.dockerignore
+
+*.sock
+*.log
+
+
+### NGINX ###
+nginx.pid
+nginx.conf.backup
+friends.conf.backup

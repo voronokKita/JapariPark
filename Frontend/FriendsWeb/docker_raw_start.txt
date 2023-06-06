@@ -1,4 +1,4 @@
-docker docker build . --file Dockerfile --tag friends_web
+docker build --file Dockerfile --tag friends_web .
 
 docker run --detach \
         -it \
@@ -7,6 +7,7 @@ docker run --detach \
         --mount type=bind,src="$(pwd)"/tests,dst=/FriendsWeb/tests,ro \
         --mount type=bind,src="$(pwd)"/helpers,dst=/FriendsWeb/helpers,ro \
         --mount type=bind,src="$(pwd)"/friends,dst=/FriendsWeb/friends,ro \
+        --mount type=bind,src="$(pwd)"/servers,dst=/FriendsWeb/servers \
         --publish 5000:5000 \
         --network=front_net \
         --network=back_net \
@@ -16,4 +17,17 @@ docker run --detach \
         --health-retries=2 \
         --health-timeout=10s \
         --health-start-period=20s \
+        friends_web
+
+
+# Lite
+docker run --detach \
+        -it \
+        --name FriendsWeb \
+        --restart=on-failure:2 \
+        --mount type=bind,src="$(pwd)"/tests,dst=/FriendsWeb/tests,ro \
+        --mount type=bind,src="$(pwd)"/helpers,dst=/FriendsWeb/helpers,ro \
+        --mount type=bind,src="$(pwd)"/friends,dst=/FriendsWeb/friends,ro \
+        --mount type=bind,src="$(pwd)"/servers,dst=/FriendsWeb/servers \
+        --publish 5000:5000 \
         friends_web

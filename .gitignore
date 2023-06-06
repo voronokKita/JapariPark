@@ -1,11 +1,12 @@
 diagram.json
-issues_guide.png
 GithubWiki/
-testingend/
 .dockerenv
+*.sock
 
-FriendsFrontend/configs/
-FriendsFrontend/secrets/
+### NGINX ###
+nginx.pid
+nginx.conf.backup
+friends.conf.backup
 
 ### Sphinx ###
 SphinxDocs/build/

@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 
 
-MANAGER_WORKDIR = Path(__file__).resolve().parents[1]
+MANAGER_WORKDIR = Path(__file__).resolve().parents[2]
 
 path = MANAGER_WORKDIR.as_posix()
 if path not in sys.path:
