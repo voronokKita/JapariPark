@@ -8,7 +8,7 @@ from helpers.context import CONTEXT
 def in_docker(func):
     """Skip if not in a container."""
     def wrapper(*args, **kwargs):
-        return func(*args, **kwargs) if CONTEXT.indocker else None
+        return func(*args, **kwargs) if CONTEXT.indocker else True
     return wrapper
 
 
