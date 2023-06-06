@@ -7,7 +7,8 @@ for all settings to work through import.
 import subprocess
 
 from base_dir import MANAGER_WORKDIR
-from config import WERKZEUG_TEST_PORT
+from config import WERKZEUG_TEST_PORT, NGINX_CONFIG
+from helpers.osdir import OSDIR
 
 from servers.gunicornd.wrapper import GunicornWrapper
 
@@ -27,16 +28,17 @@ def run_werkzeug_server():
 
 def run_gunicorn_server_with_nginx():
     """Run a normal server through a proxy."""
-    subprocess.call(
-        ['/usr/bin/sudo', '/usr/sbin/nginx'],
-        cwd=MANAGER_WORKDIR.as_posix(), shell=False,
-    )
+    if not NGINX_CONFIG['nginx_pid_file'].exists():
+        subprocess.call(
+            [OSDIR['sudo'], OSDIR['nginx']],
+            cwd=MANAGER_WORKDIR.as_posix(), shell=False,
+        )
     try:
         GunicornWrapper(app=APPLICATION).run()
     except (KeyboardInterrupt, Exception):
         pass
     finally:
         subprocess.call(
-            ['/usr/bin/sudo', '/usr/sbin/nginx', '-s', 'quit'],
+            [OSDIR['sudo'], OSDIR['nginx'], '-s', 'quit'],
             cwd=MANAGER_WORKDIR.as_posix(), shell=False,
         )

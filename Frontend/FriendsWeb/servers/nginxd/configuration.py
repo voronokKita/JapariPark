@@ -18,6 +18,7 @@ import getpass
 import subprocess
 from pathlib import Path
 
+from helpers.osdir import OSDIR
 from config import (
     HOST_DOMAIN, SITE_PORT,
     PROXY_SOCKET, NGINX_CONFIG,
@@ -55,14 +56,14 @@ def resolve_config_path():
 def check_permissions(nginx_dir: Path):
     """Check out for permissions to write in nginx dir."""
     ls_result = subprocess.run(
-        ['/usr/bin/ls', '-ld', nginx_dir.as_posix()],
+        [OSDIR['ls'], '-ld', nginx_dir.as_posix()],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         shell=False, text=True,
     )
     if 'drwxrwxrwx' not in ls_result.stdout:
         subprocess.call(
-            ['/usr/bin/sudo', '/usr/bin/chmod', '-R', '777',
+            [OSDIR['sudo'], OSDIR['chmod'], '-R', '777',
              nginx_dir.as_posix()],
         )
 

@@ -1,29 +1,29 @@
-FROM python:3.11-alpine3.18 as builder
-WORKDIR /FriendsWeb
+FROM nginx:1.25.0-alpine3.17
 
-RUN python -m venv /FriendsWeb/venv
-ENV PATH="/FriendsWeb/venv/bin:$PATH"
-
-COPY ./requirements.txt .
-RUN pip install -r requirements.txt
-# </builder>
-
-
-FROM python:3.11-alpine3.18
-WORKDIR /FriendsWeb
-
-# Add some tools
+# Add some tools and sudo
 RUN apk update \
-    && apk add --no-cache doas \
+    && apk add --no-cache sudo \
     && apk add --no-cache curl \
     && apk add --no-cache vim \
-    && echo "permit persist :wheel" >> /etc/doas.d/doas.conf
+    && apk add --no-cache openssl \
+    && apk add --no-cache ca-certificates \
+    && apk add --no-cache coreutils
 
+
+# Install python
+ENV PYTHONUNBUFFERED=1
+RUN apk add --no-cache python3 \
+    && ln -sf python3 /usr/bin/python \
+    && python -m ensurepip \
+    && pip3 install --no-cache --upgrade pip setuptools wheel
+
+
+WORKDIR /FriendsWeb
 
 # Import $ROOT_PASS and $USER_PASS
-COPY ./.dockerenv .
+COPY ./.dockerenv ./
 RUN source .dockerenv \
-    && echo root:$ROOT_PASS | chpasswd
+    && echo "root:$ROOT_PASS" | chpasswd
 
 
 # Set up a new user
@@ -43,29 +43,36 @@ RUN addgroup $GID \
 # Setup user's password;
 # add to the administrators group;
 # add to the network connections management;
-# and permissions for the 'doas' to user's group:
-RUN echo $USER:$USER_PASS | chpasswd \
+# and permissions for the `sudo nginx`:
+# `which nginx` returns `/usr/sbin/nginx`
+RUN echo "$USER:$USER_PASS" | chpasswd \
     && addgroup $USER wheel \
     && addgroup $USER netdev \
-    && echo "permit persist :$GID" >> /etc/doas.d/doas.conf
+    && echo "$USER ALL=(ALL) NOPASSWD: /usr/sbin/nginx" >> /etc/sudoers \
+    && echo "%$GID ALL=(ALL) NOPASSWD: /usr/sbin/nginx" >> /etc/sudoers
 
 
 # Copy the project files
-COPY ./manage.py .
+COPY requirements.txt manage.py config.py base_dir.py ./
 
-# Make a docker-flag-file;
-# and resolve files permissions:
+# Touch a docker-flag-file;
+# and resolve files permissions;
+# Resolve permissions for the nginx-config dir,
+# required for automatic config writing...
+# ~~~~~~~~~~~~~~~~~ Note ~~~~~~~~~~~~~~~~~~~~ #
+# The documentation indicates that configs    #
+# can be in the other two directories,        #
+# which can create additional problems        #
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 RUN touch indocker \
-    && chown -R $USER:$GID /FriendsWeb
-# chmod -R a=rwx /FriendsWeb
+    && chown -R "$USER:$GID" /FriendsWeb \
+    && chmod -R 777 /etc/nginx
 
-
-# Make dirs for the future volumes
-RUN mkdir tests friends helpers
-
-# Get the venv from builder
-COPY --from=builder /FriendsWeb/venv /FriendsWeb/venv
+# Set up a venv and resolve dependencies
+RUN python -m venv /FriendsWeb/venv
 ENV PATH="/FriendsWeb/venv/bin:$PATH"
+
+RUN pip install --no-cache -r requirements.txt
 
 
 # !Important - Cleaning
@@ -80,7 +87,8 @@ USER luckybot
 ENV PATH="/FriendsWeb/venv/bin:$PATH"
 
 
-# ~debug~ ENTRYPOINT ["tail", "-f", "/dev/null"]
+# ~debug~
+ENTRYPOINT ["tail", "-f", "/dev/null"]
 
-# Enty with base tests
-ENTRYPOINT ["/bin/sh", "-c", "python manage.py test && python -OO manage.py"]
+# Entry with base tests
+#ENTRYPOINT ["/bin/sh", "-c", "python manage.py test && python -OO manage.py dev"]
