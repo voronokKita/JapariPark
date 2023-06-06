@@ -1,17 +1,22 @@
-"""Gunicorn configurations."""
-from gunicorn.app.base import BaseApplication as GunicornWrapper
+"""
+An interface for Gunicorn.
+
+https://docs.gunicorn.org/en/stable/custom.html
+"""
+from gunicorn.app.base import BaseApplication
+from gunicorn.app.base import Arbiter
+
+from servers.gunicornd.configuration import GUNICORN_OPTIONS
 
 
-class GunicornApplication(GunicornWrapper):
-    """
-    An interface for Gunicorn.
+class GunicornWrapper(BaseApplication):
+    """Gunicorn wrapper."""
 
-    https://docs.gunicorn.org/en/stable/custom.html
-    """
+    link_to_arbiter: Arbiter
 
     def __init__(self, app=None, options=None):
         self.application = app
-        self.options = options or {}
+        self.options = options or GUNICORN_OPTIONS
 
         super().__init__()
 
@@ -26,5 +31,5 @@ class GunicornApplication(GunicornWrapper):
             self.cfg.set(key.lower(), value)
 
     def load(self):
-        """Return a Flask application from __init__(app)."""
+        """Return a Flask application from __init__()."""
         return self.application

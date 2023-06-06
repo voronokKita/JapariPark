@@ -1,7 +1,7 @@
 """Test the Docker environment."""
 import os
 
-import context
+import base_dir
 from helpers.context import CONTEXT
 
 

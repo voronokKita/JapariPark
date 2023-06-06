@@ -1,35 +1,42 @@
 """
 Japari Park: Friends Web - main root.
 
-The Flask application instance must be used from here,
+The Flask APPLICATION instance must be used from here,
 for all settings to work through import.
 """
 import subprocess
 
-from friends import routes
+from base_dir import MANAGER_WORKDIR
+from config import WERKZEUG_TEST_PORT
+
+from servers.gunicornd.wrapper import GunicornWrapper
+
+from friends import constants, routes
 from friends.config import APPLICATION
 
-from config import BASE_IP, BASE_PORT, GUNICORN_OPTIONS
-from servers.gunicornd.config import GunicornApplication
 
-
-def run_werkzeug_server():
-    """Run a Werkzeug mini-server."""
-    APPLICATION.run(host=BASE_IP, port=BASE_PORT)
-
-
-def run_werkzeug_server_with_nginx():
-    """Run a Werkzeug mini-server through a NGINX proxy."""
-    # TODO
+def run_in_production():
+    """Run in a production environment."""
     pass
 
 
-def run_gunicorn_server():
-    """Run a normal Gunicorn server."""
-    GunicornApplication(APPLICATION, GUNICORN_OPTIONS).run()
+def run_werkzeug_server():
+    """Run a Werkzeug mini-server through a Flask runner."""
+    APPLICATION.run(host='0.0.0.0', port=WERKZEUG_TEST_PORT)
 
 
 def run_gunicorn_server_with_nginx():
     """Run a normal server through a proxy."""
-    # TODO
-    pass
+    subprocess.call(
+        ['/usr/bin/sudo', '/usr/sbin/nginx'],
+        cwd=MANAGER_WORKDIR.as_posix(), shell=False,
+    )
+    try:
+        GunicornWrapper(app=APPLICATION).run()
+    except (KeyboardInterrupt, Exception):
+        pass
+    finally:
+        subprocess.call(
+            ['/usr/bin/sudo', '/usr/sbin/nginx', '-s', 'quit'],
+            cwd=MANAGER_WORKDIR.as_posix(), shell=False,
+        )

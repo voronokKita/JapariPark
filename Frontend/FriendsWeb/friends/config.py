@@ -11,7 +11,7 @@ APPLICATION.config.update(
 )
 
 
-if not CONTEXT.development:
+if CONTEXT.in_production():
     APPLICATION.config.update(
         ENV='production',
         DEBUG=False,

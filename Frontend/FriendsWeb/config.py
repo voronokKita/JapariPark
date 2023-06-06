@@ -1,33 +1,34 @@
 """Base application and server configurations."""
-import sys
-import pathlib
+from pathlib import Path
+from base_dir import MANAGER_WORKDIR
 
-from helpers.context import CONTEXT
-
-BASE_IP = '0.0.0.0'
-BASE_DOMAIN = 'localhost'
-BASE_PORT = 5000
-
-# For the final address
+# The final external address
 HOST_IP = '127.0.0.1'
 HOST_DOMAIN = 'localhost'
-SITE_PORT = 5050
+SITE_PORT = 5000
+
+PROXY_SOCKET = Path('/tmp/friends.sock')
 
 
-MANAGER_WORKDIR = pathlib.Path(__file__).resolve()
-posix = MANAGER_WORKDIR.as_posix()
-if posix not in sys.path:
-    sys.path.insert(0, posix)
+# Addresses for testing
+WERKZEUG_TEST_PORT = 5050
+MISC_TEST_PORT = 5030
 
 
-# Gunicorn options
-GUNICORN_OPTIONS = {
-    'workers': 2,
-    'timeout': 1,
+# Servers config
+SERVERS_CONFIGS_DIR = Path(MANAGER_WORKDIR, 'servers', 'configs')
+
+# NGINX config
+NGINX_CONFIG = {
+    'write_initial_nginx_conf': True,
+    'nginx_config_file': Path(SERVERS_CONFIGS_DIR, 'nginx.conf.template'),
+    'nginx_pid_file': Path(MANAGER_WORKDIR, 'servers', 'nginxd', 'nginx.pid'),
+    'nginx_logs_dir': Path(MANAGER_WORKDIR, 'servers', 'logs'),
+    'nginx_logs': ('notice', 'error'),
+    'write_nginx_server_conf': True,
+    'nginx_server_file': Path(SERVERS_CONFIGS_DIR, 'friends.conf.template'),
+    'nginx_server_filename': 'friends.conf',
 }
-if CONTEXT.dev_normal():
-    bind = ('unix:{P}/friends.sock'.
-            format(P=CONTEXT.gunicorn_dir.as_posix()))
-    GUNICORN_OPTIONS.update({'bind': bind})
-else:
-    GUNICORN_OPTIONS.update({'bind': f'{BASE_IP}:{BASE_PORT}'})
+
+# Gunicorn config
+GUNICORN_CONFIG_FILE = Path(SERVERS_CONFIGS_DIR, 'gunicorn_configs.json')

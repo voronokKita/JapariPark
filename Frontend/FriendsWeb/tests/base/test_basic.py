@@ -1,7 +1,8 @@
 """Japari Park: Friends Web - basic tests."""
-import context
+import base_dir
 from helpers.context import CONTEXT
 import friends
+import servers
 
 
 class TestFriendsBase:
@@ -14,8 +15,7 @@ class TestFriendsBase:
         files = {
             CONTEXT.manager_workdir / 'manage.py',
             CONTEXT.manager_workdir / 'config.py',
-            CONTEXT.manager_workdir / 'tests',
-            CONTEXT.manager_workdir / 'helpers' / 'context.py',
+            CONTEXT.manager_workdir / 'base_dir.py',
 
             CONTEXT.flask_dir,
             CONTEXT.flask_dir / '__init__.py',
@@ -34,3 +34,6 @@ class TestFriendsBase:
         """Test that the test-context is set."""
         assert CONTEXT.autotest is True
         assert CONTEXT.development is True
+        assert CONTEXT.in_production() is False
+        assert CONTEXT.dev_normal() is False
+        assert CONTEXT.dev_lite() is False

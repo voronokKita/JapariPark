@@ -83,4 +83,4 @@ ENV PATH="/FriendsWeb/venv/bin:$PATH"
 # ~debug~ ENTRYPOINT ["tail", "-f", "/dev/null"]
 
 # Enty with base tests
-ENTRYPOINT ["/bin/sh", "-c", "python manage.py test ./tests/base && python -OO manage.py"]
+ENTRYPOINT ["/bin/sh", "-c", "python manage.py test && python -OO manage.py"]

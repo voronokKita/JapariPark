@@ -1,5 +1,7 @@
 """Japari Park - basic tests."""
-from tests.context import PROJECT_DIR
+import pathlib
+
+PROJECT_DIR = pathlib.Path(__file__).resolve().parents[1]
 
 
 class TestBase:
@@ -26,7 +28,7 @@ class TestBase:
             PROJECT_DIR / 'requirements.txt',
 
             PROJECT_DIR / 'setup.cfg',
-            PROJECT_DIR / '.github' / 'workflows',
+            PROJECT_DIR / '.github' / 'workflows' / 'test_master_branch.yml',
 
             PROJECT_DIR / 'Frontend',
             PROJECT_DIR / 'Backend',
