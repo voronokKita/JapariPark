@@ -1,94 +1,84 @@
 FROM nginx:1.25.0-alpine3.17
 
-# Add some tools and sudo
-RUN apk update \
-    && apk add --no-cache sudo \
-    && apk add --no-cache curl \
-    && apk add --no-cache vim \
-    && apk add --no-cache openssl \
-    && apk add --no-cache ca-certificates \
-    && apk add --no-cache coreutils
+# <-------- as root -------->
+ENV NGINX_BIN=/usr/sbin/nginx
+ENV NGINX_CONF=/etc/nginx
+WORKDIR /FriendsWeb
 
 
-# Install python
+# Add some tools and sudo;
+# install python:
 ENV PYTHONUNBUFFERED=1
-RUN apk add --no-cache python3 \
+RUN apk update \
+    && apk add --no-cache \
+        sudo \
+        curl \
+        vim \
+        openssl \
+        ca-certificates \
+        coreutils \
+        python3 \
     && ln -sf python3 /usr/bin/python \
     && python -m ensurepip \
     && pip3 install --no-cache --upgrade pip setuptools wheel
 
 
-WORKDIR /FriendsWeb
-
-# Import $ROOT_PASS and $USER_PASS
-COPY ./.dockerenv ./
-RUN source .dockerenv \
-    && echo "root:$ROOT_PASS" | chpasswd
-
-
-# Set up a new user
-ENV GID=1001
+# Set up a new user & group
+ENV GID=1000
 ENV UID=1000
 ENV USER=luckybot
+ENV GROUP=luckybot
 
-RUN addgroup $GID \
+RUN addgroup $GROUP --gid $GID \
     && adduser \
         --disabled-password \
         --no-create-home \
         --gecos "" \
-        --ingroup $GID \
+        --ingroup $GROUP \
         --uid $UID \
         $USER
 
-# Setup user's password;
+
+# Import $USER_PASS;
+# setup user's password;
 # add to the administrators group;
 # add to the network connections management;
-# and permissions for the `sudo nginx`:
-# `which nginx` returns `/usr/sbin/nginx`
-RUN echo "$USER:$USER_PASS" | chpasswd \
+# set NOPASSWD for the `sudo nginx` command;
+# resolve file & dir permissions:
+COPY .dockerenv ./
+RUN source .dockerenv \
+    && echo "$USER:$USER_PASS" | chpasswd \
     && addgroup $USER wheel \
     && addgroup $USER netdev \
-    && echo "$USER ALL=(ALL) NOPASSWD: /usr/sbin/nginx" >> /etc/sudoers \
-    && echo "%$GID ALL=(ALL) NOPASSWD: /usr/sbin/nginx" >> /etc/sudoers
+    && echo "$USER ALL=(ALL) NOPASSWD: $NGINX_BIN" >> /etc/sudoers \
+    && echo "%$GID ALL=(ALL) NOPASSWD: $NGINX_BIN" >> /etc/sudoers \
+    && chmod -R 777 "$NGINX_CONF" \
+    && chown -R "$USER:$GROUP" /FriendsWeb
 
-
-# Copy the project files
-COPY requirements.txt manage.py config.py base_dir.py ./
-
-# Touch a docker-flag-file;
-# and resolve files permissions;
-# Resolve permissions for the nginx-config dir,
-# required for automatic config writing...
-# ~~~~~~~~~~~~~~~~~ Note ~~~~~~~~~~~~~~~~~~~~ #
-# The documentation indicates that configs    #
-# can be in the other two directories,        #
-# which can create additional problems        #
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-RUN touch indocker \
-    && chown -R "$USER:$GID" /FriendsWeb \
-    && chmod -R 777 /etc/nginx
-
-# Set up a venv and resolve dependencies
-RUN python -m venv /FriendsWeb/venv
-ENV PATH="/FriendsWeb/venv/bin:$PATH"
-
-RUN pip install --no-cache -r requirements.txt
-
-
-# !Important - Cleaning
-RUN unset ROOT_PASS USER_PASS \
+# Important! Cleaning
+RUN unset USER_PASS \
     && history -c \
     && rm .dockerenv
 
 
-# Login as the user
+# <---- as user ---->
 USER luckybot
-# don't forget the venv path
+
+# Set up a venv and touch an indocker flag-file
+RUN python -m venv /FriendsWeb/venv \
+    && touch indocker
 ENV PATH="/FriendsWeb/venv/bin:$PATH"
 
+# Resolve dependencies
+COPY requirements.txt ./
+RUN pip install --no-cache -r requirements.txt
 
-# ~debug~
-ENTRYPOINT ["tail", "-f", "/dev/null"]
+
+# <---- Project files ---->
+COPY manage.py config.py base_dir.py ./
+
+
+# ~debug~ ENTRYPOINT ["tail", "-f", "/dev/null"]
 
 # Entry with base tests
-#ENTRYPOINT ["/bin/sh", "-c", "python manage.py test && python -OO manage.py dev"]
+ENTRYPOINT ["/bin/sh", "-c", "python manage.py test && python -OO manage.py dev"]

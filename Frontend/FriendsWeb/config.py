@@ -22,8 +22,8 @@ SERVERS_CONFIGS_DIR = Path(MANAGER_WORKDIR, 'servers', 'configs')
 NGINX_CONFIG = {
     'write_initial_nginx_conf': True,
     'nginx_config_file': Path(SERVERS_CONFIGS_DIR, 'nginx.conf.template'),
-    'nginx_pid_file': Path(MANAGER_WORKDIR, 'servers', 'nginxd', 'nginx.pid'),
-    'nginx_logs_dir': Path(MANAGER_WORKDIR, 'servers', 'logs'),
+    'nginx_pid_file': Path(MANAGER_WORKDIR, 'logs', 'servers', 'nginx.pid'),
+    'nginx_logs_dir': Path(MANAGER_WORKDIR, 'logs', 'servers'),
     'nginx_logs': ('notice', 'error'),
     'write_nginx_server_conf': True,
     'nginx_server_file': Path(SERVERS_CONFIGS_DIR, 'friends.conf.template'),

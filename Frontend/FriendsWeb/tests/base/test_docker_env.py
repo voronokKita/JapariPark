@@ -22,6 +22,7 @@ class TestDocker:
         """Check for files in Docker."""
         dockerenv = CONTEXT.manager_workdir / '.dockerenv'
         assert dockerenv.exists() is False
+
         bind_mount_app = CONTEXT.manager_workdir / 'friends' / '__init__.py'
         assert bind_mount_app.exists() is True
 
@@ -29,6 +30,7 @@ class TestDocker:
     def test_env_variables(self):
         """Check for the env vars."""
         assert os.environ['USER'] == 'luckybot'
-        assert os.environ['GID'] == '1001'
+        assert os.environ['GROUP'] == 'luckybot'
+        assert os.environ['GID'] == '1000'
         assert os.environ['UID'] == '1000'
         assert os.environ['PWD'] == '/FriendsWeb'

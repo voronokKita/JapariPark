@@ -14,6 +14,7 @@ The script will then touch the `conf_is_set_flag` file.
 This file can be deleted if you want to automatically update `nginx.conf`;
 but it is better to change the settings manually.
 """
+import pwd
 import getpass
 import subprocess
 from pathlib import Path
@@ -71,6 +72,8 @@ def check_permissions(nginx_dir: Path):
 def make_error_logs() -> str:
     """Generate a block with logs."""
     logs_dir = NGINX_CONFIG['nginx_logs_dir']
+    logs_dir.mkdir(parents=True, exist_ok=True)
+
     log_path_list = []
     for lvl in NGINX_CONFIG['nginx_logs']:
         log_row = ('error_log  {DIR}/nginx_{LVL}.log   {LVL}; '.
@@ -84,6 +87,7 @@ def make_main_nginx_config(nginx_dir: Path | str) -> str:
     """Fill an initial config template with data."""
     with NGINX_CONFIG['nginx_config_file'].open('r') as fl:
         template = fl.read()
+
     return template.format(
         USER=getpass.getuser(),
         ERROR_LOGS=make_error_logs(),
