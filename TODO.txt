@@ -63,9 +63,10 @@ GitHub:
 
 
 Бэкенд:
-- Какой сервер?
+- Daphne
 - Django
 - DRF
+- Docker
 - Docker Compose
 - Tests
 

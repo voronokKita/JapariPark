@@ -1,0 +1,1 @@
+"""Japari Friends - API endpoints."""
