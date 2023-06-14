@@ -78,7 +78,8 @@ RUN pip install --no-cache -r requirements.txt
 COPY manage.py config.py base_dir.py ./
 
 
-# ~debug~ ENTRYPOINT ["tail", "-f", "/dev/null"]
+# Entry into eternal work
+ENTRYPOINT ["tail", "-f", "/dev/null"]
 
 # Entry with base tests
-ENTRYPOINT ["/bin/sh", "-c", "python manage.py test && python -OO manage.py dev"]
+# ENTRYPOINT ["/bin/sh", "-c", "python manage.py test && python -OO manage.py dev"]

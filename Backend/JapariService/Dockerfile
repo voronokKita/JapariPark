@@ -73,5 +73,5 @@ RUN pip install --no-cache -r requirements.txt
 COPY --chown="$USER:$GROUP" --chmod=777 manage.py ./
 
 
-# ~debug~
+# Entry into eternal work
 ENTRYPOINT ["tail", "-f", "/dev/null"]

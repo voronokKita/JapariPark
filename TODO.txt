@@ -67,7 +67,7 @@ GitHub:
 + Django
 - DRF
 + Docker
-- Docker Compose
++ Docker Compose
 - Tests
 
 
