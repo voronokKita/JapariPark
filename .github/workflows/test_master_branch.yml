@@ -32,7 +32,7 @@ jobs:
         run: pip install pytest
       -
         name: Run base tests
-        run: pytest ./basetests
+        run: pytest ./tests
 
 # Linter
   check_linter:

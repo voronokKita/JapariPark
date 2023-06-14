@@ -2,6 +2,10 @@ diagram.json
 GithubWiki/
 .dockerenv
 *.sock
+*.secret
+
+### Backend ###
+Backend/JapariService/secrets/
 
 ### NGINX ###
 nginx.pid
