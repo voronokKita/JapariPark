@@ -64,9 +64,9 @@ GitHub:
 
 Бэкенд:
 - Daphne
-- Django
++ Django
 - DRF
-- Docker
++ Docker
 - Docker Compose
 - Tests
 
