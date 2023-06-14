@@ -1,4 +1,16 @@
+# Japari Park
+#
+# * Frontend
+#   -- FriendsWeb
+#   -- AccountsWeb
+#
+# * Backend
+#   -- JapariService
+#      -- Friends app
+#      -- Accounts app
+#
 name: japaripark
+
 
 networks:
   front_net:
@@ -9,12 +21,17 @@ networks:
     driver: bridge
 
 
+secrets:
+  django_secret:
+    file: ./Backend/JapariService/secrets/.django.secret
+
+
 services:
+  # Japari Park: Web-frontend of the Friends app
   friends_web:
     container_name: FriendsWeb
     stdin_open: true
     tty: true
-
     build:
       context: ./Frontend/FriendsWeb
       dockerfile: Dockerfile
@@ -25,7 +42,6 @@ services:
         condition: on-failure
         delay: 5s
         max_attempts: 2
-
     volumes:
       - type: bind
         source: "./Frontend/FriendsWeb/tests"
@@ -39,19 +55,14 @@ services:
         source: "./Frontend/FriendsWeb/friends"
         target: "/FriendsWeb/friends"
         read_only: true
-
+      - type: bind
+        source: "./Frontend/FriendsWeb/servers"
+        target: "/FriendsWeb/servers"
+        read_only: true
     ports:
-#       - "5000:5000"
-      - target: 5000
-        host_ip: japaripark.net
-        published: "5000"
-
+      - "5000:5000"
     networks:
       admin_net:
-        priority: 2
-        aliases:
-          - friends-web
-      back_net:
         priority: 1
         aliases:
           - friends-web
@@ -59,15 +70,58 @@ services:
         priority: 0
         aliases:
           - friends-web
-          - japari-friends
-    #external_links:
-    #  - backend
-    #extra_hosts:
-    #  backend: "1.1.1.1"
+#     healthcheck:
+#       test: curl -fs "http://127.0.0.1:5000/friends/ping" || echo 1
+#       interval: 180s
+#       timeout: 10s
+#       retries: 2
+#       start_period: 20s
 
-    healthcheck:
-      test: curl -fs "http://japaripark.net:5000/friends/ping" || echo 1
-      interval: 180s
-      timeout: 10s
-      retries: 2
-      start_period: 20s
+  # Japari Park: Backend Service
+  japari_service:
+    container_name: JapariService
+    stdin_open: true
+    tty: true
+    build:
+      context: ./Backend/JapariService
+      dockerfile: Dockerfile
+    deploy:
+      endpoint_mode: vip
+      mode: global
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 2
+    volumes:
+      - type: bind
+        source: "./Backend/JapariService/JapariService"
+        target: "/JapariService/JapariService"
+        read_only: true
+      - type: bind
+        source: "./Backend/JapariService/apps"
+        target: "/JapariService/apps"
+        read_only: true
+    secrets:
+      - source: django_secret
+        target: /JapariService/secrets/.django.secret
+    ports:
+      - "8000:8000"
+    networks:
+      admin_net:
+        priority: 2
+        aliases:
+          - japari-service
+      back_net:
+        priority: 1
+        aliases:
+          - japari-service
+      front_net:
+        priority: 0
+        aliases:
+          - japari-service
+#     healthcheck:
+#       test: curl -fs "http://127.0.0.1:8000/friends/ping" || echo 1
+#       interval: 180s
+#       timeout: 10s
+#       retries: 2
+#       start_period: 20s
