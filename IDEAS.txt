@@ -63,7 +63,7 @@ GitHub:
 
 
 Бэкенд:
-- Daphne
++ Daphne
 + Django
 - DRF
 + Docker
