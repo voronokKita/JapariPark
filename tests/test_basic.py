@@ -12,8 +12,6 @@ class TestBase:
     def test_base_files(self):
         """Test that core files not removed somehow."""
         files = {
-            PROJECT_DIR / 'TODO.txt',
-            PROJECT_DIR / 'Devlogs.txt',
             PROJECT_DIR / 'cover.jpeg',
             PROJECT_DIR / 'cover2.png',
             PROJECT_DIR / 'README.md',

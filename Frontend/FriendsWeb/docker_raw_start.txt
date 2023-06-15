@@ -1,7 +1,12 @@
+# Networking
+docker network create --driver=bridge front_net
+
+
+# Build
 docker build --file Dockerfile --tag friends_web .
 
-docker network create front_net
 
+# Run
 docker run --detach \
         -it \
         --name FriendsWeb \
@@ -21,7 +26,7 @@ docker run --detach \
         friends_web
 
 
-# Lite
+## Run lite
 docker run --detach \
         -it \
         --name FriendsWeb \

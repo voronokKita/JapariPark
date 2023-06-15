@@ -2,12 +2,20 @@ Pipfile.lock
 .idea/
 .pytest_cache/
 __pycache__/
-
 *.sock
+
+
+### Logs ###
+logs/
 *.log
 
 
 ### NGINX ###
+NGINX/
 nginx.pid
-nginx.conf.backup
-friends.conf.backup
+_nginx.conf.backup
+_friends.conf.backup
+
+
+### Static ###
+staticfiles/

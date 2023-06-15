@@ -9,8 +9,8 @@ Backend/JapariService/secrets/
 
 ### NGINX ###
 nginx.pid
-nginx.conf.backup
-friends.conf.backup
+_nginx.conf.backup
+_friends.conf.backup
 
 ### Sphinx ###
 SphinxDocs/build/

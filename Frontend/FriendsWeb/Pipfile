@@ -4,13 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pytest = "*"
 requests = "*"
-Werkzeug = "*"
 Flask = ">=2.3.0,<3.0.0"
 gunicorn = ">=20.1.0,<21.0.0"
 
 [dev-packages]
+Werkzeug = "*"
+pytest = "*"
 
 [requires]
 python_version = ">=3.11.0,<3.12.0"
