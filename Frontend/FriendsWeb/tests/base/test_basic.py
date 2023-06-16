@@ -15,10 +15,11 @@ class TestFriendsBase:
         files = {
             BASE_DIR / 'manage.py',
             BASE_DIR / 'requirements.txt',
+
             BASE_DIR / 'logs',
+            BASE_DIR / 'templates',
 
             app_dir,
-            app_dir / 'templates',
             app_dir / '__init__.py',
             app_dir / 'main.py',
             app_dir / 'wsgi.py',

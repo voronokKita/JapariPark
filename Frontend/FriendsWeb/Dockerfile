@@ -1,34 +1,32 @@
-FROM nginx:1.25.0-alpine3.17
+FROM python:3.11-alpine3.17
 
-# <-------- as root -------->
-ENV NGINX_BIN=/usr/sbin/nginx
-ENV NGINX_CONF=/etc/nginx
-WORKDIR /FriendsWeb
+LABEL author="github.com/voronokKita"
+LABEL description="FriendsWeb flask application with Gunicorn server. \
+Intended to be used with a reverse proxy."
+LABEL secrets="Needs BuildX or BuildKit on, like: \
+`$ MYSECRET=qwerty DOCKER_BUILDKIT=1 docker build --secret id=user_pass,env=MYSECRET`"
+LABEL logs="Mount /FriendsWeb/logs to get them."
 
 
-# Add some tools and sudo;
-# install python:
-ENV PYTHONUNBUFFERED=1
+# < working with the environment >
+ENV BASE_DIR=/FriendsWeb
+ENV LOGS_DIR=/FriendsWeb/logs
+ENV GROUP=luckybot
+ENV USER=luckybot
+ENV GID=1000
+ENV UID=1000
+
+
+# Add some tools and sudo
 RUN apk update \
     && apk add --no-cache \
         sudo \
         curl \
         vim \
-        openssl \
-        ca-certificates \
-        coreutils \
-        python3 \
-    && ln -sf python3 /usr/bin/python \
-    && python -m ensurepip \
-    && pip3 install --no-cache --upgrade pip setuptools wheel
+    && echo "%wheel ALL=(ALL) ALL" | EDITOR='tee -a' visudo
 
 
 # Set up a new user & group
-ENV GID=1000
-ENV UID=1000
-ENV USER=luckybot
-ENV GROUP=luckybot
-
 RUN addgroup $GROUP --gid $GID \
     && adduser \
         --disabled-password \
@@ -38,48 +36,50 @@ RUN addgroup $GROUP --gid $GID \
         --uid $UID \
         $USER
 
+# Setup user's password, requires BuildX or BuildKit
+RUN --mount=type=secret,id=user_pass,target=/run/secrets/user_pass \
+    echo "$USER:$(cat /run/secrets/user_pass)" | chpasswd
 
-# Import $USER_PASS;
-# setup user's password;
-# add to the administrators group;
+# Add to the administrators group;
 # add to the network connections management;
-# set NOPASSWD for the `sudo nginx` command;
-# resolve file & dir permissions:
-COPY .dockerenv ./
-RUN source .dockerenv \
-    && echo "$USER:$USER_PASS" | chpasswd \
-    && addgroup $USER wheel \
+# add user to sudoers:
+RUN addgroup $USER wheel \
     && addgroup $USER netdev \
-    && echo "$USER ALL=(ALL) NOPASSWD: $NGINX_BIN" >> /etc/sudoers \
-    && echo "%$GID ALL=(ALL) NOPASSWD: $NGINX_BIN" >> /etc/sudoers \
-    && chmod -R 777 "$NGINX_CONF" \
-    && chown -R "$USER:$GROUP" /FriendsWeb
+    && echo "$USER ALL=(ALL) ALL" | EDITOR='tee -a' visudo
 
-# Important! Cleaning
-RUN unset USER_PASS \
-    && history -c \
-    && rm .dockerenv
+USER $USER
 
 
-# <---- as user ---->
-USER luckybot
+# Make the base dir;
+# set up a venv;
+# touch an indocker flag-file;
+# and make the dir for the logs:
+WORKDIR "$BASE_DIR"
+RUN chown "$USER:$GROUP" "$BASE_DIR" \
+    && python -m venv "$BASE_DIR/venv" \
+    && touch indocker \
+    && mkdir -p --mode=777 "$BASE_DIR/logs"
 
-# Set up a venv and touch an indocker flag-file
-RUN python -m venv /FriendsWeb/venv \
-    && touch indocker
-ENV PATH="/FriendsWeb/venv/bin:$PATH"
+ENV PATH="$BASE_DIR/venv/bin:$PATH"
 
 # Resolve dependencies
-COPY requirements.txt ./
+COPY --chown="$USER:$GROUP" --chmod=444 requirements.txt ./
 RUN pip install --no-cache -r requirements.txt
 
 
-# <---- Project files ---->
-COPY manage.py config.py base_dir.py ./
+# < working with files >
+COPY --chown="$USER:$GROUP" --chmod=444 Dockerfile manage.py  ./
+COPY --chown="$USER:$GROUP" --chmod=444 ./helpers  ./helpers
+COPY --chown="$USER:$GROUP" --chmod=444 ./templates  ./templates
+COPY --chown="$USER:$GROUP" --chmod=444 ./friends  ./friends
+COPY --chown="$USER:$GROUP" --chmod=444 ./tests  ./tests
 
 
 # Entry into eternal work
-ENTRYPOINT ["tail", "-f", "/dev/null"]
+# ENTRYPOINT ["tail", "-f", "/dev/null"]
 
-# Entry with base tests
-# ENTRYPOINT ["/bin/sh", "-c", "python manage.py test && python -OO manage.py dev"]
+ENTRYPOINT ["/FriendsWeb/venv/bin/python", "-OO", "-m"]
+CMD [ "gunicorn", \
+      "friends.wsgi:app", \
+      "-w", "2", \
+      "--bind", "0.0.0.0:5000" ]

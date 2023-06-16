@@ -21,7 +21,7 @@ ENV UID=1000
 ENV GID=1000
 
 
-# Add some tools and sudo;
+# Add some tools and sudo
 RUN apk update \
     && apk add --no-cache \
         sudo \
@@ -57,6 +57,7 @@ RUN addgroup $USER wheel \
 
 # < working with files >
 WORKDIR "$BASE_DIR"
+
 COPY --chown="$USER:$GROUP" --chmod=444 ./NGINX ./
 
 # Resolve file & dir permissions;
@@ -72,7 +73,7 @@ RUN chown "$USER:$GROUP" "$BASE_DIR" \
 COPY --chown="$USER:$GROUP" --chmod=444 ./staticfiles ./staticfiles
 
 
-USER luckybot
+USER $USER
 
 # Entry into eternal work
 # ENTRYPOINT ["tail", "-f", "/dev/null"]

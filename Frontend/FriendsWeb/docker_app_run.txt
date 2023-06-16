@@ -3,7 +3,15 @@ docker network create --driver=bridge front_net
 
 
 # Build
-docker build --file Dockerfile --tag friends_web .
+# Build
+# easy to change `env=var` to `src=secret-file`
+# !important - should be built from the FriendsWeb base dir
+MYSECRET=qwerty DOCKER_BUILDKIT=1 \
+        docker build \
+        --secret id=user_pass,env=MYSECRET \
+        --file Dockerfile \
+        --tag friends_web \
+        .
 
 
 # Run
@@ -11,22 +19,29 @@ docker run --detach \
         -it \
         --name FriendsWeb \
         --restart=on-failure:2 \
-        --mount type=bind,src="$(pwd)"/tests,dst=/FriendsWeb/tests,ro \
-        --mount type=bind,src="$(pwd)"/helpers,dst=/FriendsWeb/helpers,ro \
-        --mount type=bind,src="$(pwd)"/friends,dst=/FriendsWeb/friends,ro \
-        --mount type=bind,src="$(pwd)"/servers,dst=/FriendsWeb/servers,ro \
+        --mount type=bind,src="$(pwd)"/logs,dst=/FriendsWeb/logs \
         --publish 5000:5000 \
         --network front_net \
         --network-alias friends_web \
-        --health-cmd='curl -fs "http://0.0.0.0:5000/friends/ping" || echo 1' \
-        --health-interval=180s \
+        --health-cmd='curl -fs "http://127.0.0.1:5000/friends/ping" || echo 1' \
+        --health-interval=320s \
         --health-retries=2 \
         --health-timeout=10s \
         --health-start-period=20s \
         friends_web
 
-
 ## Run lite
+docker run --detach \
+        -it \
+        --name FriendsWeb \
+        --restart=on-failure:2 \
+        --mount type=bind,src="$(pwd)"/logs,dst=/FriendsWeb/logs \
+        --publish 5000:5000 \
+        --network front_net \
+        --network-alias friends_web \
+        friends_web
+
+## Run dev
 docker run --detach \
         -it \
         --name FriendsWeb \
@@ -34,6 +49,8 @@ docker run --detach \
         --mount type=bind,src="$(pwd)"/tests,dst=/FriendsWeb/tests,ro \
         --mount type=bind,src="$(pwd)"/helpers,dst=/FriendsWeb/helpers,ro \
         --mount type=bind,src="$(pwd)"/friends,dst=/FriendsWeb/friends,ro \
-        --mount type=bind,src="$(pwd)"/servers,dst=/FriendsWeb/servers,ro \
+        --mount type=bind,src="$(pwd)"/logs,dst=/FriendsWeb/logs \
         --publish 5000:5000 \
+        --network front_net \
+        --network-alias friends_web \
         friends_web
