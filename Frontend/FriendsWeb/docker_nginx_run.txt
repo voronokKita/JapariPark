@@ -1,0 +1,40 @@
+# Networking
+docker network create --driver=bridge front_net
+
+
+# Build
+# easy to change `env=var` to `src=secret-file`
+# !important - should be built from the FriendsWeb base dir
+MYSECRET=qwerty DOCKER_BUILDKIT=1 \
+        docker build \
+        --secret id=user_pass,env=MYSECRET \
+        --file ./NGINX/Dockerfile \
+        --tag friends_web_nginx \
+        .
+
+
+# Run
+docker run --detach \
+        -it \
+        --name FriendsWebNginx \
+        --restart=on-failure:2 \
+        --mount type=bind,src="$(pwd)"/logs/servers,dst=/FriendsWebNginx/logs \
+        --publish 8080:8080 \
+        --network front_net \
+        --network-alias friends_web_nginx \
+        --health-cmd='curl -fs "http://127.0.0.1:8080/friends/nginx/ping" || echo 1' \
+        --health-interval=320s \
+        --health-retries=2 \
+        --health-timeout=10s \
+        --health-start-period=20s \
+        friends_web_nginx
+
+
+## Run lite
+docker run --detach \
+        -it \
+        --name FriendsWebNginx \
+        --restart=on-failure:2 \
+        --mount type=bind,src="$(pwd)"/logs/servers,dst=/FriendsWebNginx/logs \
+        --publish 8080:8080 \
+        friends_web_nginx

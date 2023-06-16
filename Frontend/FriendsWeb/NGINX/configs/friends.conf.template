@@ -1,10 +1,20 @@
 server {
-    listen 5000;
+    listen 8080;
     server_name localhost;
 
-    location / {
-        proxy_pass  http://friends-web;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
+    location /friends/nginx/ping {
+        alias /FriendsWebNginx/;
+        index  ping.html;
     }
 }
+
+#server {
+#    listen 5000;
+#    server_name localhost;
+#
+#    location / {
+#        proxy_pass  http://friends-web;
+#        proxy_set_header Host $host;
+#        proxy_set_header X-Real-IP $remote_addr;
+#    }
+#}
