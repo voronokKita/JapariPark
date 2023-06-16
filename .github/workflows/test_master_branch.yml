@@ -32,7 +32,7 @@ jobs:
         run: pip install pytest
       -
         name: Run base tests
-        run: pytest ./tests
+        run: pytest ./project_tests -W ignore::DeprecationWarning
 
 # Linter
   check_linter:

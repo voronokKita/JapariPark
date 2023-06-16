@@ -1,20 +1,20 @@
-"""Japari Park: Friends Web - urls."""
+"""Entry points into the Friends application from the Web."""
 from flask import render_template
 
-from friends.config import APPLICATION as app
+from friends.flask_init import APP
 
 
-@app.route('/friends/ping', methods=['GET'])
+@APP.route('/friends/ping', methods=['GET'])
 def ping():
     """
     Ping-pong lite.
 
     :returns: tuple[str,int]: plain text, 200-OK
     """
-    return 'pong', 200
+    return 'pong!', 200
 
 
-@app.route('/friends/ping-html', methods=['GET'])
+@APP.route('/friends/ping-html', methods=['GET'])
 def ping_html():
     """
     Ping-pong.

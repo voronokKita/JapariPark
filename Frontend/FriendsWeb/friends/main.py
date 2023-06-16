@@ -1,44 +1,51 @@
 """
-Japari Park: Friends Web - main root.
+Japari Park: Friends Web - the root file.
 
 The Flask APPLICATION instance must be used from here,
-for all settings to work through import.
+for all the settings to work through imports.
+
+Includes a set of functions to run various
+application configurations manually;
+intended for testing.
 """
-import subprocess
+import sys
 
-from base_dir import MANAGER_WORKDIR
-from config import WERKZEUG_TEST_PORT, NGINX_CONFIG
-from helpers.osdir import OSDIR
+from friends.urls import APP
 
-from servers.gunicornd.wrapper import GunicornWrapper
-
-from friends import constants, routes
-from friends.config import APPLICATION
+from friends.gunicorn_wrapper import GunicornWrapper
+from friends.settings import SITE_PORT, WERKZEUG_TESTPORT
 
 
-def run_in_production():
-    """Run in a production environment."""
-    pass
+def print_warning(func):
+    """Warn about potential risks."""
+    def wrapper(*args, **kwargs):
+        if sys.stdout.isatty():
+            wrn = ("[WARNING: Don't use this start method in a production, " +
+                   "- use the WSGI interface]")
+            print(wrn, end='\n\n')
+        return func(*args, **kwargs)
+    return wrapper
 
 
+@print_warning
 def run_werkzeug_server():
     """Run a Werkzeug mini-server through a Flask runner."""
-    APPLICATION.run(host='0.0.0.0', port=WERKZEUG_TEST_PORT)
+    APP.run(
+        host='0.0.0.0', port=WERKZEUG_TESTPORT,
+        debug=True, load_dotenv=False,
+    )
 
 
-def run_gunicorn_server_with_nginx():
-    """Run a normal server through a proxy."""
-    if not NGINX_CONFIG['nginx_pid_file'].exists():
-        subprocess.call(
-            [OSDIR['sudo'], OSDIR['nginx']],
-            cwd=MANAGER_WORKDIR.as_posix(), shell=False,
-        )
+@print_warning
+def run_gunicorn_server():
+    """Run a normal server."""
+    options = {
+        'bind': f'0.0.0.0:{SITE_PORT}',
+        'workers': 2, 'timeout': 1,
+    }
     try:
-        GunicornWrapper(app=APPLICATION).run()
-    except (KeyboardInterrupt, Exception):
+        GunicornWrapper(app=APP, options=options).run()
+    except KeyboardInterrupt:
         pass
-    finally:
-        subprocess.call(
-            [OSDIR['sudo'], OSDIR['nginx'], '-s', 'quit'],
-            cwd=MANAGER_WORKDIR.as_posix(), shell=False,
-        )
+    except Exception as err:
+        raise err

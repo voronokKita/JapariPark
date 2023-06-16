@@ -1,23 +1,23 @@
-"""Test the Flask app with Werkzeug server."""
+"""Test the Flask app with Gunicorn."""
 import requests
 
 from tests import context
 from helpers.context import CONTEXT
-from friends.settings import HOST_DOMAIN, WERKZEUG_TESTPORT
+from friends.settings import HOST_DOMAIN, SITE_PORT
 
 
-class TestThroughBaseWSGIServer:
-    """Test the Flask app with Werkzeug server."""
+class TestThroughGunicorn:
+    """Test the Flask app with Gunicorn."""
 
     __slots__ = ()
 
-    def test_flask_app_ping(self, werkzeug_server):
+    def test_flask_app_ping(self, gunicorn_server):
         """Simple text response."""
         if CONTEXT.in_github_ci:
             return True
 
         response = requests.get(
-            f'http://{HOST_DOMAIN}:{WERKZEUG_TESTPORT}/friends/ping',
+            f'http://{HOST_DOMAIN}:{SITE_PORT}/friends/ping',
             timeout=5,
         )
         assert response.status_code == 200

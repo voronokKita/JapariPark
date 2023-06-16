@@ -1,8 +1,7 @@
 """Japari Park: Friends Web - basic tests."""
-import base_dir
+from tests.context import BASE_DIR
 from helpers.context import CONTEXT
 import friends
-import servers
 
 
 class TestFriendsBase:
@@ -12,20 +11,23 @@ class TestFriendsBase:
 
     def test_friends_structure(self):
         """Test that base files not removed somehow."""
+        app_dir = BASE_DIR / 'friends'
         files = {
-            CONTEXT.manager_workdir / 'manage.py',
-            CONTEXT.manager_workdir / 'config.py',
-            CONTEXT.manager_workdir / 'base_dir.py',
+            BASE_DIR / 'manage.py',
+            BASE_DIR / 'requirements.txt',
+            BASE_DIR / 'logs',
 
-            CONTEXT.flask_dir,
-            CONTEXT.flask_dir / '__init__.py',
-            CONTEXT.flask_dir / 'wsgi.py',
-            CONTEXT.flask_dir / 'main.py',
-            CONTEXT.flask_dir / 'config.py',
-            CONTEXT.flask_dir / 'routes.py',
-            CONTEXT.flask_dir / 'constants.py',
-            CONTEXT.flask_dir / 'static',
-            CONTEXT.flask_dir / 'templates',
+            app_dir,
+            app_dir / 'templates',
+            app_dir / '__init__.py',
+            app_dir / 'main.py',
+            app_dir / 'wsgi.py',
+            app_dir / 'urls.py',
+            app_dir / 'flask_init.py',
+            app_dir / 'settings.py',
+            app_dir / 'pathfinder.py',
+            app_dir / 'exceptions.py',
+            app_dir / 'gunicorn_wrapper.py',
         }
         for path in files:
             assert path.exists() is True

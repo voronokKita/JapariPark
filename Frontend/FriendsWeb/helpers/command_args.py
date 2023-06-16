@@ -1,17 +1,12 @@
 """Argument Parser works."""
 import argparse
 
-import base_dir
-
-BASE_DIR = base_dir.get_path()
-
 
 def get_parser() -> argparse.ArgumentParser:
     """Set up and return an argument parser."""
     top_parser = argparse.ArgumentParser(
         prog='friends/manage.py',
-        description='Friends - an application for web-clients of Japari Park.',
-        epilog='[End of Help]',
+        description='FriendsWeb - a web frontend of Japari Park: Friends.',
         add_help=True,
     )
     subparsers = top_parser.add_subparsers(
@@ -22,45 +17,42 @@ def get_parser() -> argparse.ArgumentParser:
         help='= production, development or automated tests',
     )
 
-    # Command: production env
+    # Command: run; production env
     prod_parser = subparsers.add_parser(
         name='run',
-        help='- normal mode, for E2E testing or production',
+        help='- normal mode, for E2E testing',
         description='Run the program in a production environment.',
-        epilog='[End of Help]',
     )
 
-    # Command: development manual testing
+    # Command: dev [--lite]; development manual testing
     dev_parser = subparsers.add_parser(
         name='dev',
         help='- manual testing (development), with flexible settings',
         description=('Run the program in a development environment. ' +
-                     'Serve through Gunicorn + NGINX. ' +
+                     'Will serve through Gunicorn. ' +
                      'Use --lite to serve through Werkzeug.'),
-        epilog='[End of Help]',
     )
     dev_parser.add_argument(
         '--lite',
         action='store_true',
         default=False,
         required=False,
-        help='serve through a Werkzeug server',
+        help='serve through a Werkzeug mini-server',
     )
 
-    # Command: auto testing
+    # Command: test [path]; auto testing
     test_parser = subparsers.add_parser(
         name='test',
         help='- automatic testing',
         description='Run the automated tests with appropriate settings.',
-        epilog='[End of Help]',
     )
     test_parser.add_argument(
         'path',
         action='store',
         nargs='?',
         default='',
-        help=('- specify the path to the tests; path can be ' +
-              'absolute `/` or relative `./` to the manage.py folder'),
+        help=("- specify the path to the tests; path can be " +
+              "relative `./` to the folder with manage.py or absolute `/`"),
     )
     return top_parser
 

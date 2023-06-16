@@ -1,6 +1,2 @@
-"""Japari Park: Friends Web - the frontend application on Flask."""
-
-import base_dir
-from friends import main
-
+"""The frontend of Japari Park: Friends."""
 __all__ = []
