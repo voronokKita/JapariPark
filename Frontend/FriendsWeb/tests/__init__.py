@@ -1,5 +1,2 @@
-"""Japari Park: Friends Web - tests."""
-
-import base_dir
-
+"""Tests for the Japari Park: Friends Web."""
 __all__ = []

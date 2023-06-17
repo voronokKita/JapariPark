@@ -1,12 +1,6 @@
-"""The WSGI entry point."""
+"""The WSGI interface."""
+from friends.main import APP
 
-from friends.main import APPLICATION as app
 
-
-def get_app():
-    """
-    Let it be.
-
-    :return: a Flask application instance
-    """
-    return app
+app = APP
+application = APP

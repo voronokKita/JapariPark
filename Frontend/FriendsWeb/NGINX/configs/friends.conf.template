@@ -1,0 +1,15 @@
+server {
+    listen 8080;
+    server_name friends.japari-park.fun;
+
+    location /proxy/ping {
+        alias /FriendsWebNginx/;
+        index  ping.html;
+    }
+
+    location / {
+        proxy_pass  http://friends-web:5000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}

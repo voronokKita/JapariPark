@@ -19,7 +19,8 @@
 - Лицензия https://choosealicense.com/
 - doctests
 - Теория систем мониторинга.
-- subprocess best practices
++ subprocess best practices
++ dockerignore template
 
 
 Git:
@@ -60,6 +61,7 @@ GitHub:
 - Compose это вторичная вещь,
   вся полнота функционала должна быть реализована
   в командах docker build & run
+- NGINX 404
 
 
 Бэкенд:

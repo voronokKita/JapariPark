@@ -5,19 +5,15 @@ import threading
 import subprocess
 from werkzeug.serving import make_server
 
-from base_dir import MANAGER_WORKDIR
-from config import WERKZEUG_TEST_PORT
-from helpers.osdir import OSDIR
+from tests.context import BASE_DIR
 from helpers.context import CONTEXT
-from friends.main import APPLICATION as app
-
-from servers.nginxd import configuration
-from servers.gunicornd.configuration import GUNICORN_OPTIONS
+from friends.settings import GUNICORN_TESTPORT, WERKZEUG_TESTPORT
+from friends.main import APP
 
 
 TEST_WERKZEUG_SERVER = make_server(
-    host='0.0.0.0', port=WERKZEUG_TEST_PORT,
-    app=app, processes=1,
+    host='::', port=WERKZEUG_TESTPORT,
+    app=APP, processes=1,
     passthrough_errors=True,
 )
 
@@ -31,7 +27,7 @@ class WerkzeugThread(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self):
-        """Serve forever."""
+        """Start serving."""
         self.server.serve_forever()
 
     def merge(self):
@@ -48,7 +44,7 @@ def werkzeug_server():
     else:
         server = WerkzeugThread()
         server.start()
-        time.sleep(0.2)
+        time.sleep(0.5)
         yield True
         server.merge()
 
@@ -59,32 +55,13 @@ def gunicorn_server():
     if CONTEXT.in_github_ci:
         yield True
     else:
-        command = ('python -m gunicorn friends.wsgi:app -w 1 --bind {BIND}'.
-                   format(BIND=GUNICORN_OPTIONS['bind']))
+        bind = f'[::]:{GUNICORN_TESTPORT}'
+        command = f'python -m gunicorn friends.wsgi:app -w 2 --bind {bind}'
         gunicorn_process = subprocess.Popen(
             command.split(),
-            cwd=MANAGER_WORKDIR.as_posix(),
+            cwd=BASE_DIR.as_posix(),
             shell=False,
         )
+        time.sleep(0.5)
         yield True
         gunicorn_process.terminate()
-
-
-@pytest.fixture(scope='session')
-def nginx_server():
-    """Run a server from a subprocess."""
-    if CONTEXT.in_github_ci:
-        yield True
-    else:
-        subprocess.call(
-            [OSDIR['sudo'], OSDIR['nginx']],
-            cwd=MANAGER_WORKDIR.as_posix(),
-            shell=False,
-        )
-        time.sleep(1)
-        yield True
-        subprocess.call(
-            [OSDIR['sudo'], OSDIR['nginx'], '-s', 'quit'],
-            cwd=MANAGER_WORKDIR.as_posix(),
-            shell=False,
-        )

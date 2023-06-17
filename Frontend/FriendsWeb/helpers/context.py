@@ -3,8 +3,7 @@ import os
 import sys
 from pathlib import Path
 
-from base_dir import MANAGER_WORKDIR
-from helpers import command_args
+from . import command_args
 
 
 class ContextError(Exception):
@@ -12,7 +11,7 @@ class ContextError(Exception):
 
 
 def in_dev_context(func):
-    """Return False if not in a development env or in autotests."""
+    """Return False if not in a development env or if in autotests."""
     def wrapper(self, *args, **kwargs):
         if self.development and not self.autotest:
             return func(self, *args, **kwargs)
@@ -38,21 +37,21 @@ class Context:
 
     :ivar bool indocker: running in a container?
     :ivar bool in_github_ci: running in a GitHub container?
+
     :ivar bool autotest: running automated tests?
     :ivar Path | None testpath: an absolute path to tests
+
     :ivar bool development: running in dev. environment?
     :ivar bool gunicorn: serving through Gunicorn?
-    :ivar bool nginx: proxying through NGINX?
-    :ivar Path manager_workdir: an absolute path to the manager.py folder
-    :ivar Path flask_dir: an absolute path to the flask app folder
-    :ivar Path servers_dir: an absolute path to the servers module
+
+    :ivar Path base_dir: an absolute path to the manager.py folder
     """
 
     __slots__ = (
         'indocker', 'in_github_ci',
         'autotest', 'testpath',
-        'development', 'gunicorn', 'nginx',
-        'manager_workdir', 'flask_dir', 'servers_dir',
+        'development', 'gunicorn',
+        'base_dir',
     )
 
     def __init__(self):
@@ -61,9 +60,13 @@ class Context:
         self._in_github_workflow()
 
         if 'manage.py' not in sys.argv[0]:
-            # if manage.py != __main__:
-            # handle just like the automated tests
-            self._context_auto_testing()
+            if any((True for arg in sys.argv if 'test' in arg)):
+                self._context_auto_testing()
+            else:
+                # if manage.py != __main__ and not test:
+                # most likely this is a direct call to
+                # the wsgi interface from a normal server
+                self._context_production()
             return
 
         args = command_args.parse()
@@ -82,57 +85,46 @@ class Context:
         elif self.dev_lite(self):
             return 'Context(dev werkzeug)'
         else:
-            return 'Context(dev gunicorn + nginx)'
+            return 'Context(dev gunicorn)'
 
     def __repr__(self):
         st = ('Context(indocker={D}, in_github_ci={CI}, ' +
               'autotest={AT}, development={DEV}, ' +
-              'gunicorn={GU}, nginx={NX}, ' +
-              'workdir={CWD})')
+              'gunicorn={GU}, workdir={CWD})')
         return st.format(
             D=self.indocker,
             CI=self.in_github_ci,
             AT=self.autotest,
             DEV=self.development,
             GU=self.gunicorn,
-            NX=self.nginx,
-            CWD=self.manager_workdir.as_posix(),
+            CWD=self.base_dir.as_posix(),
         )
 
     def in_production(self):
-        """Return True if not in development and not autotests."""
+        """Return True if not in development and not in autotests."""
         return not self.autotest and not self.development
 
     @in_dev_context
     def dev_normal(self):
         """Return True if in a normal dev env."""
-        return self.gunicorn and self.nginx
+        return self.gunicorn
 
     @in_dev_context
     def dev_lite(self):
         """Return True if in a dev --lite env."""
-        return not self.gunicorn and not self.nginx
+        return not self.gunicorn
 
     def _set_paths(self):
-        self.manager_workdir = MANAGER_WORKDIR
-        self.flask_dir = MANAGER_WORKDIR / 'friends'
-        self.servers_dir = MANAGER_WORKDIR / 'servers'
-
-        if not all((
-            self.manager_workdir.exists(),
-            self.flask_dir.exists(),
-            self.servers_dir.exists(),
-        )):
-            raise ContextError('ERROR: paths are changed')
+        """Resolve paths."""
+        self.base_dir = Path(__file__).resolve().parents[1]
 
     def _in_docker(self):
         """Check out for a container flag."""
-        self.indocker = Path(self.manager_workdir, 'indocker').exists()
+        self.indocker = Path(self.base_dir, 'indocker').exists()
 
     def _in_github_workflow(self):
         """Check out for a GitHub environment."""
-        ci = os.environ.get('GITHUB_ACTIONS')
-        self.in_github_ci = ci is not None
+        self.in_github_ci = os.environ.get('GITHUB_ACTIONS') is not None
 
     def _context_production(self):
         """Working in a normal mode: Gunicorn + NGINX."""
@@ -140,7 +132,6 @@ class Context:
         self.testpath = None
         self.development = False
         self.gunicorn = True
-        self.nginx = True
 
     def _context_development(self, options):
         """
@@ -151,13 +142,7 @@ class Context:
         self.autotest = False
         self.testpath = None
         self.development = True
-
-        if options.lite:
-            self.gunicorn = False
-            self.nginx = False
-        else:
-            self.gunicorn = True
-            self.nginx = True
+        self.gunicorn = not options.lite
 
     def _context_auto_testing(self, path: str = ''):
         """
@@ -168,12 +153,11 @@ class Context:
         self.autotest = True
         self.development = True
         self.gunicorn = False
-        self.nginx = False
 
         if path != '' and path[0] == '/':
             self.testpath = Path(path).resolve()
         elif path != '' and path[:2] == './':
-            self.testpath = Path(self.manager_workdir, Path(path))
+            self.testpath = Path(self.base_dir, Path(path))
         else:
             self.testpath = None
 

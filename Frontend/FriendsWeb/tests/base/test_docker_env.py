@@ -1,7 +1,7 @@
 """Test the Docker environment."""
 import os
 
-import base_dir
+from tests.context import BASE_DIR
 from helpers.context import CONTEXT
 
 
@@ -20,11 +20,8 @@ class TestDocker:
     @in_docker
     def test_files(self):
         """Check for files in Docker."""
-        dockerenv = CONTEXT.manager_workdir / '.dockerenv'
-        assert dockerenv.exists() is False
-
-        bind_mount_app = CONTEXT.manager_workdir / 'friends' / '__init__.py'
-        assert bind_mount_app.exists() is True
+        app = BASE_DIR / 'friends' / '__init__.py'
+        assert app.exists() is True
 
     @in_docker
     def test_env_variables(self):
