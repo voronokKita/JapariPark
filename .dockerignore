@@ -1,14 +1,6 @@
-GithubWiki/
+logs/
 secrets/
 *.secret
-
-
-### Sphinx ###
-SphinxDocs/build/
-SphinxDocs/source/generated/
-SphinxDocs/source/_templates/
-SphinxDocs/source/_static/
-
 
 
 #~~~ Auto generated ~~~#
@@ -77,6 +69,10 @@ cover/
 
 # Translations
 *.mo
+
+# Flask stuff:
+instance/
+.webassets-cache
 
 # Scrapy stuff:
 .scrapy
@@ -183,7 +179,6 @@ fabric.properties
 ### Flask ###
 instance/*
 !instance/.gitignore
-.webassets-cache
 
 ### Linux ###
 *~
@@ -224,5 +219,3 @@ pip-selfcheck.json
 .history/
 *.vsix
 .ionide
-
-# End of https://www.toptal.com/developers/gitignore/api/python,pycharm,visualstudiocode,linux,flask,django,test,venv

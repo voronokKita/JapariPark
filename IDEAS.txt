@@ -15,7 +15,6 @@
   * дублировать указанные в родительском классе слоты у наследника не нужно (сотрёт)
   * если требуется динамическое присвоение новых переменных, добавьте значение '__dict__' к последовательности строк в объявлении атрибута __slots__
 - pypy / cython / cpython
-- pyproject.toml https://pypi.org/classifiers/ | https://packaging.python.org/en/latest/specifications/declaring-project-metadata/#declaring-project-metadata
 - Лицензия https://choosealicense.com/
 - doctests
 - Теория систем мониторинга.
