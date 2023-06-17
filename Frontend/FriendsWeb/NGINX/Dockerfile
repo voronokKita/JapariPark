@@ -11,6 +11,9 @@ LABEL logs="Mount /FriendsWebNginx/logs to get them."
 
 # < working with environment >
 EXPOSE 8080/tcp
+ENV NGINX_PORT=8080
+ENV PROXY_PASS="http://friends-web:5000"
+ENV PING=/proxy/ping
 ENV NGINX_BIN=/usr/sbin/nginx
 ENV NGINX_CONF=/etc/nginx
 ENV BASE_DIR=/FriendsWebNginx
@@ -41,7 +44,7 @@ RUN addgroup $GROUP --gid $GID \
         $USER
 
 # Setup user's password, requires BuildX or BuildKit
-RUN --mount=type=secret,id=user_pass,target=/run/secrets/user_pass \
+RUN --mount=type=secret,id=friends_web_user_pass,target=/run/secrets/user_pass,required=true \
     echo "$USER:$(cat /run/secrets/user_pass)" | chpasswd
 
 # Add the user to the administrators group;
@@ -72,8 +75,14 @@ RUN chown "$USER:$GROUP" "$BASE_DIR" \
 
 COPY --chown="$USER:$GROUP" --chmod=444 ./staticfiles ./staticfiles
 
-
 USER $USER
+
+
+HEALTHCHECK --interval=120s \
+            --timeout=5s \
+            --retries=2 \
+            --start-period=6s \
+            CMD curl -f "http://127.0.0.1:8080/proxy/ping" || exit 1
 
 # Entry into eternal work
 # ENTRYPOINT ["tail", "-f", "/dev/null"]

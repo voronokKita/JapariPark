@@ -4,17 +4,17 @@ from flask import render_template
 from friends.flask_init import APP
 
 
-@APP.route('/friends/ping', methods=['GET'])
+@APP.route('/ping', methods=['GET'])
 def ping():
     """
     Ping-pong lite.
 
     :returns: tuple[str,int]: plain text, 200-OK
     """
-    return 'pong!', 200
+    return 'friends: pong!', 200
 
 
-@APP.route('/friends/ping-html', methods=['GET'])
+@APP.route('/ping-html', methods=['GET'])
 def ping_html():
     """
     Ping-pong.

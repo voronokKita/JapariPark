@@ -9,6 +9,7 @@ LABEL logs="Mount /FriendsWeb/logs to get them."
 
 
 # < working with the environment >
+ENV GUNICORN_PORT=5000
 ENV BASE_DIR=/FriendsWeb
 ENV LOGS_DIR=/FriendsWeb/logs
 ENV GROUP=luckybot
@@ -37,7 +38,7 @@ RUN addgroup $GROUP --gid $GID \
         $USER
 
 # Setup user's password, requires BuildX or BuildKit
-RUN --mount=type=secret,id=user_pass,target=/run/secrets/user_pass \
+RUN --mount=type=secret,id=friends_web_user_pass,target=/run/secrets/user_pass,required=true \
     echo "$USER:$(cat /run/secrets/user_pass)" | chpasswd
 
 # Add to the administrators group;
@@ -75,6 +76,12 @@ COPY --chown="$USER:$GROUP" --chmod=444 ./friends  ./friends
 COPY --chown="$USER:$GROUP" --chmod=444 ./tests  ./tests
 
 
+HEALTHCHECK --interval=120s \
+            --timeout=5s \
+            --retries=2 \
+            --start-period=6s \
+            CMD curl -f "http://127.0.0.1:5000/ping" || exit 1
+
 # Entry into eternal work
 # ENTRYPOINT ["tail", "-f", "/dev/null"]
 
@@ -82,4 +89,4 @@ ENTRYPOINT ["/FriendsWeb/venv/bin/python", "-OO", "-m"]
 CMD [ "gunicorn", \
       "friends.wsgi:app", \
       "-w", "2", \
-      "--bind", "0.0.0.0:5000" ]
+      "--bind", "[::]:5000" ]

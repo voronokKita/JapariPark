@@ -2,10 +2,9 @@ diagram.json
 GithubWiki/
 .dockerenv
 *.sock
+secrets/
 *.secret
 
-### Backend ###
-Backend/JapariService/secrets/
 
 ### Sphinx ###
 SphinxDocs/build/

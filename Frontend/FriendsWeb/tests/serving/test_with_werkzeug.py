@@ -3,7 +3,7 @@ import requests
 
 from tests import context
 from helpers.context import CONTEXT
-from friends.settings import HOST_DOMAIN, WERKZEUG_TESTPORT
+from friends.settings import WERKZEUG_TESTPORT
 
 
 class TestThroughBaseWSGIServer:
@@ -17,8 +17,8 @@ class TestThroughBaseWSGIServer:
             return True
 
         response = requests.get(
-            f'http://{HOST_DOMAIN}:{WERKZEUG_TESTPORT}/friends/ping',
+            f'http://127.0.0.1:{WERKZEUG_TESTPORT}/ping',
             timeout=5,
         )
         assert response.status_code == 200
-        assert response.text == 'pong!'
+        assert response.text == 'friends: pong!'

@@ -1,8 +1,8 @@
 server {
     listen 8080;
-    server_name localhost;
+    server_name friends.japari-park.fun;
 
-    location /friends/nginx/ping {
+    location /proxy/ping {
         alias /FriendsWebNginx/;
         index  ping.html;
     }

@@ -1,4 +1,6 @@
 logs/
+secrets/
+*.secret
 
 
 #~~~ Auto generated ~~~#

@@ -6,46 +6,41 @@ docker network create --driver=bridge friends_web_bridge
 # Build
 # easy to change `env=var` to `src=secret-file`
 # !important - should be built from the FriendsWeb base dir
-MYSECRET=qwerty DOCKER_BUILDKIT=1 \
-        docker build \
-        --secret id=user_pass,env=MYSECRET \
+DOCKER_BUILDKIT=1 \
+    docker build \
+        --secret id=friends_web_user_pass,src=./secrets/.docker-build.secret \
         --file Dockerfile \
-        --tag friends_web \
+        --tag friends_web:latest \
         .
 
 
 # Run
 docker run --detach \
         -it \
+        -e "NETWORK=friends_web_bridge" \
+        -e "NETWORK_ALIAS=friends-web" \
         --name FriendsWeb \
         --restart=on-failure:2 \
         --mount type=bind,src="$(pwd)"/logs,dst=/FriendsWeb/logs \
-        --publish 5000:5000 \
         --network friends_web_bridge \
-        --network-alias friends_web \
         --network-alias friends-web \
-        --health-cmd='curl -fs "http://friends_web:5000/friends/ping" || echo 1' \
-        --health-interval=320s \
-        --health-retries=2 \
-        --health-timeout=10s \
-        --health-start-period=20s \
         friends_web
 
 ## Run lite
 docker run --detach \
         -it \
+        -e "EXPECTING_PORT=5000" \
         --name FriendsWeb \
         --restart=on-failure:2 \
         --mount type=bind,src="$(pwd)"/logs,dst=/FriendsWeb/logs \
         --publish 5000:5000 \
-        --network friends_web_bridge \
-        --network-alias friends_web \
-        --network-alias friends-web \
+        --no-healthcheck=true \
         friends_web
 
 ## Run dev
 docker run --detach \
         -it \
+        -e "EXPECTING_PORT=5000" \
         --name FriendsWeb \
         --restart=on-failure:2 \
         --mount type=bind,src="$(pwd)"/tests,dst=/FriendsWeb/tests,ro \
@@ -54,6 +49,5 @@ docker run --detach \
         --mount type=bind,src="$(pwd)"/logs,dst=/FriendsWeb/logs \
         --publish 5000:5000 \
         --network friends_web_bridge \
-        --network-alias friends_web \
         --network-alias friends-web \
         friends_web

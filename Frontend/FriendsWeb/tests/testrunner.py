@@ -18,6 +18,7 @@ import subprocess
 from pathlib import Path
 
 from tests.context import BASE_DIR
+from helpers.context import CONTEXT
 
 NO_TEST_FOUND_EXIT_CODE = 5
 
@@ -51,18 +52,15 @@ def run_path(path: Path):
         sys.exit(result.returncode)
 
 
-def run(path: Path = None, max_layer='SERVING'):
+def run(path: Path = None):
     """
     Run tests.
 
-    If a **path** is given, run tests only on that path.
-
     Normally, should run tests in groups, folder by folder,
     from `base` up to `serving`.
-    Can specify another **max_layer** to stop.
+    If a **path** is given, run tests only on that path.
 
     :param path: a path to give to pytest
-    :param max_layer: a layer of the testing pyramid to stop
     """
     if path:
         run_path(path)
@@ -75,10 +73,11 @@ def run(path: Path = None, max_layer='SERVING'):
         tsize = os.get_terminal_size()
 
     for layer in get_pyramid():
+        if CONTEXT.in_github_ci and layer['name'] == 'SERVING':
+            continue
+
         if terminal:
             print()
             print(f'[[ TESTING LAYER {layer["name"]} ]]'.center(tsize.columns))
 
         run_path(layer['path'])
-        if layer['name'] == max_layer:
-            break

@@ -13,7 +13,7 @@ import sys
 from friends.urls import APP
 
 from friends.gunicorn_wrapper import GunicornWrapper
-from friends.settings import SITE_PORT, WERKZEUG_TESTPORT
+from friends.settings import GUNICORN_TESTPORT, WERKZEUG_TESTPORT
 
 
 def print_warning(func):
@@ -31,7 +31,7 @@ def print_warning(func):
 def run_werkzeug_server():
     """Run a Werkzeug mini-server through a Flask runner."""
     APP.run(
-        host='0.0.0.0', port=WERKZEUG_TESTPORT,
+        host='::', port=WERKZEUG_TESTPORT,
         debug=True, load_dotenv=False,
     )
 
@@ -40,7 +40,7 @@ def run_werkzeug_server():
 def run_gunicorn_server():
     """Run a normal server."""
     options = {
-        'bind': f'0.0.0.0:{SITE_PORT}',
+        'bind': f'[::]:{GUNICORN_TESTPORT}',
         'workers': 2, 'timeout': 1,
     }
     try:

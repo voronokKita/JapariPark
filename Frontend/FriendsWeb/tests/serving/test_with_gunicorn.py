@@ -3,7 +3,7 @@ import requests
 
 from tests import context
 from helpers.context import CONTEXT
-from friends.settings import HOST_DOMAIN, SITE_PORT
+from friends.settings import GUNICORN_TESTPORT
 
 
 class TestThroughGunicorn:
@@ -17,8 +17,8 @@ class TestThroughGunicorn:
             return True
 
         response = requests.get(
-            f'http://{HOST_DOMAIN}:{SITE_PORT}/friends/ping',
+            f'http://127.0.0.1:{GUNICORN_TESTPORT}/ping',
             timeout=5,
         )
         assert response.status_code == 200
-        assert response.text == 'pong!'
+        assert response.text == 'friends: pong!'

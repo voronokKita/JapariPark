@@ -7,12 +7,12 @@ from werkzeug.serving import make_server
 
 from tests.context import BASE_DIR
 from helpers.context import CONTEXT
-from friends.settings import SITE_PORT, WERKZEUG_TESTPORT
+from friends.settings import GUNICORN_TESTPORT, WERKZEUG_TESTPORT
 from friends.main import APP
 
 
 TEST_WERKZEUG_SERVER = make_server(
-    host='0.0.0.0', port=WERKZEUG_TESTPORT,
+    host='::', port=WERKZEUG_TESTPORT,
     app=APP, processes=1,
     passthrough_errors=True,
 )
@@ -44,7 +44,7 @@ def werkzeug_server():
     else:
         server = WerkzeugThread()
         server.start()
-        time.sleep(0.2)
+        time.sleep(0.5)
         yield True
         server.merge()
 
@@ -55,13 +55,13 @@ def gunicorn_server():
     if CONTEXT.in_github_ci:
         yield True
     else:
-        bind = f'0.0.0.0:{SITE_PORT}'
+        bind = f'[::]:{GUNICORN_TESTPORT}'
         command = f'python -m gunicorn friends.wsgi:app -w 2 --bind {bind}'
         gunicorn_process = subprocess.Popen(
             command.split(),
             cwd=BASE_DIR.as_posix(),
             shell=False,
         )
-        time.sleep(0.2)
+        time.sleep(0.5)
         yield True
         gunicorn_process.terminate()

@@ -17,6 +17,6 @@ class TestWithTestClient:
 
     def test_flask_app_ping(self, client):
         """Simple text response."""
-        response = client.get('friends/ping')
+        response = client.get('/ping')
         assert response.status_code == 200
-        assert response.text == 'pong!'
+        assert response.text == 'friends: pong!'

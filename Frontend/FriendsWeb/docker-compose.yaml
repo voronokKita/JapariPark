@@ -1,0 +1,75 @@
+# Frontend application of Japari Park: Friends
+# Gunicorn server + NGINX reverse-proxy
+# `docker compose up --detach --build`
+#
+name: japaripark-friend_web
+
+
+networks:
+  friends_web_bridge:
+    driver: bridge
+
+secrets:
+  friends_web_user_pass:
+    file: ./secrets/.docker-build.secret
+
+
+services:
+  # Gunicorn server
+  friends_web:
+    container_name: FriendsWeb
+    stdin_open: true
+    tty: true
+    build:
+      context: .
+      secrets:
+        - friends_web_user_pass
+    image: friends_web:latest
+    volumes:
+      - type: bind
+        source: "./logs"
+        target: "/FriendsWeb/logs"
+    networks:
+      friends_web_bridge:
+        priority: 0
+        aliases:
+          - friends-web
+    environment:
+      - NETWORK=friends_web_bridge
+      - NETWORK_ALIAS=friends-web
+    restart: on-failure
+    stop_grace_period: 10s
+
+  # NGINX reverse-proxy
+  friends_web_nginx:
+    container_name: FriendsWebNginx
+    stdin_open: true
+    tty: true
+    depends_on:
+      friends_web:
+        condition: service_started
+    build:
+      context: .
+      dockerfile: ./NGINX/Dockerfile
+      secrets:
+        - friends_web_user_pass
+    image: friends_web_proxy:latest
+    volumes:
+      - type: bind
+        source: "./logs/servers"
+        target: "/FriendsWebNginx/logs"
+    ports:
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: host
+    networks:
+      friends_web_bridge:
+        priority: 0
+        aliases:
+          - friends-web-proxy
+    environment:
+      - NETWORK=friends_web_bridge
+      - NETWORK_ALIAS=friends-web-proxy
+    restart: on-failure
+    stop_grace_period: 10s
