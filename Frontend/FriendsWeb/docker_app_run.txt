@@ -1,5 +1,5 @@
 # Networking
-docker network create --driver=bridge front_net
+docker network create --driver=bridge friends_web_bridge
 
 
 # Build
@@ -21,9 +21,10 @@ docker run --detach \
         --restart=on-failure:2 \
         --mount type=bind,src="$(pwd)"/logs,dst=/FriendsWeb/logs \
         --publish 5000:5000 \
-        --network front_net \
+        --network friends_web_bridge \
         --network-alias friends_web \
-        --health-cmd='curl -fs "http://127.0.0.1:5000/friends/ping" || echo 1' \
+        --network-alias friends-web \
+        --health-cmd='curl -fs "http://friends_web:5000/friends/ping" || echo 1' \
         --health-interval=320s \
         --health-retries=2 \
         --health-timeout=10s \
@@ -37,8 +38,9 @@ docker run --detach \
         --restart=on-failure:2 \
         --mount type=bind,src="$(pwd)"/logs,dst=/FriendsWeb/logs \
         --publish 5000:5000 \
-        --network front_net \
+        --network friends_web_bridge \
         --network-alias friends_web \
+        --network-alias friends-web \
         friends_web
 
 ## Run dev
@@ -51,6 +53,7 @@ docker run --detach \
         --mount type=bind,src="$(pwd)"/friends,dst=/FriendsWeb/friends,ro \
         --mount type=bind,src="$(pwd)"/logs,dst=/FriendsWeb/logs \
         --publish 5000:5000 \
-        --network front_net \
+        --network friends_web_bridge \
         --network-alias friends_web \
+        --network-alias friends-web \
         friends_web

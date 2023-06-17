@@ -1,5 +1,5 @@
 # Networking
-docker network create --driver=bridge front_net
+docker network create --driver=bridge friends_web_bridge
 
 
 # Build
@@ -20,9 +20,12 @@ docker run --detach \
         --restart=on-failure:2 \
         --mount type=bind,src="$(pwd)"/logs/servers,dst=/FriendsWebNginx/logs \
         --publish 8080:8080 \
-        --network front_net \
+        --network friends_web_bridge \
+        --network-alias friends_web_nginx \
+        --network-alias friends-web-nginx \
         --network-alias friends_web_proxy \
-        --health-cmd='curl -fs "http://127.0.0.1:8080/friends/nginx/ping" || echo 1' \
+        --network-alias friends-web-proxy \
+        --health-cmd='curl -fs "http://friends_web_nginx:8080/friends/nginx/ping" || echo 1' \
         --health-interval=320s \
         --health-retries=2 \
         --health-timeout=10s \
@@ -36,6 +39,9 @@ docker run --detach \
         --restart=on-failure:2 \
         --mount type=bind,src="$(pwd)"/logs/servers,dst=/FriendsWebNginx/logs \
         --publish 8080:8080 \
-        --network front_net \
+        --network friends_web_bridge \
+        --network-alias friends_web_nginx \
+        --network-alias friends-web-nginx \
         --network-alias friends_web_proxy \
+        --network-alias friends-web-proxy \
         friends_web_nginx
