@@ -16,6 +16,9 @@ ALLOWED_HOSTS = [
     'friends.japari-park.fun',
     'accounts.japari-park.fun',
 ]
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
 
 
 # Application definition
@@ -41,7 +44,14 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+if DEBUG:
+    INSTALLED_APPS.append('debug_toolbar')
+    MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+
+
 ROOT_URLCONF = 'JapariService.urls'
+WSGI_APPLICATION = 'JapariService.wsgi.application'
+
 
 TEMPLATES = [
     {
@@ -58,8 +68,6 @@ TEMPLATES = [
         },
     },
 ]
-
-WSGI_APPLICATION = 'JapariService.wsgi.application'
 
 
 # Database

@@ -6,3 +6,4 @@ daphne>=4.0.0,<5.0.0
 
 # for testing
 pytest
+django-debug-toolbar
