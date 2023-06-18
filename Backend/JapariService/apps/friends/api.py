@@ -1,1 +1,1 @@
-"""Japari Friends - API endpoints."""
+"""Japari Park: Friends - API endpoints."""

@@ -2,6 +2,7 @@
 from flask import render_template
 
 from friends.flask_init import APP
+from friends import views
 
 
 @APP.route('/ping', methods=['GET'])
@@ -11,7 +12,7 @@ def ping():
 
     :returns: tuple[str,int]: plain text, 200-OK
     """
-    return 'friends: pong!', 200
+    return 'FriendsWeb: pong!', 200
 
 
 @APP.route('/ping-html', methods=['GET'])

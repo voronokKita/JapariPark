@@ -1,4 +1,4 @@
-"""Process an absolute path to the JapariService directory."""
+"""Process an absolute path to the base directories."""
 import sys
 from pathlib import Path
 
@@ -10,4 +10,7 @@ if (base_dir := BASE_DIR.as_posix()) not in sys.path:
 
 
 SECRETS_DIR = BASE_DIR / 'secrets'
+
 APPS_DIR = BASE_DIR / 'apps'
+FRIENDS_DIR = APPS_DIR / 'friends'
+ACCOUNTS_DIR = APPS_DIR / 'accounts'

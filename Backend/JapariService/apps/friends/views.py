@@ -1,5 +1,4 @@
-"""Japari Friends - views."""
-from django.shortcuts import render
+"""Japari Park: Friends - http views."""
 from django.http import HttpResponse, HttpRequest
 
 
@@ -9,4 +8,4 @@ def ping(request: HttpRequest) -> HttpResponse:
 
     :returns: a plain text
     """
-    return HttpResponse('pong')
+    return HttpResponse('Friends Backend: pong!')

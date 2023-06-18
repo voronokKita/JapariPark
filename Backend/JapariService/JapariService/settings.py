@@ -1,26 +1,21 @@
 """Django's settings for JapariService."""
-import secrets
-from pathlib import Path
+from JapariService.pathfinder import BASE_DIR
+from JapariService.appsconf import APPS_CONF
+from helpers import istestrun, secret_key
 
-from .pathfinder import BASE_DIR, SECRETS_DIR
-from .appconf import APP_CONF
+# TODO port
 
+DEBUG = istestrun.check()
 
-DEBUG = True
-
-
-# Secret key
-key = SECRETS_DIR / '.django.secret'
-if key.exists():
-    with key.open('r') as fl:
-        SECRET_KEY = fl.read().strip()
-else:
-    # TODO print warning
-    SECRET_KEY = secrets.token_urlsafe(50)
-del key
+SECRET_KEY = secret_key.getkey()
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    'friends.japari-park.fun',
+    'accounts.japari-park.fun',
+]
 
 
 # Application definition
@@ -68,7 +63,6 @@ WSGI_APPLICATION = 'JapariService.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -89,11 +83,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
 

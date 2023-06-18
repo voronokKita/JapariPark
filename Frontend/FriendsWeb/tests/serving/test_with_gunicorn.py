@@ -21,4 +21,4 @@ class TestThroughGunicorn:
             timeout=5,
         )
         assert response.status_code == 200
-        assert response.text == 'friends: pong!'
+        assert response.text == 'FriendsWeb: pong!'

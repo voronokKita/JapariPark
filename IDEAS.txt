@@ -20,6 +20,7 @@
 - Теория систем мониторинга.
 + subprocess best practices
 + dockerignore template
+- pyi
 
 
 Git:

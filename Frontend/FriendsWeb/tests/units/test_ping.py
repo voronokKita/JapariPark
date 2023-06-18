@@ -19,4 +19,4 @@ class TestWithTestClient:
         """Simple text response."""
         response = client.get('/ping')
         assert response.status_code == 200
-        assert response.text == 'friends: pong!'
+        assert response.text == 'FriendsWeb: pong!'

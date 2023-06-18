@@ -1,7 +1,7 @@
 """Japari Friends' router."""
 from django.urls import path
 
-from . import views
+from apps.friends import views
 
 
 urlpatterns = [
