@@ -1,4 +1,4 @@
-"""Japari Park: Friends - backend http views."""
+"""Japari Park: Accounts - backend http views."""
 from django.http import HttpResponse, HttpRequest
 
 
@@ -8,4 +8,4 @@ def ping(request: HttpRequest) -> HttpResponse:
 
     :returns: a plain text
     """
-    return HttpResponse('Friends Backend: pong!')
+    return HttpResponse('Accounts Backend: pong!')

@@ -1,7 +1,7 @@
-"""Japari Park: Friends' router."""
+"""Japari Park: Accounts' router."""
 from django.urls import path
 
-from apps.friends import views
+from apps.accounts import views
 
 
 urlpatterns = [

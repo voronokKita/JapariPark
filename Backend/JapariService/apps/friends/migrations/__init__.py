@@ -1,1 +1,1 @@
-"""Django's migrations for Japari Friends."""
+"""Django's migrations for Japari Park: Friends."""
