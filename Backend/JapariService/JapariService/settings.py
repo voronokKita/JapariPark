@@ -3,18 +3,20 @@ from JapariService.pathfinder import BASE_DIR
 from JapariService.appsconf import APPS_CONF
 from helpers import istestrun, secret_key
 
-# TODO port
 
 DEBUG = istestrun.check()
+TESTSERVER_PORT = 8001
 
 SECRET_KEY = secret_key.getkey()
 
 
 ALLOWED_HOSTS = [
+    '[::1]',
     '127.0.0.1',
     'localhost',
-    'friends.japari-park.fun',
     'accounts.japari-park.fun',
+    'users.japari-park.fun',
+    'friends.japari-park.fun',
 ]
 INTERNAL_IPS = [
     '127.0.0.1',
@@ -23,6 +25,8 @@ INTERNAL_IPS = [
 
 # Application definition
 INSTALLED_APPS = [
+    'daphne',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -30,8 +34,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # 'apps.friends.app.FriendsConfig',
-    # 'apps.accounts.app.FriendsConfig',
+    'apps.core.app.CoreConfig',
+    'apps.accounts.app.AccountsConfig',
+    'apps.friends.app.FriendsConfig',
 ]
 
 MIDDLEWARE = [
@@ -46,11 +51,13 @@ MIDDLEWARE = [
 
 if DEBUG:
     INSTALLED_APPS.append('debug_toolbar')
-    MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+    MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
 
 
 ROOT_URLCONF = 'JapariService.urls'
+
 WSGI_APPLICATION = 'JapariService.wsgi.application'
+ASGI_APPLICATION = 'JapariService.asgi.application'
 
 
 TEMPLATES = [
@@ -90,11 +97,20 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
+# <internationalization>
+DEFAULT_CHARSET = 'utf-8'
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
+
 USE_I18N = True
 USE_TZ = True
+USE_L10N = False
+
+DATE_FORMAT = 'Y.n.j'
+TIME_FORMAT = 'G:i:s'
+DATETIME_FORMAT = 'Y.n.j G:i:s'
+SHORT_DATE_FORMAT = 'Y.n.j P'
+# </internationalization>
 
 
 # Static files (CSS, JavaScript, Images)
@@ -102,3 +118,8 @@ STATIC_URL = 'static/'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# <misc>
+APPEND_SLASH = False
+# </misc>

@@ -224,3 +224,6 @@ Github Actions вроде бы и так должен съесть `sudo nginx` 
 Небольшие улучшения к бэкенду и фронтенду.
 Бэкенд-приложение Accounts.
 Установил django-debug-toolbar.
+
+Бэкенд-приложение core.
+Подключил Daphne к команде runserver.

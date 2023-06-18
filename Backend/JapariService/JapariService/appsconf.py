@@ -1,18 +1,25 @@
 """Presets for Django's applications."""
 from collections import namedtuple
 
-from JapariService.pathfinder import FRIENDS_DIR, ACCOUNTS_DIR
+from JapariService.pathfinder import (
+    COREAPP_DIR,
+    ACCOUNTS_DIR,
+    FRIENDS_DIR,
+)
 
 
 Appsconfig = namedtuple(
     'Appsconfig',
-    field_names=('friends', 'accounts'),
+    field_names=('core', 'accounts', 'friends'),
 )
 APPS_CONF = Appsconfig(
     {
-        'dir': FRIENDS_DIR,
+        'dir': COREAPP_DIR,
     },
     {
         'dir': ACCOUNTS_DIR,
+    },
+    {
+        'dir': FRIENDS_DIR,
     },
 )

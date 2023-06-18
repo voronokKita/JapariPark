@@ -12,5 +12,6 @@ if (base_dir := BASE_DIR.as_posix()) not in sys.path:
 SECRETS_DIR = BASE_DIR / 'secrets'
 
 APPS_DIR = BASE_DIR / 'apps'
-FRIENDS_DIR = APPS_DIR / 'friends'
+COREAPP_DIR = APPS_DIR / 'core'
 ACCOUNTS_DIR = APPS_DIR / 'accounts'
+FRIENDS_DIR = APPS_DIR / 'friends'

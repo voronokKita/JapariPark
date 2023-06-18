@@ -6,4 +6,6 @@ class FriendsConfig(AppConfig):
     """Backend of Japari Park: Friends."""
 
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'friends'
+    name = 'apps.friends'
+    label = 'friends'
+    verbose_name = 'Japari Park: Friends'
