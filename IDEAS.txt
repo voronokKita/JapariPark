@@ -48,7 +48,6 @@ GitHub:
 
 
 Фронтенд:
-- https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-22-04
 + NGINX
 + Файлы конфигурации NGINX
 + Gunicorn
@@ -58,9 +57,6 @@ GitHub:
 + Docker Compose
 + Tests
 - HTML meta tags
-- Compose это вторичная вещь,
-  вся полнота функционала должна быть реализована
-  в командах docker build & run
 - NGINX 404
 
 

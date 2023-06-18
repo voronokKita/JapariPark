@@ -1,4 +1,4 @@
-#!/bin/python
+#!/usr/bin/env python
 """
 A hook script to prepare the commit log message.
 Called by "git commit" with the name of the file that has the
@@ -7,47 +7,31 @@ message's source.  The hook's purpose is to edit the commit
 message file.  If the hook fails with a non-zero status,
 the commit is aborted.
 """
-import re
 import sys
 from pathlib import Path
 from subprocess import check_output
 
+
 print('[ Git prepare-commit-msg ]')
 
 CWD = Path(__file__).resolve().parents[2]
-COMMIT_MSG_FILEPATH = sys.argv[1]
+COMMIT_MSG_FILEPATH: str = sys.argv[1]
 
-CURRENT_BRANCH = (
+CURRENT_BRANCH: str = (
     check_output(
-        ["git", "symbolic-ref", "--short", "HEAD"],
+        ['git', 'symbolic-ref', '--short', 'HEAD'],
         shell=False, cwd=CWD.as_posix(),
-    ).decode("utf-8").strip()
+    ).decode('utf-8').strip()
 )
 
 with open(COMMIT_MSG_FILEPATH, 'r') as f:
-    INIT_COMMENTARY = f.read()
+    INIT_COMMENTARY: str = f.read()
 
 
 # Filter lazy commentary
 if len(INIT_COMMENTARY) < 10 or '#' not in INIT_COMMENTARY:
-    print("Protection: Do not use lazy comments please.")
+    print('Protection: Do not use lazy comments please.')
     sys.exit(1)
-
-
-# Protect master (obsolete)
-'''
-if CURRENT_BRANCH == 'master':
-    allowed_branches = ['development', 'master']
-    pattern = "Merge branch '([a-z0-9-_]+)'"
-    # Seek for the " Merge branch 'foo' "
-    if match := re.search(pattern, COMMENTARY, flags=re.I):
-        merging_branch = match.group(1)
-        if merging_branch not in allowed_branches:
-            print(f"Protection: Not allowed to merge this branch ({merging_branch}) into master!")
-            sys.exit(1)
-        else:
-            print("Protection: Merge into master is allowed.")
-'''
 
 
 # Insert the branch name into commit

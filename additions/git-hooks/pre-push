@@ -1,4 +1,4 @@
-#!/bin/python
+#!/usr/bin/env python
 """
 A hook script to verify what is about to be pushed.  Called by "git
 push" after it has checked the remote status, but before anything has been
@@ -18,14 +18,13 @@ the standard input in the form:
 """
 import sys
 
-print('[ Git pre-push ]')
 
+print('[ Git pre-push ]')
 for line in sys.stdin:
-    l = line.split()
-    print('FROM:', l[0])
-    print('TO:', l[2])
-    local = l[0].removeprefix('refs/heads/')
-    remote = l[2].removeprefix('refs/heads/')
+    ln = line.split()
+    local = ln[0].removeprefix('refs/heads/')
+    remote = ln[2].removeprefix('refs/heads/')
+
     # It will be OK(0) for non-heads refs
     if remote == 'master' and local != 'master':
         print('Protection: You can push to the master only from the master!')

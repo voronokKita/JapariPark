@@ -8,10 +8,10 @@ DEBUG = istestrun.check()
 
 
 urlpatterns = [
-    path('', include('apps.core.urls')),
+    path('', include('apps.core.urls', namespace='core')),
 
-    path('accounts', include('apps.accounts.urls')),
-    path('friends', include('apps.friends.urls')),
+    path('accounts', include('apps.accounts.urls', namespace='accounts')),
+    path('friends', include('apps.friends.urls', namespace='friends')),
 
     path('admin/', admin.site.urls),
 ]

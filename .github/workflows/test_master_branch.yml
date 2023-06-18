@@ -48,7 +48,7 @@ jobs:
       - name: Check with linter
         run: flake8
 
-# Friends Web tests
+# FriendsWeb tests
   test_friends_web:
     name: Friends Web tests
     runs-on: ubuntu-22.04
@@ -62,3 +62,18 @@ jobs:
       - run: pip install -r ./Frontend/FriendsWeb/requirements.txt
       - name: Run a testing pyramid
         run: python ./Frontend/FriendsWeb/manage.py test
+
+# JapariService tests
+  test_japari_service:
+    name: JapariService tests
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: "./Backend/JapariService/requirements.txt"
+      - run: pip install -r ./Backend/JapariService/requirements.txt
+      - name: Run the tests
+        run: python ./Backend/JapariService/manage.py test --parallel 'auto' --verbosity 3
