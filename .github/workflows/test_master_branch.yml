@@ -32,7 +32,7 @@ jobs:
         run: pip install pytest
       -
         name: Run base tests
-        run: pytest ./project_tests -W ignore::DeprecationWarning
+        run: pytest ./project_tests/ -W ignore::DeprecationWarning
 
 # Linter
   check_linter:
@@ -76,4 +76,4 @@ jobs:
           cache-dependency-path: "./Backend/JapariService/requirements.txt"
       - run: pip install -r ./Backend/JapariService/requirements.txt
       - name: Run the tests
-        run: python ./Backend/JapariService/manage.py test --parallel 'auto' --verbosity 3
+        run: pytest ./Backend/JapariService/ -W ignore::DeprecationWarning

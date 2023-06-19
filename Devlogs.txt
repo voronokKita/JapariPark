@@ -229,3 +229,10 @@ Github Actions вроде бы и так должен съесть `sudo nginx` 
 Подключил Daphne к команде runserver.
 Переписал git-hooks.
 Написал базовые бэкенд-тесты.
+
+
+# 06.19 mon
+
+Настроил Docker для JapariService с сервером.
+Настроил pytest для JapariService.
+Написал Docker Compose для всего.

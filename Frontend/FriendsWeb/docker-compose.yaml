@@ -8,6 +8,8 @@ name: japaripark-friend_web
 networks:
   friends_web_bridge:
     driver: bridge
+  japari_frontend:
+    driver: bridge
 
 secrets:
   friends_web_user_pass:
@@ -27,8 +29,8 @@ services:
     image: friends_web:latest
     volumes:
       - type: bind
-        source: "./logs"
-        target: "/FriendsWeb/logs"
+        source: ./logs
+        target: /FriendsWeb/logs
     networks:
       friends_web_bridge:
         priority: 0
@@ -56,8 +58,8 @@ services:
     image: friends_web_proxy:latest
     volumes:
       - type: bind
-        source: "./logs/servers"
-        target: "/FriendsWebNginx/logs"
+        source: ./logs/servers
+        target: /FriendsWebNginx/logs
     ports:
       - target: 8080
         published: 8080
@@ -65,9 +67,13 @@ services:
         mode: host
     networks:
       friends_web_bridge:
-        priority: 0
+        priority: 1
         aliases:
           - friends-web-proxy
+      japari_frontend:
+        priority: 0
+        aliases:
+          - friends-web
     environment:
       - NETWORK=friends_web_bridge
       - NETWORK_ALIAS=friends-web-proxy

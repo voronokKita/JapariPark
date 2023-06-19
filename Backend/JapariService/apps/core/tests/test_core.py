@@ -24,9 +24,8 @@ class TestCoreAppResources(SimpleTestCase):
 
     def test_core_app_files(self):
         """Check application files."""
-        self.assertTrue(
-            all((item.exists() for item in self.resources)),
-        )
+        for fp in self.resources:
+            self.assertTrue(fp.exists(), msg=fp)
 
 
 class TestCoreAppViews(SimpleTestCase):
@@ -67,6 +66,5 @@ class TestProjectResources(SimpleTestCase):
 
     def test_project_files(self):
         """Check project files."""
-        self.assertTrue(
-            all((item.exists() for item in self.resources)),
-        )
+        for fp in self.resources:
+            self.assertTrue(fp.exists(), msg=fp)

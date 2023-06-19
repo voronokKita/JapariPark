@@ -9,7 +9,7 @@ Django = ">=4.0.0,<5.0.0"
 daphne = ">=4.0.0,<5.0.0"
 
 [dev-packages]
-pytest = "*"
+pytest-django = "*"
 django-debug-toolbar = "*"
 
 [requires]

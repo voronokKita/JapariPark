@@ -21,6 +21,8 @@
 + subprocess best practices
 + dockerignore template
 - pyi
+- Тесты по запросу.
+- страницы с 404 и другими
 
 
 Git:
@@ -66,7 +68,7 @@ GitHub:
 - DRF
 + Docker
 + Docker Compose
-- Tests
++ Tests
 
 
 База данных:

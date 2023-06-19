@@ -13,115 +13,117 @@ name: japaripark
 
 
 networks:
-  front_net:
+  japari_frontend:
     driver: bridge
-  back_net:
+  friends_web_bridge:
     driver: bridge
-  admin_net:
-    driver: bridge
-
 
 secrets:
-  django_secret:
+  japari_service_django_secret:
     file: ./Backend/JapariService/secrets/.django.secret
+  japari_service_user_pass:
+    file: ./Backend/JapariService/secrets/.docker-build.secret
+  friends_web_user_pass:
+    file: ./Frontend/FriendsWeb/secrets/.docker-build.secret
 
 
 services:
-  # Japari Park: Web-frontend of the Friends app
-  friends_web:
-    container_name: FriendsWeb
-    stdin_open: true
-    tty: true
-    build:
-      context: ./Frontend/FriendsWeb
-      dockerfile: Dockerfile
-    deploy:
-      endpoint_mode: vip
-      mode: global
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 2
-    volumes:
-      - type: bind
-        source: "./Frontend/FriendsWeb/tests"
-        target: "/FriendsWeb/tests"
-        read_only: true
-      - type: bind
-        source: "./Frontend/FriendsWeb/helpers"
-        target: "/FriendsWeb/helpers"
-        read_only: true
-      - type: bind
-        source: "./Frontend/FriendsWeb/friends"
-        target: "/FriendsWeb/friends"
-        read_only: true
-      - type: bind
-        source: "./Frontend/FriendsWeb/servers"
-        target: "/FriendsWeb/servers"
-        read_only: true
-    ports:
-      - "5000:5000"
-    networks:
-      admin_net:
-        priority: 1
-        aliases:
-          - friends-web
-      front_net:
-        priority: 0
-        aliases:
-          - friends-web
-#     healthcheck:
-#       test: curl -fs "http://127.0.0.1:5000/friends/ping" || echo 1
-#       interval: 180s
-#       timeout: 10s
-#       retries: 2
-#       start_period: 20s
-
-  # Japari Park: Backend Service
+  # JapariService: the main backend service
   japari_service:
     container_name: JapariService
     stdin_open: true
     tty: true
     build:
-      context: ./Backend/JapariService
-      dockerfile: Dockerfile
-    deploy:
-      endpoint_mode: vip
-      mode: global
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 2
+      context: ./Backend/JapariService/
+      secrets:
+        - japari_service_user_pass
+    image: japari_service:latest
     volumes:
       - type: bind
-        source: "./Backend/JapariService/JapariService"
-        target: "/JapariService/JapariService"
-        read_only: true
-      - type: bind
-        source: "./Backend/JapariService/apps"
-        target: "/JapariService/apps"
-        read_only: true
+        source: ./Backend/JapariService/logs
+        target: /JapariService/logs
     secrets:
-      - source: django_secret
+      - source: japari_service_django_secret
         target: /JapariService/secrets/.django.secret
+        uid: '1000'
+        gid: '1000'
+        mode: 0440
     ports:
-      - "8000:8000"
+      - target: 8000
+        published: 8000
+        protocol: tcp
+        mode: host
     networks:
-      admin_net:
-        priority: 2
-        aliases:
-          - japari-service
-      back_net:
-        priority: 1
-        aliases:
-          - japari-service
-      front_net:
+      japari_frontend:
         priority: 0
         aliases:
           - japari-service
-#     healthcheck:
-#       test: curl -fs "http://127.0.0.1:8000/friends/ping" || echo 1
-#       interval: 180s
-#       timeout: 10s
-#       retries: 2
-#       start_period: 20s
+    environment:
+      - NETWORK=japari_frontend
+      - NETWORK_ALIAS=japari-service
+    restart: on-failure
+    stop_grace_period: 10s
+
+  # FriendsWeb: Gunicorn server
+  friends_web:
+    container_name: FriendsWeb
+    stdin_open: true
+    tty: true
+    build:
+      context: ./Frontend/FriendsWeb/
+      secrets:
+        - friends_web_user_pass
+    image: friends_web:latest
+    volumes:
+      - type: bind
+        source: ./Frontend/FriendsWeb/logs
+        target: /FriendsWeb/logs
+    networks:
+      friends_web_bridge:
+        aliases:
+          - friends-web
+    environment:
+      - NETWORK=friends_web_bridge
+      - NETWORK_ALIAS=friends-web
+    restart: on-failure
+    stop_grace_period: 10s
+
+  # FriendsWeb: NGINX reverse-proxy
+  friends_web_nginx:
+    container_name: FriendsWebNginx
+    stdin_open: true
+    tty: true
+    depends_on:
+      friends_web:
+        condition: service_started
+      japari_service:
+        condition: service_started
+    build:
+      context: ./Frontend/FriendsWeb/
+      dockerfile: ./NGINX/Dockerfile
+      secrets:
+        - friends_web_user_pass
+    image: friends_web_proxy:latest
+    volumes:
+      - type: bind
+        source: ./Frontend/FriendsWeb/logs/servers
+        target: /FriendsWebNginx/logs
+    ports:
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: host
+    networks:
+      friends_web_bridge:
+        priority: 1
+        aliases:
+          - friends-web-proxy
+      japari_frontend:
+        priority: 0
+        aliases:
+          - friends-web
+    environment:
+      - NETWORK=friends_web_bridge
+      - NETWORK_ALIAS=friends-web-proxy
+    restart: on-failure
+    stop_grace_period: 10s

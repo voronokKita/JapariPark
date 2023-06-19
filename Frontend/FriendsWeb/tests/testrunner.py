@@ -44,7 +44,8 @@ def run_path(path: Path):
     """
     cmd = [
         sys.executable, '-m',
-        'pytest', path.as_posix(),
+        'pytest', '-v',
+        path.as_posix(),
         '-W', 'ignore::DeprecationWarning',
     ]
     result = subprocess.run(cmd, shell=False, cwd=BASE_DIR.as_posix())

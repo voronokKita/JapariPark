@@ -22,9 +22,8 @@ class TestFriendsResources(SimpleTestCase):
 
     def test_accounts_files(self):
         """Check application files."""
-        self.assertTrue(
-            all((item.exists() for item in self.resources)),
-        )
+        for fp in self.resources:
+            self.assertTrue(fp.exists(), msg=fp)
 
 
 class TestFriendsViews(SimpleTestCase):

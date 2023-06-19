@@ -3,9 +3,8 @@ docker network create --driver=bridge friends_web_bridge
 
 
 # Build
-# Build
 # easy to change `env=var` to `src=secret-file`
-# !important - should be built from the FriendsWeb base dir
+# Context: the FriendsWeb base dir
 DOCKER_BUILDKIT=1 \
     docker build \
         --secret id=friends_web_user_pass,src=./secrets/.docker-build.secret \
@@ -29,7 +28,6 @@ docker run --detach \
 ## Run lite
 docker run --detach \
         -it \
-        -e "EXPECTING_PORT=5000" \
         --name FriendsWeb \
         --restart=on-failure:2 \
         --mount type=bind,src="$(pwd)"/logs,dst=/FriendsWeb/logs \
@@ -40,7 +38,6 @@ docker run --detach \
 ## Run dev
 docker run --detach \
         -it \
-        -e "EXPECTING_PORT=5000" \
         --name FriendsWeb \
         --restart=on-failure:2 \
         --mount type=bind,src="$(pwd)"/tests,dst=/FriendsWeb/tests,ro \
