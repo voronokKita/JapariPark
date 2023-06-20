@@ -10,10 +10,6 @@ LABEL logs="Mount /FriendsWebNginx/logs to get them."
 
 # < as root >
 # < working with environment >
-EXPOSE 8080/tcp
-ENV NGINX_PORT=8080
-ENV PROXY_PASS="http://friends-web:5000"
-ENV PING=/proxy/ping
 ENV NGINX_BIN=/usr/sbin/nginx
 ENV NGINX_CONF=/etc/nginx
 ENV BASE_DIR=/FriendsWebNginx
@@ -81,15 +77,13 @@ ENV PATH="$BASE_DIR:$PATH"
 RUN mkdir --mode=777 "$BASE_DIR/logs" \
     && mkdir "$BASE_DIR/secrets"
 
-COPY --chown="$USER:$GROUP" --chmod=764 docker_nginx_run.txt docker-compose.yaml ./
+COPY --chown="$USER:$GROUP" --chmod=764 docker-compose.yaml ./
 COPY --chown="$USER:$GROUP" --chmod=764 ./staticfiles ./staticfiles
 
 
-HEALTHCHECK --interval=120s \
-            --timeout=5s \
-            --retries=2 \
-            --start-period=6s \
-            CMD curl -f "http://127.0.0.1:8080/proxy/ping" || exit 1
+# Serving
+EXPOSE 80/tcp
+ENV NGINX_PORT=80
 
 # Entry into the eternal work
 # ENTRYPOINT ["tail", "-f", "/dev/null"]

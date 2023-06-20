@@ -3,48 +3,20 @@ docker network create --driver=bridge friends_web_bridge
 
 
 # Build
-# easy to change `env=var` to `src=secret-file`
-# Context: the FriendsWeb base dir
 DOCKER_BUILDKIT=1 \
     docker build \
         --secret id=friends_web_user_pass,src=./secrets/.docker-build.secret \
         --file Dockerfile \
-        --tag friends_web:latest \
+        --tag friends_web_app \
         .
 
 
 # Run
 docker run --detach \
         -it \
-        -e "NETWORK=friends_web_bridge" \
-        -e "NETWORK_ALIAS=friends-web" \
         --name FriendsWeb \
         --restart=on-failure:2 \
         --mount type=bind,src="$(pwd)"/logs,dst=/FriendsWeb/logs \
         --network friends_web_bridge \
-        --network-alias friends-web \
-        friends_web
-
-## Run lite
-docker run --detach \
-        -it \
-        --name FriendsWeb \
-        --restart=on-failure:2 \
-        --mount type=bind,src="$(pwd)"/logs,dst=/FriendsWeb/logs \
-        --publish 5000:5000 \
-        --no-healthcheck=true \
-        friends_web
-
-## Run dev
-docker run --detach \
-        -it \
-        --name FriendsWeb \
-        --restart=on-failure:2 \
-        --mount type=bind,src="$(pwd)"/tests,dst=/FriendsWeb/tests,ro \
-        --mount type=bind,src="$(pwd)"/helpers,dst=/FriendsWeb/helpers,ro \
-        --mount type=bind,src="$(pwd)"/friends,dst=/FriendsWeb/friends,ro \
-        --mount type=bind,src="$(pwd)"/logs,dst=/FriendsWeb/logs \
-        --publish 5000:5000 \
-        --network friends_web_bridge \
-        --network-alias friends-web \
-        friends_web
+        --network-alias friends-web.app \
+        friends_web_app

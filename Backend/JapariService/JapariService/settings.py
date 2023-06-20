@@ -14,11 +14,11 @@ ALLOWED_HOSTS = [
     '[::1]',
     '127.0.0.1',
     'localhost',
-    'accounts.japari-park.fun',
-    'users.japari-park.fun',
-    'friends.japari-park.fun',
+
+    'japari-service.rest',
 ]
 INTERNAL_IPS = [
+    '[::1]',
     '127.0.0.1',
 ]
 
@@ -34,6 +34,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'rest_framework',
+
     'apps.core.app.CoreConfig',
     'apps.accounts.app.AccountsConfig',
     'apps.friends.app.FriendsConfig',
@@ -48,6 +50,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+    ],
+}
 
 if DEBUG:
     INSTALLED_APPS.append('debug_toolbar')
@@ -121,5 +129,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # <misc>
-APPEND_SLASH = False
+APPEND_SLASH = True
+PREPEND_WWW = False
 # </misc>

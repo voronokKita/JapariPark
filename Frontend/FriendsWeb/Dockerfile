@@ -10,7 +10,6 @@ LABEL logs="Mount /FriendsWeb/logs to get them."
 
 # < as root >
 # < working with the environment >
-ENV GUNICORN_PORT=5000
 ENV BASE_DIR=/FriendsWeb
 ENV LOGS_DIR=/FriendsWeb/logs
 ENV HTML_DIR=/FriendsWeb/templates
@@ -76,18 +75,15 @@ RUN touch indocker \
     && mkdir "$BASE_DIR/secrets"
 
 COPY --chown="$USER:$GROUP" --chmod=764 \
-     Dockerfile docker_app_run.txt docker-compose.yaml manage.py ./
+     Dockerfile docker-compose.yaml manage.py ./
 COPY --chown="$USER:$GROUP" --chmod=764 ./friends ./friends
 COPY --chown="$USER:$GROUP" --chmod=764 ./helpers ./helpers
 COPY --chown="$USER:$GROUP" --chmod=764 ./templates ./templates
 COPY --chown="$USER:$GROUP" --chmod=764 ./tests ./tests
 
 
-HEALTHCHECK --interval=120s \
-            --timeout=5s \
-            --retries=2 \
-            --start-period=6s \
-            CMD curl -f "http://127.0.0.1:5000/ping" || exit 1
+# Serving
+ENV GUNICORN_PORT=80
 
 # Entry into the eternal work
 # ENTRYPOINT ["tail", "-f", "/dev/null"]
@@ -96,4 +92,4 @@ ENTRYPOINT ["/FriendsWeb/venv/bin/python", "-OO", "-m"]
 CMD [ "gunicorn", \
       "friends.wsgi:app", \
       "-w", "2", \
-      "--bind", "[::]:5000" ]
+      "--bind", "0.0.0.0:80" ]

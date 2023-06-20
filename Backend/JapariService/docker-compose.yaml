@@ -6,12 +6,15 @@ name: japaripark-backend
 
 
 networks:
-  japari_frontend:
-    driver: bridge
+  frontend_overlay:
+    driver: overlay
+    attachable: true
+
 
 secrets:
   japari_service_user_pass:
     file: ./secrets/.docker-build.secret
+
   japari_service_django_secret:
     file: ./secrets/.django.secret
 
@@ -25,7 +28,7 @@ services:
       context: .
       secrets:
         - japari_service_user_pass
-    image: japari_service:latest
+    image: japari_service
     volumes:
       - type: bind
         source: ./logs
@@ -37,17 +40,19 @@ services:
         gid: '1000'
         mode: 0440
     ports:
-      - target: 8000
+      - target: 80
         published: 8000
         protocol: tcp
         mode: host
     networks:
-      japari_frontend:
-        priority: 0
+      frontend_overlay:
         aliases:
-          - japari-service
-    environment:
-      - NETWORK=japari_frontend
-      - NETWORK_ALIAS=japari-service
+          - japari-service.rest
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://japari-service.rest/ping || exit 1"]
+      interval: 3m
+      timeout: 5s
+      retries: 2
+      start_period: 10s
     restart: on-failure
     stop_grace_period: 10s

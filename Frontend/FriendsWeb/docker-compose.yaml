@@ -8,8 +8,11 @@ name: japaripark-friend_web
 networks:
   friends_web_bridge:
     driver: bridge
-  japari_frontend:
-    driver: bridge
+
+  frontend_overlay:
+    driver: overlay
+    attachable: true
+
 
 secrets:
   friends_web_user_pass:
@@ -26,19 +29,21 @@ services:
       context: .
       secrets:
         - friends_web_user_pass
-    image: friends_web:latest
+    image: friends_web_app
     volumes:
       - type: bind
         source: ./logs
         target: /FriendsWeb/logs
     networks:
       friends_web_bridge:
-        priority: 0
         aliases:
-          - friends-web
-    environment:
-      - NETWORK=friends_web_bridge
-      - NETWORK_ALIAS=friends-web
+          - friends-web.app
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://frinds-web.app/ping || exit 1"]
+      interval: 3m
+      timeout: 5s
+      retries: 2
+      start_period: 10s
     restart: on-failure
     stop_grace_period: 10s
 
@@ -47,21 +52,18 @@ services:
     container_name: FriendsWebNginx
     stdin_open: true
     tty: true
-    depends_on:
-      friends_web:
-        condition: service_started
     build:
       context: .
       dockerfile: ./NGINX/Dockerfile
       secrets:
         - friends_web_user_pass
-    image: friends_web_proxy:latest
+    image: friends_web_proxy
     volumes:
       - type: bind
         source: ./logs/servers
         target: /FriendsWebNginx/logs
     ports:
-      - target: 8080
+      - target: 80
         published: 8080
         protocol: tcp
         mode: host
@@ -69,13 +71,16 @@ services:
       friends_web_bridge:
         priority: 1
         aliases:
-          - friends-web-proxy
-      japari_frontend:
+          - friends-web.proxy
+      frontend_overlay:
         priority: 0
         aliases:
-          - friends-web
-    environment:
-      - NETWORK=friends_web_bridge
-      - NETWORK_ALIAS=friends-web-proxy
+          - friends-web.rest
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://friends-web.rest/proxy/ping/ || exit 1"]
+      interval: 3m
+      timeout: 5s
+      retries: 2
+      start_period: 10s
     restart: on-failure
     stop_grace_period: 10s

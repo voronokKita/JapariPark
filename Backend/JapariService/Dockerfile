@@ -9,8 +9,6 @@ LABEL logs="Mount /JapariService/logs to get them."
 
 # < as root >
 # < working with the environment >
-EXPOSE 8000/tcp
-ENV DAPHNE_PORT=8000
 ENV BASE_DIR=/JapariService
 ENV LOGS_DIR=/JapariService/logs
 ENV GROUP=luckybot
@@ -75,17 +73,15 @@ RUN touch indocker \
     && mkdir "$BASE_DIR/secrets"
 
 COPY --chown="$USER:$GROUP" --chmod=764 \
-     Dockerfile docker_run.txt docker-compose.yaml manage.py ./
+     Dockerfile docker-compose.yaml pytest.ini manage.py ./
 COPY --chown="$USER:$GROUP" --chmod=764 ./JapariService ./JapariService
 COPY --chown="$USER:$GROUP" --chmod=764 ./helpers ./helpers
 COPY --chown="$USER:$GROUP" --chmod=764 ./apps ./apps
 
 
-HEALTHCHECK --interval=120s \
-            --timeout=5s \
-            --retries=2 \
-            --start-period=6s \
-            CMD curl -f "http://127.0.0.1:8000/ping" || exit 1
+# Serving
+EXPOSE 80/tcp
+ENV DAPHNE_PORT=80
 
 # Entry into the eternal work
 # ENTRYPOINT ["tail", "-f", "/dev/null"]
@@ -93,6 +89,6 @@ HEALTHCHECK --interval=120s \
 ENTRYPOINT ["/JapariService/venv/bin/python", "-OO", "-m"]
 CMD [ "daphne", \
       "--root-path=/JapariService", \
-      "-b", "::", \
-      "-p", "8000", \
-      "JapariService.asgi:application" ]
+      "-b", "0.0.0.0", \
+      "-p", "80", \
+      "JapariService.asgi:app" ]

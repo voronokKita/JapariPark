@@ -1,5 +1,5 @@
 # Networking
-docker network create --driver=bridge japari_frontend
+docker network create -d overlay --attachable japari_frontend
 
 
 # Build
@@ -8,43 +8,17 @@ DOCKER_BUILDKIT=1 \
     docker build \
         --secret id=japari_service_user_pass,src=./secrets/.docker-build.secret \
         --file Dockerfile \
-        --tag japari_service:latest \
+        --tag japari_service \
         .
 
 
 # Run
 docker run --detach \
         -it \
-        -e "NETWORK=japari_frontend" \
-        -e "NETWORK_ALIAS=japari-service" \
         --name JapariService \
         --restart=on-failure:2 \
         --mount type=bind,src="$(pwd)"/logs,dst=/JapariService/logs \
-        --publish 8000:8000 \
+        --publish 8000:80 \
         --network japari_frontend \
-        --network-alias japari-service \
-        japari_service
-
-## Run lite
-docker run --detach \
-        -it \
-        --name JapariService \
-        --restart=on-failure:2 \
-        --mount type=bind,src="$(pwd)"/logs,dst=/JapariService/logs \
-        --publish 8000:8000 \
-        --no-healthcheck=true \
-        japari_service
-
-## Run dev
-docker run --detach \
-        -it \
-        --name JapariService \
-        --restart=on-failure:2 \
-        --mount type=bind,src="$(pwd)"/JapariService,dst=/JapariService/JapariService,ro \
-        --mount type=bind,src="$(pwd)"/helpers,dst=/JapariService/helpers,ro \
-        --mount type=bind,src="$(pwd)"/apps,dst=/JapariService/apps,ro \
-        --mount type=bind,src="$(pwd)"/logs,dst=/JapariService/logs \
-        --publish 8000:8000 \
-        --network japari_frontend \
-        --network-alias japari-service \
+        --network-alias japari-service.rest \
         japari_service

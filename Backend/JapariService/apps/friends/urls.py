@@ -7,5 +7,5 @@ from apps.friends import views
 app_name = 'friends'
 
 urlpatterns = [
-    path('/ping', views.ping, name='friends-ping'),
+    path('ping', views.ping, name='friends-ping'),
 ]

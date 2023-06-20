@@ -1,4 +1,4 @@
-"""JapariService - the core views."""
+"""JapariService - views."""
 from django.http import HttpResponse, HttpRequest
 
 

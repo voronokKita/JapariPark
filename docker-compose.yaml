@@ -9,20 +9,27 @@
 #      -- Friends app
 #      -- Accounts app
 #
+# `docker compose up --detach --build`
 name: japaripark
 
 
 networks:
-  japari_frontend:
-    driver: bridge
+  frontend_overlay:
+    # aliases: japari-service.rest, friends-web.rest
+    driver: overlay
+    attachable: true
+
   friends_web_bridge:
     driver: bridge
+
 
 secrets:
   japari_service_django_secret:
     file: ./Backend/JapariService/secrets/.django.secret
+
   japari_service_user_pass:
     file: ./Backend/JapariService/secrets/.docker-build.secret
+
   friends_web_user_pass:
     file: ./Frontend/FriendsWeb/secrets/.docker-build.secret
 
@@ -37,7 +44,7 @@ services:
       context: ./Backend/JapariService/
       secrets:
         - japari_service_user_pass
-    image: japari_service:latest
+    image: japari_service
     volumes:
       - type: bind
         source: ./Backend/JapariService/logs
@@ -49,18 +56,21 @@ services:
         gid: '1000'
         mode: 0440
     ports:
-      - target: 8000
+      - target: 80
         published: 8000
         protocol: tcp
         mode: host
     networks:
-      japari_frontend:
+      frontend_overlay:
         priority: 0
         aliases:
-          - japari-service
-    environment:
-      - NETWORK=japari_frontend
-      - NETWORK_ALIAS=japari-service
+          - japari-service.rest
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://japari-service.rest/ping || exit 1"]
+      interval: 3m
+      timeout: 5s
+      retries: 2
+      start_period: 10s
     restart: on-failure
     stop_grace_period: 10s
 
@@ -73,7 +83,7 @@ services:
       context: ./Frontend/FriendsWeb/
       secrets:
         - friends_web_user_pass
-    image: friends_web:latest
+    image: friends_web
     volumes:
       - type: bind
         source: ./Frontend/FriendsWeb/logs
@@ -81,10 +91,13 @@ services:
     networks:
       friends_web_bridge:
         aliases:
-          - friends-web
-    environment:
-      - NETWORK=friends_web_bridge
-      - NETWORK_ALIAS=friends-web
+          - friends-web.app
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://frinds-web.app/ping || exit 1"]
+      interval: 3m
+      timeout: 5s
+      retries: 2
+      start_period: 10s
     restart: on-failure
     stop_grace_period: 10s
 
@@ -93,23 +106,18 @@ services:
     container_name: FriendsWebNginx
     stdin_open: true
     tty: true
-    depends_on:
-      friends_web:
-        condition: service_started
-      japari_service:
-        condition: service_started
     build:
       context: ./Frontend/FriendsWeb/
       dockerfile: ./NGINX/Dockerfile
       secrets:
         - friends_web_user_pass
-    image: friends_web_proxy:latest
+    image: friends_web_proxy
     volumes:
       - type: bind
         source: ./Frontend/FriendsWeb/logs/servers
         target: /FriendsWebNginx/logs
     ports:
-      - target: 8080
+      - target: 80
         published: 8080
         protocol: tcp
         mode: host
@@ -117,13 +125,16 @@ services:
       friends_web_bridge:
         priority: 1
         aliases:
-          - friends-web-proxy
-      japari_frontend:
+          - friends-web.proxy
+      frontend_overlay:
         priority: 0
         aliases:
-          - friends-web
-    environment:
-      - NETWORK=friends_web_bridge
-      - NETWORK_ALIAS=friends-web-proxy
+          - friends-web.rest
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://friends-web.rest/proxy/ping/ || exit 1"]
+      interval: 3m
+      timeout: 5s
+      retries: 2
+      start_period: 10s
     restart: on-failure
     stop_grace_period: 10s
