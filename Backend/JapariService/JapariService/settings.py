@@ -129,6 +129,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # <misc>
-APPEND_SLASH = True
+APPEND_SLASH = False
 PREPEND_WWW = False
 # </misc>
