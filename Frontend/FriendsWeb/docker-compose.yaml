@@ -21,7 +21,7 @@ secrets:
 
 services:
   # Gunicorn server
-  friends_web:
+  friends_web_app:
     container_name: FriendsWeb
     stdin_open: true
     tty: true

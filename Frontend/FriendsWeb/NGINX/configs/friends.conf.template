@@ -1,6 +1,6 @@
 server {
     listen  80;
-    server_name  friends-web.rest  friends.japari-park.fun;
+    server_name  friends.japari-park.fun  friends-web.rest;
 
     #rewrite ^/(.*)/$ /$1 permanent;
     absolute_redirect  off;
@@ -14,7 +14,19 @@ server {
 
     location  / {
         proxy_pass  http://friends-web.app;
-        proxy_set_header  Host $host;
-        proxy_set_header  X-Real-IP $remote_addr;
+    }
+}
+server {
+    listen  80;
+    server_name  friends-web.proxy;
+
+    # TODO an auth
+
+    location  /backend-api/ {
+        proxy_pass http://japari-service.rest/friends/;
+    }
+
+    location  / {
+        return 404;
     }
 }

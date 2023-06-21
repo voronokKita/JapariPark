@@ -6,6 +6,9 @@ from friends.flask_init import APP
 from friends import views
 
 
+BACKEND_URL = 'http://friends-web.proxy/backend-api'
+
+
 @APP.route('/ping', methods=['GET'])
 def ping():
     """
@@ -16,10 +19,10 @@ def ping():
     return 'FriendsWeb: pong!', 200
 
 
-@APP.route('/ping-html', methods=['GET'])
+@APP.route('/ping-static', methods=['GET'])
 def ping_html():
     """
-    Ping-pong.
+    Ping-pong static.
 
     :returns: tuple[str,int]: the ping.html page, 200-OK
     """
@@ -31,11 +34,15 @@ def ping_backend():
     """
     Ping-pong the backend service.
 
-    :returns: tuple[str,int]: responce, 200-OK
+    :returns: tuple[str,int]: response, status
     """
-    result = requests.get('http://japari-service.rest/ping', timeout=20)
+    try:
+        result = requests.get(f'{BACKEND_URL}/ping', timeout=5)
+    except Exception as err:
+        return str(err.args), 202
+
     if result.status_code == 200:
-        return result.text
+        return result.text, 200
     else:
         st = 'Error to ping the backend service: {err}'
-        return st.format(err=result.status_code)
+        return st.format(err=result.status_code), 202
