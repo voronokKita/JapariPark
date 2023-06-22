@@ -17,7 +17,6 @@ class TestFriendsResources(SimpleTestCase):
         app_dir / 'urls.py',
         app_dir / 'views.py',
         app_dir / 'models.py',
-        app_dir / 'api.py',
     )
 
     def test_accounts_files(self):

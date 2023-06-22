@@ -19,7 +19,8 @@ class TestCoreAppResources(SimpleTestCase):
         app_dir / 'urls.py',
         app_dir / 'views.py',
         app_dir / 'models.py',
-        app_dir / 'api.py',
+        app_dir / 'serializers.py',
+        app_dir / 'permissions.py',
     )
 
     def test_core_app_files(self):
@@ -44,6 +45,8 @@ class TestProjectResources(SimpleTestCase):
         BASE_DIR / 'Pipfile',
         BASE_DIR / 'requirements.txt',
         BASE_DIR / 'Dockerfile',
+        BASE_DIR / 'docker-compose.yaml',
+        BASE_DIR / 'pytest.ini',
 
         BASE_DIR / 'manage.py',
         BASE_DIR / 'JapariService',

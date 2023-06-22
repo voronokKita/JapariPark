@@ -16,9 +16,7 @@ class TestBase:
             PROJECT_DIR / 'cover2.png',
             PROJECT_DIR / 'README.md',
             PROJECT_DIR / 'LICENSE',
-
             PROJECT_DIR / '.gitignore',
-            PROJECT_DIR / 'pyproject.toml',
 
             PROJECT_DIR / 'docker-compose.yaml',
 
