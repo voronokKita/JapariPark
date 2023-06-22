@@ -25,6 +25,7 @@ daphne = ">=4.0.0,<5.0.0"
 # and will throw import errors
 pytest = "*"
 Werkzeug = "*"
+django-debug-toolbar = "*"
 
 # Linter
 wemake-python-styleguide = "*"

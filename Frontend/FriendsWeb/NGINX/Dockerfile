@@ -4,20 +4,17 @@ LABEL author="github.com/voronokKita"
 LABEL description="A composite container - part of the FriendsWeb application, \
 to host NGINX reverse-proxy."
 LABEL secrets="Needs BuildX or BuildKit on, like: \
-`$ MYSECRET=qwerty DOCKER_BUILDKIT=1 docker build --secret id=user_pass,env=MYSECRET`"
-LABEL context="The parent directory, where the staticfiles are originated."
+`$ MYSECRET=qwerty DOCKER_BUILDKIT=1 docker build --secret id=friends_web_user_pass,env=MYSECRET`"
 LABEL logs="Mount /FriendsWebNginx/logs to get them."
 
 
+# < as root >
 # < working with environment >
-EXPOSE 8080/tcp
-ENV NGINX_PORT=8080
-ENV PROXY_PASS="http://friends-web:5000"
-ENV PING=/proxy/ping
 ENV NGINX_BIN=/usr/sbin/nginx
 ENV NGINX_CONF=/etc/nginx
 ENV BASE_DIR=/FriendsWebNginx
 ENV LOGS_DIR=/FriendsWebNginx/logs
+ENV STATIC_DIR=/FriendsWebNginx/staticfiles
 ENV USER=luckybot
 ENV GROUP=luckybot
 ENV UID=1000
@@ -61,30 +58,34 @@ RUN addgroup $USER wheel \
 # < working with files >
 WORKDIR "$BASE_DIR"
 
-COPY --chown="$USER:$GROUP" --chmod=444 ./NGINX ./
+COPY --chown="$USER:$GROUP" --chmod=764 ./NGINX ./
 
 # Resolve file & dir permissions;
-# make a dir for the logs;
-# and setup NGINX configs:
+# setup NGINX configs:
 RUN chown "$USER:$GROUP" "$BASE_DIR" \
-    && mkdir -p --mode=777 "$BASE_DIR/logs" \
     && mv "$NGINX_CONF/nginx.conf" "$NGINX_CONF/nginx.conf.backup" \
     && cp "$BASE_DIR/configs/nginx.conf.template" "$NGINX_CONF/nginx.conf" \
-    && mkdir -p --mode=744 "$NGINX_CONF/site-available" \
+    && mkdir --mode=744 "$NGINX_CONF/site-available" \
     && cp "$BASE_DIR/configs/friends.conf.template" "$NGINX_CONF/site-available/friends.conf"
 
-COPY --chown="$USER:$GROUP" --chmod=444 ./staticfiles ./staticfiles
 
+# < as the user >
 USER $USER
+ENV PATH="$BASE_DIR:$PATH"
+
+# Make dirs for the logs and secrets
+RUN mkdir --mode=777 "$BASE_DIR/logs" \
+    && mkdir "$BASE_DIR/secrets"
+
+COPY --chown="$USER:$GROUP" --chmod=764 docker-compose.yaml ./
+COPY --chown="$USER:$GROUP" --chmod=764 ./staticfiles ./staticfiles
 
 
-HEALTHCHECK --interval=120s \
-            --timeout=5s \
-            --retries=2 \
-            --start-period=6s \
-            CMD curl -f "http://127.0.0.1:8080/proxy/ping" || exit 1
+# Serving
+EXPOSE 80/tcp
+ENV NGINX_PORT=80
 
-# Entry into eternal work
+# Entry into the eternal work
 # ENTRYPOINT ["tail", "-f", "/dev/null"]
 
 ENTRYPOINT ["/usr/bin/sudo", "/usr/sbin/nginx"]

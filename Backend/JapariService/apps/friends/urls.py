@@ -1,9 +1,11 @@
-"""Japari Friends' router."""
+"""Japari Park: Friends' router."""
 from django.urls import path
 
-from . import views
+from apps.friends import views
 
+
+app_name = 'friends'
 
 urlpatterns = [
-    path('ping', views.ping, name='ping'),
+    path('ping', views.ping, name='friends-ping'),
 ]

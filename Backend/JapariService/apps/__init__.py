@@ -1,1 +1,1 @@
-"""Japari Park Service - applications."""
+"""Django's application set."""

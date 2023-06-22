@@ -1,8 +1,4 @@
-diagram.json
 GithubWiki/
-.dockerenv
-*.sock
-secrets/
 *.secret
 
 
@@ -80,10 +76,6 @@ cover/
 
 # Translations
 *.mo
-
-# Flask stuff:
-instance/
-.webassets-cache
 
 # Scrapy stuff:
 .scrapy
@@ -190,6 +182,7 @@ fabric.properties
 ### Flask ###
 instance/*
 !instance/.gitignore
+.webassets-cache
 
 ### Linux ###
 *~

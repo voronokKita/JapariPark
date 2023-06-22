@@ -3,35 +3,22 @@ docker network create --driver=bridge friends_web_bridge
 
 
 # Build
-# easy to change `env=var` to `src=secret-file`
-# !important - should be built from the FriendsWeb base dir
+# Context: the FriendsWeb base dir
 DOCKER_BUILDKIT=1 \
     docker build \
         --secret id=friends_web_user_pass,src=./secrets/.docker-build.secret \
         --file ./NGINX/Dockerfile \
-        --tag friends_web_proxy:latest \
+        --tag friends_web_proxy \
         .
 
 
 # Run
 docker run --detach \
         -it \
-        -e "NETWORK=friends_web_bridge" \
-        -e "NETWORK_ALIAS=friends-web-proxy" \
         --name FriendsWebNginx \
         --restart=on-failure:2 \
         --mount type=bind,src="$(pwd)"/logs/servers,dst=/FriendsWebNginx/logs \
-        --publish 8080:8080 \
+        --publish 8080:80 \
         --network friends_web_bridge \
-        --network-alias friends-web-proxy \
-        friends_web_proxy
-
-## Run lite
-docker run --detach \
-        -it \
-        --name FriendsWebNginx \
-        --restart=on-failure:2 \
-        --mount type=bind,src="$(pwd)"/logs/servers,dst=/FriendsWebNginx/logs \
-        --publish 8080:8080 \
-        --no-healthcheck=true \
+        --network-alias friends-web.proxy \
         friends_web_proxy

@@ -16,13 +16,19 @@ class TestFriendsBase:
             BASE_DIR / 'manage.py',
             BASE_DIR / 'requirements.txt',
 
+            BASE_DIR / 'Dockerfile',
+            BASE_DIR / 'docker-compose.yaml',
+
             BASE_DIR / 'logs',
             BASE_DIR / 'templates',
+            BASE_DIR / 'helpers',
+            BASE_DIR / 'secrets',
 
             app_dir,
             app_dir / '__init__.py',
             app_dir / 'main.py',
             app_dir / 'wsgi.py',
+            app_dir / 'views.py',
             app_dir / 'urls.py',
             app_dir / 'flask_init.py',
             app_dir / 'settings.py',

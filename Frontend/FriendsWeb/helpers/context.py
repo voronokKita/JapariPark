@@ -3,7 +3,7 @@ import os
 import sys
 from pathlib import Path
 
-from . import command_args
+from helpers import command_args
 
 
 class ContextError(Exception):

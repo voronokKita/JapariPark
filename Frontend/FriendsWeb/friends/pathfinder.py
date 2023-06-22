@@ -1,4 +1,4 @@
-"""Process an absolute path to the FriendsWeb directory."""
+"""Process an absolute path to the base directories."""
 import sys
 from pathlib import Path
 

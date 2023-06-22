@@ -15,12 +15,15 @@
   * дублировать указанные в родительском классе слоты у наследника не нужно (сотрёт)
   * если требуется динамическое присвоение новых переменных, добавьте значение '__dict__' к последовательности строк в объявлении атрибута __slots__
 - pypy / cython / cpython
-- pyproject.toml https://pypi.org/classifiers/ | https://packaging.python.org/en/latest/specifications/declaring-project-metadata/#declaring-project-metadata
 - Лицензия https://choosealicense.com/
 - doctests
 - Теория систем мониторинга.
 + subprocess best practices
 + dockerignore template
+- pyi
+- Тесты по запросу.
+- страницы с 404 и другими
+- HTTPS
 
 
 Git:
@@ -48,7 +51,6 @@ GitHub:
 
 
 Фронтенд:
-- https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-22-04
 + NGINX
 + Файлы конфигурации NGINX
 + Gunicorn
@@ -58,19 +60,16 @@ GitHub:
 + Docker Compose
 + Tests
 - HTML meta tags
-- Compose это вторичная вещь,
-  вся полнота функционала должна быть реализована
-  в командах docker build & run
 - NGINX 404
 
 
 Бэкенд:
 + Daphne
 + Django
-- DRF
++ DRF
 + Docker
 + Docker Compose
-- Tests
++ Tests
 
 
 База данных:

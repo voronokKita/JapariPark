@@ -1,0 +1,58 @@
+# Backend of Japari Park
+# Daphne serving a Django application
+# `docker compose up --detach --build`
+#
+name: japaripark-backend
+
+
+networks:
+  frontend_overlay:
+    driver: overlay
+    attachable: true
+
+
+secrets:
+  japari_service_user_pass:
+    file: ./secrets/.docker-build.secret
+
+  japari_service_django_secret:
+    file: ./secrets/.django.secret
+
+
+services:
+  japari_service:
+    container_name: JapariService
+    stdin_open: true
+    tty: true
+    build:
+      context: .
+      secrets:
+        - japari_service_user_pass
+    image: japari_service
+    volumes:
+      - type: bind
+        source: ./logs
+        target: /JapariService/logs
+    secrets:
+      - source: japari_service_django_secret
+        target: /JapariService/secrets/.django.secret
+        uid: '1000'
+        gid: '1000'
+        mode: 0440
+    ports:
+      - target: 80
+        published: 8000
+        protocol: tcp
+        mode: host
+    networks:
+      frontend_overlay:
+        aliases:
+          - japari-service.rest
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://japari-service.rest/ping || exit 1"]
+      interval: 3m
+      timeout: 5s
+      retries: 2
+      start_period: 10s
+    restart: on-failure
+    stop_grace_period: 10s

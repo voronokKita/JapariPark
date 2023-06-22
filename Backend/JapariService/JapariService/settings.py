@@ -1,30 +1,32 @@
 """Django's settings for JapariService."""
-import secrets
-from pathlib import Path
-
-from .pathfinder import BASE_DIR, SECRETS_DIR
-from .appconf import APP_CONF
+from JapariService.pathfinder import BASE_DIR
+from JapariService.appsconf import APPS_CONF
+from helpers import istestrun, secret_key
 
 
-DEBUG = True
+DEBUG = istestrun.check()
+TESTSERVER_PORT = 8001
+
+SECRET_KEY = secret_key.getkey()
 
 
-# Secret key
-key = SECRETS_DIR / '.django.secret'
-if key.exists():
-    with key.open('r') as fl:
-        SECRET_KEY = fl.read().strip()
-else:
-    # TODO print warning
-    SECRET_KEY = secrets.token_urlsafe(50)
-del key
+ALLOWED_HOSTS = [
+    '[::1]',
+    '127.0.0.1',
+    'localhost',
 
-
-ALLOWED_HOSTS = []
+    'japari-service.rest',
+]
+INTERNAL_IPS = [
+    '[::1]',
+    '127.0.0.1',
+]
 
 
 # Application definition
 INSTALLED_APPS = [
+    'daphne',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -32,7 +34,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # 'apps.friends.app.FriendsConfig',
+    'rest_framework',
+
+    'apps.core.app.CoreConfig',
+    'apps.accounts.app.AccountsConfig',
+    'apps.friends.app.FriendsConfig',
 ]
 
 MIDDLEWARE = [
@@ -45,7 +51,22 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+    ],
+}
+
+if DEBUG:
+    INSTALLED_APPS.append('debug_toolbar')
+    MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
+
+
 ROOT_URLCONF = 'JapariService.urls'
+
+WSGI_APPLICATION = 'JapariService.wsgi.application'
+ASGI_APPLICATION = 'JapariService.asgi.application'
+
 
 TEMPLATES = [
     {
@@ -63,12 +84,9 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'JapariService.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -87,14 +105,20 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
+# <internationalization>
+DEFAULT_CHARSET = 'utf-8'
 LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
-
 USE_TZ = True
+USE_L10N = False
+
+DATE_FORMAT = 'Y.n.j'
+TIME_FORMAT = 'G:i:s'
+DATETIME_FORMAT = 'Y.n.j G:i:s'
+SHORT_DATE_FORMAT = 'Y.n.j P'
+# </internationalization>
 
 
 # Static files (CSS, JavaScript, Images)
@@ -102,3 +126,9 @@ STATIC_URL = 'static/'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# <misc>
+APPEND_SLASH = False
+PREPEND_WWW = False
+# </misc>

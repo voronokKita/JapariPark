@@ -1,17 +1,18 @@
 FROM python:3.11-alpine3.17
 
 LABEL author="github.com/voronokKita"
-LABEL description="FriendsWeb flask application with Gunicorn server. \
+LABEL description="The Flask application with Gunicorn server. \
 Intended to be used with a reverse proxy."
 LABEL secrets="Needs BuildX or BuildKit on, like: \
-`$ MYSECRET=qwerty DOCKER_BUILDKIT=1 docker build --secret id=user_pass,env=MYSECRET`"
+`$ MYSECRET=qwerty DOCKER_BUILDKIT=1 docker build --secret id=friends_web_user_pass,env=MYSECRET`"
 LABEL logs="Mount /FriendsWeb/logs to get them."
 
 
+# < as root >
 # < working with the environment >
-ENV GUNICORN_PORT=5000
 ENV BASE_DIR=/FriendsWeb
 ENV LOGS_DIR=/FriendsWeb/logs
+ENV HTML_DIR=/FriendsWeb/templates
 ENV GROUP=luckybot
 ENV USER=luckybot
 ENV GID=1000
@@ -24,6 +25,7 @@ RUN apk update \
         sudo \
         curl \
         vim \
+        coreutils \
     && echo "%wheel ALL=(ALL) ALL" | EDITOR='tee -a' visudo
 
 
@@ -48,45 +50,46 @@ RUN addgroup $USER wheel \
     && addgroup $USER netdev \
     && echo "$USER ALL=(ALL) ALL" | EDITOR='tee -a' visudo
 
+
+# < as the user >
 USER $USER
 
-
 # Make the base dir;
-# set up a venv;
-# touch an indocker flag-file;
-# and make the dir for the logs:
+# set up a venv:
 WORKDIR "$BASE_DIR"
 RUN chown "$USER:$GROUP" "$BASE_DIR" \
-    && python -m venv "$BASE_DIR/venv" \
-    && touch indocker \
-    && mkdir -p --mode=777 "$BASE_DIR/logs"
+    && python -m venv "$BASE_DIR/venv"
 
-ENV PATH="$BASE_DIR/venv/bin:$PATH"
+ENV PATH="$BASE_DIR/venv/bin:$BASE_DIR:$PATH"
 
 # Resolve dependencies
-COPY --chown="$USER:$GROUP" --chmod=444 requirements.txt ./
+COPY --chown="$USER:$GROUP" --chmod=764 Pipfile requirements.txt ./
 RUN pip install --no-cache -r requirements.txt
 
 
 # < working with files >
-COPY --chown="$USER:$GROUP" --chmod=444 Dockerfile manage.py  ./
-COPY --chown="$USER:$GROUP" --chmod=444 ./helpers  ./helpers
-COPY --chown="$USER:$GROUP" --chmod=444 ./templates  ./templates
-COPY --chown="$USER:$GROUP" --chmod=444 ./friends  ./friends
-COPY --chown="$USER:$GROUP" --chmod=444 ./tests  ./tests
+# Touch an indocker flag-file;
+# and make dirs for the logs and secrets:
+RUN touch indocker \
+    && mkdir --mode=777 "$BASE_DIR/logs" \
+    && mkdir "$BASE_DIR/secrets"
+
+COPY --chown="$USER:$GROUP" --chmod=764 \
+     Dockerfile docker-compose.yaml manage.py ./
+COPY --chown="$USER:$GROUP" --chmod=764 ./friends ./friends
+COPY --chown="$USER:$GROUP" --chmod=764 ./helpers ./helpers
+COPY --chown="$USER:$GROUP" --chmod=764 ./templates ./templates
+COPY --chown="$USER:$GROUP" --chmod=764 ./tests ./tests
 
 
-HEALTHCHECK --interval=120s \
-            --timeout=5s \
-            --retries=2 \
-            --start-period=6s \
-            CMD curl -f "http://127.0.0.1:5000/ping" || exit 1
+# Serving
+ENV GUNICORN_PORT=80
 
-# Entry into eternal work
+# Entry into the eternal work
 # ENTRYPOINT ["tail", "-f", "/dev/null"]
 
 ENTRYPOINT ["/FriendsWeb/venv/bin/python", "-OO", "-m"]
 CMD [ "gunicorn", \
       "friends.wsgi:app", \
       "-w", "2", \
-      "--bind", "[::]:5000" ]
+      "--bind", "0.0.0.0:80" ]
