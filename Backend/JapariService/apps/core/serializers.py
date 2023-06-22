@@ -1,34 +1,38 @@
 """JapariService - REST serializers."""
 from django.contrib.auth.models import User
 from rest_framework.serializers import (
-    ModelSerializer,
+    ModelSerializer, HyperlinkedModelSerializer,
     PrimaryKeyRelatedField, ReadOnlyField,
+    HyperlinkedRelatedField, HyperlinkedIdentityField,
 )
 
 from apps.core.models import ListEntry
 
 
-class UserSrz(ModelSerializer):
+class UserSrz(HyperlinkedModelSerializer):
     """Serializer for the User model."""
 
-    list_entries = PrimaryKeyRelatedField(
-        many=True, queryset=ListEntry.objects.all(),
-    )
+    list_entries = HyperlinkedRelatedField(view_name='core:entry-detail',
+                                           many=True, read_only=True)
+    url = HyperlinkedIdentityField(view_name='core:user-detail',
+                                   read_only=True)
 
     class Meta:
         """Meta settings."""
 
         model = User
-        fields = ('pk', 'username', 'list_entries')
+        fields = ('username', 'url', 'list_entries')
 
 
-class ListEntrySrz(ModelSerializer):
+class ListEntrySrz(HyperlinkedModelSerializer):
     """Serializer for the ListEntry model."""
 
     owner = ReadOnlyField(source='owner.username')
+    url = HyperlinkedIdentityField(view_name='core:entry-detail',
+                                   read_only=True)
 
     class Meta:
         """Meta settings."""
 
         model = ListEntry
-        fields = ('pk', 'entry_text', 'pub_date', 'owner')
+        fields = ('pk', 'entry_text', 'owner', 'url', 'pub_date')

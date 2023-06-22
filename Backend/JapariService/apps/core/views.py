@@ -9,6 +9,7 @@ from rest_framework.generics import (
     ListCreateAPIView, RetrieveUpdateDestroyAPIView,
     ListAPIView, RetrieveAPIView,
 )
+from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from apps.core.models import ListEntry
@@ -113,6 +114,23 @@ class EntryDetailView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
 
+class EntryViewSet(ModelViewSet):
+    """
+    APIv3 for the ListEntry model.
+
+    This viewset provides `list`, `create`, `retrieve`,
+    `update` and `destroy` actions.
+    """
+
+    queryset = ListEntry.objects.all()
+    serializer_class = ListEntrySrz
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+
+    def perform_create(self, serializer):
+        """Associate the entry with the user."""
+        serializer.save(owner=self.request.user)
+
+
 class UserListView(ListAPIView):
     """
     API for the Users model.
@@ -135,3 +153,14 @@ class UserDetailView(RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSrz
     permission_classes = [IsAuthenticatedOrReadOnly]
+
+
+class UserViewSet(ReadOnlyModelViewSet):
+    """
+    APIv2 for the Users model.
+
+    This viewset provides `list` and `retrieve` actions.
+    """
+
+    queryset = User.objects.all()
+    serializer_class = UserSrz
