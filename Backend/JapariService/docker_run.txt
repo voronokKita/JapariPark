@@ -14,11 +14,11 @@ DOCKER_BUILDKIT=1 \
 
 # Run
 docker run --detach \
-        -it \
-        --name JapariService \
-        --restart=on-failure:2 \
-        --mount type=bind,src="$(pwd)"/logs,dst=/JapariService/logs \
-        --publish 8000:80 \
-        --network japari_frontend \
-        --network-alias japari-service.rest \
-        japari_service
+            -it \
+            --name JapariService \
+            --restart=on-failure:2 \
+            --mount type=bind,src="$(pwd)"/logs,dst=/JapariService/logs \
+            --publish 8000:80 \
+            --network japari_frontend \
+            --network-alias japari-service.rest \
+            japari_service
