@@ -34,7 +34,6 @@ RUN apk update \
     && echo "%wheel ALL=(ALL) ALL" | EDITOR='tee -a' visudo \
     && echo "%BASE_GROUP ALL=(ALL) ALL" | EDITOR='tee -a' visudo
 
-
 # Set up a new user
 RUN adduser \
       --disabled-password \
@@ -67,13 +66,13 @@ RUN addgroup $USER wheel \
 # Make the base dir;
 # make dirs for the logs, secrets and configs:
 WORKDIR "$BASE_DIR"
-RUN chmod 777 "$BASE_DIR" \
-    && mkdir --mode=776 "$BASE_DIR/logs" \
-    && mkdir --mode=774 "$BASE_DIR/secrets" \
-    && mkdir --mode=774 "$BASE_DIR/configs"
+RUN mkdir --mode=664 "$BASE_DIR/logs" \
+    && mkdir --mode=444 "$BASE_DIR/configs" \
+    && chown "$USER:$BASE_GROUP" "$BASE_DIR/logs" \
+    && chown "$USER:$BASE_GROUP" "$BASE_DIR/configs"
 
-COPY --chmod=775 Dockerfile docker-compose.yaml ./
-COPY --chmod=775 ./tests ./tests
+COPY --chmod=444 Dockerfile docker-compose.yaml ./
+COPY --chmod=555 ./tests ./tests
 
 
 USER $USER
