@@ -4,7 +4,12 @@ docker network create -d overlay --attachable japari_data_net
 
 # Build
 # Context: the JapariDB base dir
-docker build --file Dockerfile --tag japari_db .
+DOCKER_BUILDKIT=1 \
+    docker build \
+            --secret id=japari_data_user_pass,src=./secrets/.docker-build.secret \
+            --file Dockerfile \
+            --tag japari_db \
+            .
 
 
 # Run

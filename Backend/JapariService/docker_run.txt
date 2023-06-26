@@ -6,10 +6,10 @@ docker network create -d overlay --attachable japari_frontend
 # Context: the JapariService base dir
 DOCKER_BUILDKIT=1 \
     docker build \
-        --secret id=japari_service_user_pass,src=./secrets/.docker-build.secret \
-        --file Dockerfile \
-        --tag japari_service \
-        .
+            --secret id=japari_service_user_pass,src=./secrets/.docker-build.secret \
+            --file Dockerfile \
+            --tag japari_service \
+            .
 
 
 # Run
