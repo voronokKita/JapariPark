@@ -1,6 +1,6 @@
 logs/
 secrets/
-pgdata/
+data/
 *.secret
 
 

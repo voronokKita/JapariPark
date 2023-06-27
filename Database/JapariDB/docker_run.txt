@@ -1,0 +1,22 @@
+# Networking
+docker network create -d overlay --attachable data_overlay
+
+
+# Build
+# Context: the JapariDB base dir
+DOCKER_BUILDKIT=1 \
+    docker build \
+            --secret id=japari_data_user_pass,src=./secrets/.docker-build.secret \
+            --file Dockerfile \
+            --tag japari_db \
+            .
+
+
+# Run
+docker run --detach \
+            --name JapariDB \
+            -e POSTGRES_PASSWORD="$(cat ./secrets/.postgres_pass.secret)" \
+            --network data_overlay \
+            --network-alias japari-db.api \
+            -v "$(pwd)/mnt-data":/var/lib/postgresql/data \
+            japari_db

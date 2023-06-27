@@ -9,11 +9,19 @@
 #      -- Friends app
 #      -- Accounts app
 #
+# * Database
+#   -- JapariDB
+#
 # `docker compose up --detach --build`
 name: japaripark
 
 
 networks:
+  data_overlay:
+    # aliases: japari-db.api
+    driver: overlay
+    attachable: true
+
   frontend_overlay:
     # aliases: japari-service.rest, friends-web.rest
     driver: overlay
@@ -24,9 +32,13 @@ networks:
 
 
 secrets:
+  japari_data_user_pass:
+    file: ./Database/JapariDB/secrets/.docker-build.secret
+  japari_data_postgres_pass:
+    file: ./Database/JapariDB/secrets/.postgres_pass.secret
+
   japari_service_django_secret:
     file: ./Backend/JapariService/secrets/.django.secret
-
   japari_service_user_pass:
     file: ./Backend/JapariService/secrets/.docker-build.secret
 
@@ -34,12 +46,67 @@ secrets:
     file: ./Frontend/FriendsWeb/secrets/.docker-build.secret
 
 
+configs:
+  japari_data_postgres_config:
+    file: ./Database/JapariDB/configs/configs
+
+
 services:
+  # JapariDB: a mono database
+  japari_db:
+    container_name: JapariDB
+    stdin_open: true
+    tty: true
+    build:
+      context: ./Database/JapariDB/
+      secrets:
+        - japari_data_user_pass
+    image: japari_db
+    volumes:
+      - type: bind
+        source: ./Database/JapariDB/logs
+        target: /JapariDB/logs
+    configs:
+      - source: japari_data_postgres_config
+        target: /JapariData/configs/dummy
+        uid: '1000'
+        gid: '70'
+        mode: 0444
+    secrets:
+      - source: japari_data_postgres_pass
+        target: /run/secrets/postgres_pass
+        uid: '1000'
+        gid: '70'
+        mode: 0440
+    environment:
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_pass
+    # ports:
+    #   - target: 5432
+    #     published: 5432
+    #     protocol: tcp
+    #     mode: host
+    networks:
+      data_overlay:
+        aliases:
+          - japari-db.api
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U luckybot -d japari_park_database \
+                           -h japari-db.api -p 5432 -t 5 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 2
+      start_period: 15s
+    restart: on-failure
+    stop_grace_period: 10s
+
   # JapariService: the main backend service
   japari_service:
     container_name: JapariService
     stdin_open: true
     tty: true
+    # depends_on:
+    #   japari_db:
+    #     condition: service_started
     build:
       context: ./Backend/JapariService/
       secrets:
@@ -106,6 +173,13 @@ services:
     container_name: FriendsWebNginx
     stdin_open: true
     tty: true
+    # depends_on:
+    #   friends_web_app:
+    #     condition: service_started
+    #   japari_service:
+    #     condition: service_started
+    #   japari_db:
+    #     condition: service_started
     build:
       context: ./Frontend/FriendsWeb/
       dockerfile: ./NGINX/Dockerfile
