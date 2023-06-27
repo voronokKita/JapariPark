@@ -1,0 +1,74 @@
+# Japari Park - pgAdmin
+#
+# `docker compose up --detach --build`
+#
+name: japaripark-pgadmin
+
+
+networks:
+  data_overlay:
+    driver: overlay
+    attachable: true
+
+
+secrets:
+  pgadmin_build_pass:
+    file: ./secrets/.docker-build.secret
+
+  pgadmin_user_pass:
+    file: ./secrets/.pgadmin_pass.secret
+
+
+configs:
+  pgadmin_config:
+    file: ./configs/configs
+
+
+services:
+  japari_pgadmin:
+    container_name: pgAdmin
+    stdin_open: true
+    tty: true
+    build:
+      context: .
+      secrets:
+        - pgadmin_build_pass
+    image: japari_pgadmin
+    volumes:
+      - type: bind
+        source: ./mnt-data/pgadata
+        target: /var/lib/pgadmin
+      - type: bind
+        source: ./mnt-logs
+        target: /JapariPGA/logs
+    configs:
+      - source: pgadmin_config
+        target: /JapariPGA/configs/dummy
+        uid: '5050'
+        gid: '5050'
+        mode: 440
+    secrets:
+      - source: pgadmin_user_pass
+        target: /run/secrets/pgadmin_user_pass
+        uid: '5050'
+        gid: '5050'
+        mode: 400
+    environment:
+      - PGADMIN_DEFAULT_PASSWORD_FILE=/run/secrets/pgadmin_user_pass
+    ports:
+      - target: 80
+        published: 5050
+        protocol: tcp
+        mode: host
+    networks:
+      data_overlay:
+        aliases:
+          - pgadmin.api
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://pgadmin.api/login || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 2
+      start_period: 20s
+    restart: on-failure
+    stop_grace_period: 10s

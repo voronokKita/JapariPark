@@ -1,0 +1,23 @@
+# Networking
+docker network create -d overlay --attachable data_overlay
+
+
+# Build
+# Context: the pgAdmin base dir
+DOCKER_BUILDKIT=1 \
+    docker build \
+            --secret id=pgadmin_user_pass,src=./secrets/.docker-build.secret \
+            --file Dockerfile \
+            --tag japari_pgadmin \
+            .
+
+
+# Run
+docker run --detach \
+            --name pgAdmin \
+            -e PGADMIN_DEFAULT_PASSWORD="$(cat ./secrets/.pgadmin_pass.secret)" \
+            -p 5050:80 \
+            --network data_overlay \
+            --network-alias pgadmin.api \
+            -v "$(pwd)/mnt-data/pgadata":/var/lib/pgadmin \
+            japari_pgadmin
