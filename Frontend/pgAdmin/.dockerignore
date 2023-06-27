@@ -1,8 +1,8 @@
+mnt-logs/
+mnt-data/
+pgadata/
 secrets/
 configs/
-mnt-logs/
-mnt-data/pgdata/
-pgdata/
 *.secret
 
 
