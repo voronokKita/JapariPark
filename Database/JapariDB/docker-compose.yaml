@@ -12,7 +12,7 @@ networks:
 
 
 secrets:
-  japari_data_user_pass:
+  japari_data_build_pass:
     file: ./secrets/.docker-build.secret
 
   japari_data_postgres_pass:
@@ -32,7 +32,7 @@ services:
     build:
       context: .
       secrets:
-        - japari_data_user_pass
+        - japari_data_build_pass
     image: japari_db
     volumes:
       - type: bind
@@ -55,11 +55,7 @@ services:
         mode: 400
     environment:
       - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_pass
-    # ports:
-    #   - target: 5432
-    #     published: 5432
-    #     protocol: tcp
-    #     mode: host
+    # ports: 5432:5432
     networks:
       data_overlay:
         aliases:

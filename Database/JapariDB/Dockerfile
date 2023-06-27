@@ -5,7 +5,7 @@ LABEL description="Japari Park mono database."
 LABEL author="github.com/voronokKita"
 LABEL logs="Mount /JapariData/logs to get them."
 LABEL building_secret="Needs BuildX or BuildKit on, like: \
-`$ MYSECRET=qwerty DOCKER_BUILDKIT=1 docker build --secret id=japari_data_user_pass,env=MYSECRET`"
+`$ MYSECRET=qwerty DOCKER_BUILDKIT=1 docker build --secret id=japari_data_build_pass,env=MYSECRET`"
 
 
 # << as root >>
@@ -16,17 +16,18 @@ ENV BASE_DIR=/JapariData
 ENV LOGS_DIR=/JapariData/logs
 ENV CONFIGS_DIR=/JapariData/configs
 
-ENV TOP_USER=postgres
+ENV BASE_USER=postgres
 ENV BASE_GROUP=postgres
+ENV GID=70
 ENV USER=luckybot
 ENV UID=1000
-ENV GID=70
 
-# <configs>
+
+# <Configs>
 ENV PGDATA=/var/lib/postgresql/data/pgdata
 ENV POSTGRES_USER=luckybot
 ENV POSTGRES_DB=japari_park_database
-# </configs>
+# </Configs>
 
 
 # Add some tools and sudo
@@ -49,7 +50,7 @@ RUN adduser \
       $USER
 
 # Setup user's password, requires BuildX or BuildKit
-RUN --mount=type=secret,id=japari_data_user_pass,target=/run/secrets/user_pass,required=true \
+RUN --mount=type=secret,id=japari_data_build_pass,target=/run/secrets/user_pass,required=true \
     echo "$USER:$(cat /run/secrets/user_pass)" | chpasswd
 
 # Add to the administrators group and to the sudoers
@@ -70,12 +71,10 @@ RUN mkdir -p /var/lib/postgresql/data \
     && chmod 775 /var/run/postgresql
 
 # Make the base dir and dirs for the logs and configs
-RUN mkdir --mode=775 "$BASE_DIR" \
-    && mkdir --mode=775 "$LOGS_DIR" \
-    && mkdir --mode=550 "$CONFIGS_DIR" \
-    && chown "$UID:$GID" "$BASE_DIR" \
-    && chown "$UID:$GID" "$LOGS_DIR" \
-    && chown "$UID:$GID" "$CONFIGS_DIR"
+RUN mkdir --mode=775 $BASE_DIR \
+    && mkdir --mode=775 $LOGS_DIR \
+    && mkdir --mode=550 $CONFIGS_DIR \
+    && chown "$UID:$GID" $BASE_DIR $LOGS_DIR $CONFIGS_DIR
 
 COPY --chown="$UID:$GID" --chmod=555 Dockerfile docker-compose.yaml requirements.txt ./
 COPY --chown="$UID:$GID" --chmod=555 ./tests ./tests

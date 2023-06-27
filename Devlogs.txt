@@ -2,6 +2,7 @@
 
 Настройки безопасности и прав доступа в JapariDB.
 Контейне с pgAdmin.
+Compose pgAdmin.
 
 
 # 06.26 mon
