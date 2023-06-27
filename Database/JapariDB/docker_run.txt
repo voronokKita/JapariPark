@@ -18,5 +18,5 @@ docker run --detach \
             -e POSTGRES_PASSWORD="$(cat ./secrets/.postgres_pass.secret)" \
             --network data_overlay \
             --network-alias japari-db.api \
-            -v "$(pwd)/data":/var/lib/postgresql/data \
+            -v "$(pwd)/mnt-data":/var/lib/postgresql/data \
             japari_db

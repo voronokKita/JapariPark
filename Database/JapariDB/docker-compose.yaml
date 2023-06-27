@@ -36,20 +36,23 @@ services:
     image: japari_db
     volumes:
       - type: bind
-        source: ./logs
+        source: ./mnt-data
+        target: /var/lib/postgresql/data
+      - type: bind
+        source: ./mnt-logs
         target: /JapariDB/logs
     configs:
       - source: japari_data_postgres_config
         target: /JapariData/configs/dummy
         uid: '1000'
         gid: '70'
-        mode: 0444
+        mode: 440
     secrets:
       - source: japari_data_postgres_pass
         target: /run/secrets/postgres_pass
         uid: '1000'
         gid: '70'
-        mode: 0440
+        mode: 400
     environment:
       - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_pass
     # ports:
@@ -67,6 +70,6 @@ services:
       interval: 30s
       timeout: 5s
       retries: 2
-      start_period: 15s
+      start_period: 20s
     restart: on-failure
     stop_grace_period: 10s

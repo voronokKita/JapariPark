@@ -1,24 +1,25 @@
 FROM postgres:15-alpine3.18
 
 LABEL author="github.com/voronokKita"
-LABEL description="Japari Park main database."
+LABEL description="Japari Park mono database."
 LABEL secrets="Needs BuildX or BuildKit on, like: \
 `$ MYSECRET=qwerty DOCKER_BUILDKIT=1 docker build --secret id=japari_data_user_pass,env=MYSECRET`"
 LABEL logs="Mount /JapariData/logs to get them."
 
 
-# < as root >
-# < working with the environment >
+# << as root >>
+# <Environment setup>
 EXPOSE 5432/tcp
 ENV POSTGRES_PORT=5432
 ENV BASE_DIR=/JapariData
 ENV LOGS_DIR=/JapariData/logs
 ENV CONFIGS_DIR=/JapariData/configs
 
-ENV BASE_USER=postgres
+ENV TOP_USER=postgres
 ENV BASE_GROUP=postgres
 ENV USER=luckybot
 ENV UID=1000
+ENV GID=70
 
 ENV PGDATA=/var/lib/postgresql/data/pgdata
 ENV POSTGRES_USER=luckybot
@@ -32,9 +33,10 @@ RUN apk update \
         vim \
         sudo \
     && echo "%wheel ALL=(ALL) ALL" | EDITOR='tee -a' visudo \
-    && echo "%BASE_GROUP ALL=(ALL) ALL" | EDITOR='tee -a' visudo
+    && echo "%postgres ALL=(ALL) ALL" | EDITOR='tee -a' visudo
 
-# Set up a new user
+
+# <User setup>
 RUN adduser \
       --disabled-password \
       --no-create-home \
@@ -47,32 +49,34 @@ RUN adduser \
 RUN --mount=type=secret,id=japari_data_user_pass,target=/run/secrets/user_pass,required=true \
     echo "$USER:$(cat /run/secrets/user_pass)" | chpasswd
 
-# Add to the administrators group;
-# add user to sudoers;
-# resolve the PGDATA dir;
-# resolve the Postgres var dir:
+# Add to the administrators group and to the sudoers
 RUN addgroup $USER wheel \
-    && echo "$USER ALL=(ALL) ALL" | EDITOR='tee -a' visudo \
-    \
-    && mkdir -p /var/lib/postgresql/data \
-    && chown "$USER:$BASE_GROUP" /var/lib/postgresql/data \
-    && chmod 774 /var/lib/postgresql/data \
+    && echo "$USER ALL=(ALL) ALL" | EDITOR='tee -a' visudo
+# </User setup>
+# </Environment setup>
+
+
+# <Files setup>
+# Resolve the PGDATA and the Postgres vars directories
+RUN mkdir -p /var/lib/postgresql/data \
+    && chown "$UID:$GID" /var/lib/postgresql/data \
+    && chmod 775 /var/lib/postgresql/data \
     \
     && mkdir -p /var/run/postgresql \
-    && chown "$USER:$BASE_GROUP" /var/run/postgresql \
+    && chown "$UID:$GID" /var/run/postgresql \
     && chmod 775 /var/run/postgresql
 
+# Make the base dir and dir for the logs
+RUN mkdir --mode=775 "$BASE_DIR" \
+    && mkdir --mode=775 "$BASE_DIR/logs" \
+    && chown "$UID:$GID" "$BASE_DIR" \
+    && chown "$UID:$GID" "$BASE_DIR/logs"
 
-# Make the base dir;
-# make dirs for the logs, secrets and configs:
-WORKDIR "$BASE_DIR"
-RUN mkdir --mode=664 "$BASE_DIR/logs" \
-    && mkdir --mode=444 "$BASE_DIR/configs" \
-    && chown "$USER:$BASE_GROUP" "$BASE_DIR/logs" \
-    && chown "$USER:$BASE_GROUP" "$BASE_DIR/configs"
-
-COPY --chmod=444 Dockerfile docker-compose.yaml ./
-COPY --chmod=555 ./tests ./tests
+COPY --chown="$UID:$GID" --chmod=555 Dockerfile docker-compose.yaml requirements.txt ./
+COPY --chown="$UID:$GID" --chmod=555 ./tests ./tests
+# </Files setup>
 
 
+# << as the user >>
 USER $USER
+WORKDIR "$BASE_DIR"
