@@ -1,11 +1,11 @@
 """Django's settings for JapariService."""
 from JapariService.pathfinder import BASE_DIR
 from JapariService.appsconf import APPS_CONF
-from helpers import istestrun, secret_key
+from helpers import secret_key
 
+# Context switch
+DEBUG = True
 
-DEBUG = istestrun.check()
-TESTSERVER_PORT = 8001
 
 SECRET_KEY = secret_key.getkey()
 
@@ -14,7 +14,6 @@ ALLOWED_HOSTS = [
     '[::1]',
     '127.0.0.1',
     'localhost',
-
     'japari-service.rest',
 ]
 INTERNAL_IPS = [
@@ -86,7 +85,6 @@ TEMPLATES = [
 
 
 # Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

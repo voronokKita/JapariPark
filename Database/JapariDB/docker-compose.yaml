@@ -19,11 +19,6 @@ secrets:
     file: ./secrets/.postgres_pass.secret
 
 
-configs:
-  japari_data_postgres_config:
-    file: ./configs/configs
-
-
 services:
   japari_db:
     container_name: JapariDB

@@ -52,8 +52,6 @@ class TestProjectResources(SimpleTestCase):
         BASE_DIR / 'JapariService',
         BASE_DIR / 'helpers',
         BASE_DIR / 'apps',
-        BASE_DIR / 'secrets',
-        BASE_DIR / 'logs',
 
         APPS_CONF.core['dir'],
         APPS_CONF.accounts['dir'],
