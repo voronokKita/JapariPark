@@ -83,4 +83,4 @@ COPY --chown="$UID:$GID" --chmod=555 ./tests ./tests
 
 # << as the user >>
 USER $USER
-WORKDIR "$BASE_DIR"
+WORKDIR $BASE_DIR

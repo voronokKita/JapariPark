@@ -19,11 +19,6 @@ secrets:
     file: ./secrets/.pgadmin_pass.secret
 
 
-configs:
-  pgadmin_config:
-    file: ./configs/configs
-
-
 services:
   japari_pgadmin:
     container_name: pgAdmin

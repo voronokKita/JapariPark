@@ -2,9 +2,7 @@
 from django.contrib import admin
 from django.urls import path, include
 
-from helpers import istestrun
-
-DEBUG = istestrun.check()
+from JapariService.settings import DEBUG
 
 
 urlpatterns = [

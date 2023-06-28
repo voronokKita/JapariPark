@@ -1,12 +1,13 @@
 # Networking
-docker network create -d overlay --attachable japari_frontend
+docker network create -d overlay --attachable data_overlay
+docker network create -d overlay --attachable frontend_overlay
 
 
 # Build
 # Context: the JapariService base dir
 DOCKER_BUILDKIT=1 \
     docker build \
-            --secret id=japari_service_user_pass,src=./secrets/.docker-build.secret \
+            --secret id=japari_service_build_pass,src=./secrets/.docker-build.secret \
             --file Dockerfile \
             --tag japari_service \
             .
@@ -16,9 +17,9 @@ DOCKER_BUILDKIT=1 \
 docker run --detach \
             -it \
             --name JapariService \
-            --restart=on-failure:2 \
-            --mount type=bind,src="$(pwd)"/logs,dst=/JapariService/logs \
+            --mount type=bind,src="$(pwd)"/mnt-logs,dst=/JapariService/logs \
+            --mount type=bind,src="$(pwd)"/mnt-data,dst=/JapariService/mnt-data \
             --publish 8000:80 \
-            --network japari_frontend \
+            --network frontend_overlay \
             --network-alias japari-service.rest \
             japari_service

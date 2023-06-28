@@ -1,11 +1,13 @@
 """Django's settings for JapariService."""
 from JapariService.pathfinder import BASE_DIR
+
 from JapariService.appsconf import APPS_CONF
-from helpers import istestrun, secret_key
+from JapariService.dbconf import DB_CONF
+from JapariService.helpers import secret_key, is_db_online
 
+# Context switch
+DEBUG = True
 
-DEBUG = istestrun.check()
-TESTSERVER_PORT = 8001
 
 SECRET_KEY = secret_key.getkey()
 
@@ -14,7 +16,6 @@ ALLOWED_HOSTS = [
     '[::1]',
     '127.0.0.1',
     'localhost',
-
     'japari-service.rest',
 ]
 INTERNAL_IPS = [
@@ -86,13 +87,28 @@ TEMPLATES = [
 
 
 # Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    },
-}
+if is_db_online.check():
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': DB_CONF.dbname,
+            'USER': DB_CONF.user,
+            'PASSWORD': DB_CONF.password,
+            'HOST': DB_CONF.host,
+            'PORT': DB_CONF.port,
+            'ATOMIC_REQUESTS': True,
+            'TEST': {
+                'NAME': 'japari_service_tests',
+            },
+        },
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'mnt-data' / 'db.sqlite3',
+        },
+    }
 
 
 # Password validation

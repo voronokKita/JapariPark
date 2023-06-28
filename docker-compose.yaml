@@ -3,24 +3,24 @@
 # * Frontend
 #   -- FriendsWeb p:8080
 #   -- AccountsWeb p:4242
-#   -- pgAdmin p:5050
+#   -- pgAdmin p:5050 user:admin@mail.com
 #
 # * Backend
-#   -- JapariService
+#   -- JapariService p:8000 admin:admin
 #      -- core app
 #      -- Friends app
 #      -- Accounts app
 #
 # * Database
-#   -- JapariDB
+#   -- JapariDB user:luckybot
 #
 # `docker compose up --detach --build`
-name: japaripark
+name: japari-park
 
 
 networks:
   data_overlay:
-    # namespace: japari-db.api, pgadmin.api
+    # namespace: japari-db.api, pgadmin.api, japari-service.rest
     driver: overlay
     attachable: true
 
@@ -39,10 +39,12 @@ secrets:
   japari_data_postgres_pass:
     file: ./Database/JapariDB/secrets/.postgres_pass.secret
 
-  japari_service_user_pass:
+  japari_service_build_pass:
     file: ./Backend/JapariService/secrets/.docker-build.secret
   japari_service_django_secret:
     file: ./Backend/JapariService/secrets/.django.secret
+  japari_service_postgres_pass:
+    file: ./Backend/JapariService/secrets/.postgres_pass.secret
 
   friends_web_user_pass:
     file: ./Frontend/FriendsWeb/secrets/.docker-build.secret
@@ -51,14 +53,6 @@ secrets:
     file: ./Frontend/pgAdmin/secrets/.docker-build.secret
   pgadmin_user_pass:
     file: ./Frontend/pgAdmin/secrets/.pgadmin_pass.secret
-
-
-configs:
-  japari_data_postgres_config:
-    file: ./Database/JapariDB/configs/configs
-
-  pgadmin_config:
-    file: ./Frontend/pgAdmin/configs/configs
 
 
 services:
@@ -80,12 +74,6 @@ services:
       - type: bind
         source: ./Database/JapariDB/mnt-logs
         target: /JapariDB/logs
-    configs:
-      - source: japari_data_postgres_config
-        target: /JapariData/configs/dummy
-        uid: '1000'
-        gid: '70'
-        mode: 440
     secrets:
       - source: japari_data_postgres_pass
         target: /run/secrets/postgres_pass
@@ -115,33 +103,49 @@ services:
     container_name: JapariService
     stdin_open: true
     tty: true
-    # depends_on:
-    #   japari_db:
-    #     condition: service_started
+    depends_on:
+      japari_db:
+        condition: service_healthy
     build:
       context: ./Backend/JapariService/
       secrets:
-        - japari_service_user_pass
+        - japari_service_build_pass
     image: japari_service
     volumes:
       - type: bind
-        source: ./Backend/JapariService/logs
+        source: ./Backend/JapariService/mnt-logs
         target: /JapariService/logs
+      - type: bind
+        source: ./Backend/JapariService/mnt-data
+        target: /JapariService/mnt-data
     secrets:
       - source: japari_service_django_secret
-        target: /JapariService/secrets/.django.secret
+        target: /run/secrets/django_secret
         uid: '1000'
         gid: '1000'
-        mode: 0440
-    # ports: 8000:80
+        mode: 400
+      - source: japari_service_postgres_pass
+        target: /run/secrets/postgres_pass
+        uid: '1000'
+        gid: '1000'
+        mode: 400
+    ports:
+      - target: 80
+        published: 8000
+        protocol: tcp
+        mode: host
     networks:
+      data_overlay:
+        priority: 1
+        aliases:
+          - japari-service.rest
       frontend_overlay:
         priority: 0
         aliases:
           - japari-service.rest
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://japari-service.rest/ping || exit 1"]
-      interval: 3m
+      interval: 30s
       timeout: 5s
       retries: 2
       start_period: 10s
@@ -227,9 +231,9 @@ services:
     container_name: pgAdmin
     stdin_open: true
     tty: true
-    # depends_on:
-    #   japari_db:
-    #     condition: service_started
+    depends_on:
+      japari_db:
+        condition: service_started
     build:
       context: ./Frontend/pgAdmin/
       secrets:
@@ -242,12 +246,6 @@ services:
       - type: bind
         source: ./Frontend/pgAdmin/mnt-logs
         target: /JapariPGA/logs
-    configs:
-      - source: pgadmin_config
-        target: /JapariPGA/configs/dummy
-        uid: '5050'
-        gid: '5050'
-        mode: 440
     secrets:
       - source: pgadmin_user_pass
         target: /run/secrets/pgadmin_user_pass

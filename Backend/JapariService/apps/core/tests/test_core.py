@@ -50,17 +50,16 @@ class TestProjectResources(SimpleTestCase):
 
         BASE_DIR / 'manage.py',
         BASE_DIR / 'JapariService',
-        BASE_DIR / 'helpers',
         BASE_DIR / 'apps',
-        BASE_DIR / 'secrets',
-        BASE_DIR / 'logs',
 
         APPS_CONF.core['dir'],
         APPS_CONF.accounts['dir'],
         APPS_CONF.friends['dir'],
 
+        SETTINGS_DIR / 'helpers',
         SETTINGS_DIR / 'pathfinder.py',
         SETTINGS_DIR / 'appsconf.py',
+        SETTINGS_DIR / 'dbconf.py',
         SETTINGS_DIR / 'settings.py',
         SETTINGS_DIR / 'urls.py',
         SETTINGS_DIR / 'wsgi.py',
