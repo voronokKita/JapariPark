@@ -7,7 +7,6 @@ in one of the arguments.
 """
 import sys
 
-
 TESTING = any((True for arg in sys.argv if 'test' in arg))
 
 

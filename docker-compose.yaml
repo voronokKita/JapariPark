@@ -3,16 +3,16 @@
 # * Frontend
 #   -- FriendsWeb p:8080
 #   -- AccountsWeb p:4242
-#   -- pgAdmin p:5050
+#   -- pgAdmin p:5050 user:admin@mail.com
 #
 # * Backend
-#   -- JapariService p:8000
+#   -- JapariService p:8000 admin:admin
 #      -- core app
 #      -- Friends app
 #      -- Accounts app
 #
 # * Database
-#   -- JapariDB
+#   -- JapariDB user:luckybot
 #
 # `docker compose up --detach --build`
 name: japari-park
@@ -43,6 +43,8 @@ secrets:
     file: ./Backend/JapariService/secrets/.docker-build.secret
   japari_service_django_secret:
     file: ./Backend/JapariService/secrets/.django.secret
+  japari_service_postgres_pass:
+    file: ./Backend/JapariService/secrets/.postgres_pass.secret
 
   friends_web_user_pass:
     file: ./Frontend/FriendsWeb/secrets/.docker-build.secret
@@ -72,12 +74,6 @@ services:
       - type: bind
         source: ./Database/JapariDB/mnt-logs
         target: /JapariDB/logs
-    configs:
-      - source: japari_data_postgres_config
-        target: /JapariData/configs/dummy
-        uid: '1000'
-        gid: '70'
-        mode: 440
     secrets:
       - source: japari_data_postgres_pass
         target: /run/secrets/postgres_pass
@@ -107,9 +103,9 @@ services:
     container_name: JapariService
     stdin_open: true
     tty: true
-    # depends_on:
-    #   japari_db:
-    #     condition: service_started
+    depends_on:
+      japari_db:
+        condition: service_healthy
     build:
       context: ./Backend/JapariService/
       secrets:
@@ -119,9 +115,17 @@ services:
       - type: bind
         source: ./Backend/JapariService/mnt-logs
         target: /JapariService/logs
+      - type: bind
+        source: ./Backend/JapariService/mnt-data
+        target: /JapariService/mnt-data
     secrets:
       - source: japari_service_django_secret
         target: /run/secrets/django_secret
+        uid: '1000'
+        gid: '1000'
+        mode: 400
+      - source: japari_service_postgres_pass
+        target: /run/secrets/postgres_pass
         uid: '1000'
         gid: '1000'
         mode: 400
@@ -227,9 +231,9 @@ services:
     container_name: pgAdmin
     stdin_open: true
     tty: true
-    # depends_on:
-    #   japari_db:
-    #     condition: service_started
+    depends_on:
+      japari_db:
+        condition: service_started
     build:
       context: ./Frontend/pgAdmin/
       secrets:
@@ -242,12 +246,6 @@ services:
       - type: bind
         source: ./Frontend/pgAdmin/mnt-logs
         target: /JapariPGA/logs
-    configs:
-      - source: pgadmin_config
-        target: /JapariPGA/configs/dummy
-        uid: '5050'
-        gid: '5050'
-        mode: 440
     secrets:
       - source: pgadmin_user_pass
         target: /run/secrets/pgadmin_user_pass

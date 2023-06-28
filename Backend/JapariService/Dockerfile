@@ -15,6 +15,7 @@ ENV DAPHNE_PORT=80
 ENV BASE_DIR=/JapariService
 ENV LOGS_DIR=/JapariService/logs
 ENV CONFIGS_DIR=/JapariService/configs
+ENV LOCAL_DATA=/JapariService/mnt-data
 
 ENV GROUP=luckybot
 ENV USER=luckybot
@@ -54,12 +55,13 @@ RUN addgroup $USER wheel \
 
 
 # <Files setup>
-# Make the base dir and dirs for the logs and configs
+# Make the base dir and dirs for the logs, configs and data
 RUN mkdir --mode=775 $BASE_DIR \
     && mkdir --mode=775 $LOGS_DIR \
     && mkdir --mode=550 $CONFIGS_DIR \
-    && chown "$UID:$GID" $BASE_DIR $LOGS_DIR $CONFIGS_DIR \
-    && touch indocker
+    && mkdir --mode=775 $LOCAL_DATA \
+    && chown "$UID:$GID" $BASE_DIR $LOGS_DIR $CONFIGS_DIR $LOCAL_DATA \
+    && touch "$BASE_DIR/indocker"
 
 # << as the user >>
 USER $USER
@@ -75,12 +77,14 @@ RUN pip install --no-cache -r requirements.txt
 COPY --chown="$USER:$GROUP" --chmod=775 \
      Dockerfile docker-compose.yaml pytest.ini manage.py ./
 COPY --chown="$USER:$GROUP" --chmod=775 JapariService/ ./JapariService
-COPY --chown="$USER:$GROUP" --chmod=775 helpers/ ./helpers
 COPY --chown="$USER:$GROUP" --chmod=775 apps/ ./apps
 # </Files setup>
 
 
 # << Serving >>
+# Entry into the eternal work
+# ENTRYPOINT ["tail", "-f", "/dev/null"]
+
 ENTRYPOINT ["/JapariService/venv/bin/python", "-OO", "-m"]
 CMD [ "daphne", \
       "--root-path=/JapariService", \

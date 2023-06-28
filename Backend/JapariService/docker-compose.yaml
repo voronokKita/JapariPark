@@ -22,6 +22,9 @@ secrets:
   japari_service_django_secret:
     file: ./secrets/.django.secret
 
+  japari_service_postgres_pass:
+    file: ./secrets/.postgres_pass.secret
+
 
 services:
   japari_service:
@@ -37,9 +40,17 @@ services:
       - type: bind
         source: ./mnt-logs
         target: /JapariService/logs
+      - type: bind
+        source: ./mnt-data
+        target: /JapariService/mnt-data
     secrets:
       - source: japari_service_django_secret
         target: /run/secrets/django_secret
+        uid: '1000'
+        gid: '1000'
+        mode: 400
+      - source: japari_service_postgres_pass
+        target: /run/secrets/postgres_pass
         uid: '1000'
         gid: '1000'
         mode: 400

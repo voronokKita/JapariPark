@@ -1,14 +1,15 @@
 """Resolves Django's secret key."""
 import sys
 import secrets
-from pathlib import Path
 
-SECRET = Path('/run/secrets/django_secret').resolve()
+from JapariService.pathfinder import SECRETS_DIR
+
+SECRET = SECRETS_DIR / 'django_secret'
 
 
 def getkey() -> str:
     """
-    Must get django secret key.
+    Must get django's secret key.
 
     If file not found - generate a random token.
 

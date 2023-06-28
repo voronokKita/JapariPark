@@ -18,6 +18,7 @@ docker run --detach \
             -it \
             --name JapariService \
             --mount type=bind,src="$(pwd)"/mnt-logs,dst=/JapariService/logs \
+            --mount type=bind,src="$(pwd)"/mnt-data,dst=/JapariService/mnt-data \
             --publish 8000:80 \
             --network frontend_overlay \
             --network-alias japari-service.rest \
