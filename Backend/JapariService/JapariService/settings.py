@@ -89,7 +89,7 @@ TEMPLATES = [
 # Database
 if is_db_online.check():
     DATABASES = {
-        'default': {
+        'japari_park_database': {
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': DB_CONF.dbname,
             'USER': DB_CONF.user,

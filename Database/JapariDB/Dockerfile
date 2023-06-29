@@ -22,11 +22,10 @@ ENV GID=70
 ENV USER=luckybot
 ENV UID=1000
 
-
 # <Configs>
 ENV PGDATA=/var/lib/postgresql/data/pgdata
-ENV POSTGRES_USER=luckybot
-ENV POSTGRES_DB=japari_park_database
+ENV POSTGRES_USER=honeybot
+ENV POSTGRES_DB=japari_park_default
 # </Configs>
 
 
@@ -78,6 +77,7 @@ RUN mkdir --mode=775 $BASE_DIR \
 
 COPY --chown="$UID:$GID" --chmod=555 Dockerfile docker-compose.yaml requirements.txt ./
 COPY --chown="$UID:$GID" --chmod=555 ./tests ./tests
+COPY --chown="$UID:$GID" --chmod=555 ./initdb /docker-entrypoint-initdb.d
 # </Files setup>
 
 

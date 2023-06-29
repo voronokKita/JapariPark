@@ -1,6 +1,7 @@
 GithubWiki/
 pgdata/
 pgadata/
+!mnt-data/
 *.secret
 
 

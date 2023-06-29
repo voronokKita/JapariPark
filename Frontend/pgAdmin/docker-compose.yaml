@@ -15,7 +15,7 @@ secrets:
   pgadmin_build_pass:
     file: ./secrets/.docker-build.secret
 
-  pgadmin_user_pass:
+  pgadmin_pass:
     file: ./secrets/.pgadmin_pass.secret
 
 
@@ -36,20 +36,14 @@ services:
       - type: bind
         source: ./mnt-logs
         target: /JapariPGA/logs
-    configs:
-      - source: pgadmin_config
-        target: /JapariPGA/configs/dummy
-        uid: '5050'
-        gid: '5050'
-        mode: 440
     secrets:
-      - source: pgadmin_user_pass
-        target: /run/secrets/pgadmin_user_pass
+      - source: pgadmin_pass
+        target: /run/secrets/pgadmin_pass
         uid: '5050'
         gid: '5050'
         mode: 400
     environment:
-      - PGADMIN_DEFAULT_PASSWORD_FILE=/run/secrets/pgadmin_user_pass
+      - PGADMIN_DEFAULT_PASSWORD_FILE=/run/secrets/pgadmin_pass
     ports:
       - target: 80
         published: 5050
@@ -60,7 +54,7 @@ services:
         aliases:
           - pgadmin.api
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://pgadmin.api/login || exit 1"]
+      test: ["CMD-SHELL", "curl -fs http://pgadmin.api/login -o /dev/null || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 2

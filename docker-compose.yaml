@@ -3,16 +3,16 @@
 # * Frontend
 #   -- FriendsWeb p:8080
 #   -- AccountsWeb p:4242
-#   -- pgAdmin p:5050 user:admin@mail.com
+#   -- pgAdmin p:5050 user:admin@mail.net
 #
 # * Backend
-#   -- JapariService p:8000 admin:admin
+#   -- JapariService p:8000
 #      -- core app
 #      -- Friends app
 #      -- Accounts app
 #
 # * Database
-#   -- JapariDB user:luckybot
+#   -- JapariDB superuser:honeybot
 #
 # `docker compose up --detach --build`
 name: japari-park
@@ -36,8 +36,12 @@ networks:
 secrets:
   japari_data_build_pass:
     file: ./Database/JapariDB/secrets/.docker-build.secret
-  japari_data_postgres_pass:
-    file: ./Database/JapariDB/secrets/.postgres_pass.secret
+  japari_data_superuser_pass:
+    file: ./Database/JapariDB/secrets/.superuser_pass.secret
+  japari_data_admin_pass:
+    file: ./Database/JapariDB/secrets/.admin_pass.secret
+  japari_data_jservice_pass:
+    file: ./Database/JapariDB/secrets/.japari_service_pass.secret
 
   japari_service_build_pass:
     file: ./Backend/JapariService/secrets/.docker-build.secret
@@ -51,7 +55,7 @@ secrets:
 
   pgadmin_build_pass:
     file: ./Frontend/pgAdmin/secrets/.docker-build.secret
-  pgadmin_user_pass:
+  pgadmin_pass:
     file: ./Frontend/pgAdmin/secrets/.pgadmin_pass.secret
 
 
@@ -75,20 +79,30 @@ services:
         source: ./Database/JapariDB/mnt-logs
         target: /JapariDB/logs
     secrets:
-      - source: japari_data_postgres_pass
-        target: /run/secrets/postgres_pass
+      - source: japari_data_superuser_pass
+        target: /run/secrets/superuser_pass
+        uid: '1000'
+        gid: '70'
+        mode: 400
+      - source: japari_data_admin_pass
+        target: /run/secrets/admin_pass
+        uid: '1000'
+        gid: '70'
+        mode: 400
+      - source: japari_data_jservice_pass
+        target: /run/secrets/jservice_pass
         uid: '1000'
         gid: '70'
         mode: 400
     environment:
-      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_pass
+      - POSTGRES_PASSWORD_FILE=/run/secrets/superuser_pass
     # ports: 5432:5432
     networks:
       data_overlay:
         aliases:
           - japari-db.api
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U luckybot -d japari_park_database \
+      test: ["CMD-SHELL", "pg_isready -U honeybot -d japari_park_default \
                            -h japari-db.api -p 5432 -t 5 || exit 1"]
       interval: 30s
       timeout: 5s
@@ -144,7 +158,7 @@ services:
         aliases:
           - japari-service.rest
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://japari-service.rest/ping || exit 1"]
+      test: ["CMD-SHELL", "curl -fs http://japari-service.rest/ping -o /dev/null || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 2
@@ -173,7 +187,7 @@ services:
         aliases:
           - friends-web.app
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://frinds-web.app/ping || exit 1"]
+      test: ["CMD-SHELL", "curl -fs http://frinds-web.app/ping -o /dev/null || exit 1"]
       interval: 3m
       timeout: 5s
       retries: 2
@@ -218,7 +232,7 @@ services:
         aliases:
           - friends-web.rest
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://friends-web.rest/proxy/ping/ || exit 1"]
+      test: ["CMD-SHELL", "curl -fs http://friends-web.rest/proxy/ping/ -o /dev/null || exit 1"]
       interval: 3m
       timeout: 5s
       retries: 2
@@ -231,9 +245,6 @@ services:
     container_name: pgAdmin
     stdin_open: true
     tty: true
-    depends_on:
-      japari_db:
-        condition: service_started
     build:
       context: ./Frontend/pgAdmin/
       secrets:
@@ -247,13 +258,13 @@ services:
         source: ./Frontend/pgAdmin/mnt-logs
         target: /JapariPGA/logs
     secrets:
-      - source: pgadmin_user_pass
-        target: /run/secrets/pgadmin_user_pass
+      - source: pgadmin_pass
+        target: /run/secrets/pgadmin_pass
         uid: '5050'
         gid: '5050'
         mode: 400
     environment:
-      - PGADMIN_DEFAULT_PASSWORD_FILE=/run/secrets/pgadmin_user_pass
+      - PGADMIN_DEFAULT_PASSWORD_FILE=/run/secrets/pgadmin_pass
     ports:
       - target: 80
         published: 5050
@@ -264,7 +275,7 @@ services:
         aliases:
           - pgadmin.api
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://pgadmin.api/login || exit 1"]
+      test: ["CMD-SHELL", "curl -fs http://pgadmin.api/login -o /dev/null || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 2
