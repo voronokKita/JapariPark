@@ -1,5 +1,4 @@
-# Mono database of Japari Park
-# PostgreSQL
+# A monolithic database system of Japari Park - PostgreSQL
 # `docker compose up --detach --build`
 #
 name: japaripark-database
@@ -15,8 +14,19 @@ secrets:
   japari_data_build_pass:
     file: ./secrets/.docker-build.secret
 
-  japari_data_postgres_pass:
-    file: ./secrets/.postgres_pass.secret
+  japari_data_superuser_pass:
+    file: ./secrets/.superuser_pass.secret
+
+  japari_data_admin_pass:
+    file: ./secrets/.admin_pass.secret
+
+  japari_data_jservice_pass:
+    file: ./secrets/.japari_service_pass.secret
+
+
+configs:
+  japari_data_conf:
+    file: ./configs/postgresql.conf
 
 
 services:
@@ -36,27 +46,38 @@ services:
       - type: bind
         source: ./mnt-logs
         target: /JapariDB/logs
-    configs:
-      - source: japari_data_postgres_config
-        target: /JapariData/configs/dummy
-        uid: '1000'
-        gid: '70'
-        mode: 440
     secrets:
-      - source: japari_data_postgres_pass
-        target: /run/secrets/postgres_pass
+      - source: japari_data_superuser_pass
+        target: /run/secrets/superuser_pass
         uid: '1000'
         gid: '70'
-        mode: 400
+        mode: 0400
+      - source: japari_data_admin_pass
+        target: /run/secrets/admin_pass
+        uid: '1000'
+        gid: '70'
+        mode: 0400
+      - source: japari_data_jservice_pass
+        target: /run/secrets/jservice_pass
+        uid: '1000'
+        gid: '70'
+        mode: 0400
+    configs:
+      - source: japari_data_conf
+        target: /JapariDB/configs/postgresql.conf
+        uid: '1000'
+        gid: '70'
+        mode: 0440
     environment:
-      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_pass
+      - POSTGRES_PASSWORD_FILE=/run/secrets/superuser_pass
+    command: ["postgres", "-c", "config_file=/JapariDB/configs/postgresql.conf"]
     # ports: 5432:5432
     networks:
       data_overlay:
         aliases:
           - japari-db.api
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U luckybot -d japari_park_database \
+      test: ["CMD-SHELL", "pg_isready -U honeybot -d japari_park_default \
                            -h japari-db.api -p 5432 -t 5 || exit 1"]
       interval: 30s
       timeout: 5s

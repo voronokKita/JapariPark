@@ -48,12 +48,12 @@ services:
         target: /run/secrets/django_secret
         uid: '1000'
         gid: '1000'
-        mode: 400
+        mode: 0400
       - source: japari_service_postgres_pass
         target: /run/secrets/postgres_pass
         uid: '1000'
         gid: '1000'
-        mode: 400
+        mode: 0400
     ports:
       - target: 80
         published: 8000
@@ -69,7 +69,7 @@ services:
         aliases:
           - japari-service.rest
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://japari-service.rest/ping || exit 1"]
+      test: ["CMD-SHELL", "curl -fs http://japari-service.rest/ping -o /dev/null || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 2

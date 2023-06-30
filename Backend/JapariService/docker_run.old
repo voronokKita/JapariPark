@@ -1,3 +1,5 @@
+# IS DEPRECATED
+
 # Networking
 docker network create -d overlay --attachable data_overlay
 docker network create -d overlay --attachable frontend_overlay

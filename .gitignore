@@ -1,7 +1,14 @@
 GithubWiki/
 pgdata/
 pgadata/
+!data/
+!mnt-data/
+**/mnt-logs/*.json
 *.secret
+japari_park_default.sqlite3
+japari_park_accounts.sqlite3
+japari_friends.sqlite3
+japari_friends_posts.sqlite3
 
 
 ### Sphinx ###

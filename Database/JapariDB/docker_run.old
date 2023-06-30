@@ -1,3 +1,5 @@
+# IS DEPRECATED
+
 # Networking
 docker network create -d overlay --attachable data_overlay
 
@@ -15,7 +17,7 @@ DOCKER_BUILDKIT=1 \
 # Run
 docker run --detach \
             --name JapariDB \
-            -e POSTGRES_PASSWORD="$(cat ./secrets/.postgres_pass.secret)" \
+            -e POSTGRES_PASSWORD="$(cat ./secrets/.superuser_pass.secret)" \
             --network data_overlay \
             --network-alias japari-db.api \
             -v "$(pwd)/mnt-data":/var/lib/postgresql/data \

@@ -26,10 +26,10 @@ ENV BASE_GROUP=pgadmin
 ENV GID=5050
 
 # <Configs>
-ENV PGADMIN_DEFAULT_EMAIL="admin@mail.com"
+ENV PGADMIN_DEFAULT_EMAIL="admin@mail.net"
 ENV PGADMIN_LISTEN_ADDRESS=0.0.0.0
 ENV PGADMIN_LISTEN_PORT=80
-ENV GUNICORN_THREADS=2
+ENV GUNICORN_THREADS=1
 # </Configs>
 
 
@@ -38,14 +38,6 @@ USER root
 
 # Add some tools
 RUN apk update && apk add --no-cache curl vim
-
-# Setup user's password, requires BuildX or BuildKit
-# RUN --mount=type=secret,id=pgadmin_user_pass,target=/run/secrets/user_pass,required=true \
-#     echo "$BASE_USER:$(cat /run/secrets/user_pass)" | chpasswd
-
-# Add to the administrators group and to the sudoers
-# RUN addgroup $BASE_USER wheel \
-#     && echo "$BASE_USER ALL=(ALL) ALL" | EDITOR='tee -a' visudo
 # </Environment setup>
 
 
