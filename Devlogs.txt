@@ -1,6 +1,7 @@
 # 06.30 fri
 
-Успешно соединил JapariService с JapariDB в роли japari_service
+Успешно соединил JapariService с JapariDB в роли japari_service.
+JapariDB configs and logging.
 
 
 # 06.29 thu

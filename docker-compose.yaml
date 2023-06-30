@@ -59,6 +59,11 @@ secrets:
     file: ./Frontend/pgAdmin/secrets/.pgadmin_pass.secret
 
 
+configs:
+  japari_data_conf:
+    file: ./Database/JapariDB/configs/postgresql.conf
+
+
 services:
   # <<<Database layer>>>
   # JapariDB: a mono database
@@ -83,19 +88,26 @@ services:
         target: /run/secrets/superuser_pass
         uid: '1000'
         gid: '70'
-        mode: 400
+        mode: 0400
       - source: japari_data_admin_pass
         target: /run/secrets/admin_pass
         uid: '1000'
         gid: '70'
-        mode: 400
+        mode: 0400
       - source: japari_data_jservice_pass
         target: /run/secrets/jservice_pass
         uid: '1000'
         gid: '70'
-        mode: 400
+        mode: 0400
+    configs:
+      - source: japari_data_conf
+        target: /JapariDB/configs/postgresql.conf
+        uid: '1000'
+        gid: '70'
+        mode: 0440
     environment:
       - POSTGRES_PASSWORD_FILE=/run/secrets/superuser_pass
+    command: ["postgres", "-c", "config_file=/JapariDB/configs/postgresql.conf"]
     # ports: 5432:5432
     networks:
       data_overlay:
@@ -137,12 +149,12 @@ services:
         target: /run/secrets/django_secret
         uid: '1000'
         gid: '1000'
-        mode: 400
+        mode: 0400
       - source: japari_service_postgres_pass
         target: /run/secrets/postgres_pass
         uid: '1000'
         gid: '1000'
-        mode: 400
+        mode: 0400
     ports:
       - target: 80
         published: 8000
@@ -262,7 +274,7 @@ services:
         target: /run/secrets/pgadmin_pass
         uid: '5050'
         gid: '5050'
-        mode: 400
+        mode: 0400
     environment:
       - PGADMIN_DEFAULT_PASSWORD_FILE=/run/secrets/pgadmin_pass
     ports:

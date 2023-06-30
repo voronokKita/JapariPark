@@ -3,7 +3,7 @@ FROM postgres:15-alpine3.18
 LABEL name="JapariDB"
 LABEL description="Japari Park mono database."
 LABEL author="github.com/voronokKita"
-LABEL logs="Mount /JapariData/logs to get them."
+LABEL logs="Mount /JapariDB/logs to get them."
 LABEL building_secret="Needs BuildX or BuildKit on, like: \
 `$ MYSECRET=qwerty DOCKER_BUILDKIT=1 docker build --secret id=japari_data_build_pass,env=MYSECRET`"
 
@@ -12,9 +12,9 @@ LABEL building_secret="Needs BuildX or BuildKit on, like: \
 # <Environment setup>
 EXPOSE 5432
 ENV POSTGRES_PORT=5432
-ENV BASE_DIR=/JapariData
-ENV LOGS_DIR=/JapariData/logs
-ENV CONFIGS_DIR=/JapariData/configs
+ENV BASE_DIR=/JapariDB
+ENV LOGS_DIR=/JapariDB/logs
+ENV CONFIGS_DIR=/JapariDB/configs
 
 ENV BASE_USER=postgres
 ENV BASE_GROUP=postgres
@@ -60,7 +60,7 @@ RUN addgroup $USER wheel \
 
 
 # <Files setup>
-# Resolve the PGDATA and the Postgres vars directories
+# Resolve the PGDATA, configs and the Postgres vars directories
 RUN mkdir -p /var/lib/postgresql/data \
     && chown "$UID:$GID" /var/lib/postgresql/data \
     && chmod 775 /var/lib/postgresql/data \
@@ -72,7 +72,7 @@ RUN mkdir -p /var/lib/postgresql/data \
 # Make the base dir and dirs for the logs and configs
 RUN mkdir --mode=775 $BASE_DIR \
     && mkdir --mode=775 $LOGS_DIR \
-    && mkdir --mode=550 $CONFIGS_DIR \
+    && mkdir --mode=775 $CONFIGS_DIR \
     && chown "$UID:$GID" $BASE_DIR $LOGS_DIR $CONFIGS_DIR
 
 COPY --chown="$UID:$GID" --chmod=555 Dockerfile docker-compose.yaml requirements.txt ./

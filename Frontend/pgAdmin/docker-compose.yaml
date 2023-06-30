@@ -41,7 +41,7 @@ services:
         target: /run/secrets/pgadmin_pass
         uid: '5050'
         gid: '5050'
-        mode: 400
+        mode: 0400
     environment:
       - PGADMIN_DEFAULT_PASSWORD_FILE=/run/secrets/pgadmin_pass
     ports:

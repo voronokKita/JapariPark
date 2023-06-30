@@ -48,12 +48,12 @@ services:
         target: /run/secrets/django_secret
         uid: '1000'
         gid: '1000'
-        mode: 400
+        mode: 0400
       - source: japari_service_postgres_pass
         target: /run/secrets/postgres_pass
         uid: '1000'
         gid: '1000'
-        mode: 400
+        mode: 0400
     ports:
       - target: 80
         published: 8000
