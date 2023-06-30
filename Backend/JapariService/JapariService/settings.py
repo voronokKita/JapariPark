@@ -52,9 +52,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+drf_permissions = 'rest_framework.permissions'
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+        f'{drf_permissions}.DjangoModelPermissionsOrAnonReadOnly',
     ],
 }
 
@@ -86,27 +87,76 @@ TEMPLATES = [
 ]
 
 
-# Database
+# Database setup
 if is_db_online.check():
     DATABASES = {
-        'japari_park_database': {
+        'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': DB_CONF.dbname,
-            'USER': DB_CONF.user,
-            'PASSWORD': DB_CONF.password,
-            'HOST': DB_CONF.host,
-            'PORT': DB_CONF.port,
+            'NAME': DB_CONF['default'].dbname,
+            'USER': DB_CONF['default'].user,
+            'PASSWORD': DB_CONF['default'].password,
+            'HOST': DB_CONF['default'].host,
+            'PORT': DB_CONF['default'].port,
             'ATOMIC_REQUESTS': True,
             'TEST': {
-                'NAME': 'japari_service_tests',
+                'NAME': 'test_default',
+            },
+        },
+        'japari_park_accounts': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': DB_CONF['accounts'].dbname,
+            'USER': DB_CONF['accounts'].user,
+            'PASSWORD': DB_CONF['accounts'].password,
+            'HOST': DB_CONF['accounts'].host,
+            'PORT': DB_CONF['accounts'].port,
+            'ATOMIC_REQUESTS': True,
+            'TEST': {
+                'NAME': 'test_accounts',
+            },
+        },
+        'japari_friends': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': DB_CONF['friends'].dbname,
+            'USER': DB_CONF['friends'].user,
+            'PASSWORD': DB_CONF['friends'].password,
+            'HOST': DB_CONF['friends'].host,
+            'PORT': DB_CONF['friends'].port,
+            'ATOMIC_REQUESTS': True,
+            'TEST': {
+                'NAME': 'test_friends',
+            },
+        },
+        'japari_friends_posts': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': DB_CONF['friends-posts'].dbname,
+            'USER': DB_CONF['friends-posts'].user,
+            'PASSWORD': DB_CONF['friends-posts'].password,
+            'HOST': DB_CONF['friends-posts'].host,
+            'PORT': DB_CONF['friends-posts'].port,
+            'ATOMIC_REQUESTS': True,
+            'TEST': {
+                'NAME': 'test_friends_posts',
             },
         },
     }
 else:
+    data = BASE_DIR / 'mnt-data'
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'mnt-data' / 'db.sqlite3',
+            'NAME': data / 'japari_park_default.sqlite3',
+        },
+        'japari_park_accounts': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': data / 'japari_park_accounts.sqlite3',
+        },
+        'japari_friends': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': data / 'japari_friends.sqlite3',
+        },
+        'japari_friends_posts': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': data / 'japari_friends_posts.sqlite3',
         },
     }
 

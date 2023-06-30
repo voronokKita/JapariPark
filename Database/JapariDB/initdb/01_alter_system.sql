@@ -1,1 +1,1 @@
-ALTER SYSTEM SET password_encryption = 'SCRAM-SHA-256'
+-- Can to alter DBMS settings here

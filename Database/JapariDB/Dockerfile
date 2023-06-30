@@ -76,7 +76,6 @@ RUN mkdir --mode=775 $BASE_DIR \
     && chown "$UID:$GID" $BASE_DIR $LOGS_DIR $CONFIGS_DIR
 
 COPY --chown="$UID:$GID" --chmod=555 Dockerfile docker-compose.yaml requirements.txt ./
-COPY --chown="$UID:$GID" --chmod=555 ./tests ./tests
 COPY --chown="$UID:$GID" --chmod=555 ./initdb /docker-entrypoint-initdb.d
 # </Files setup>
 

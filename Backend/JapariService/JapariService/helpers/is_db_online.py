@@ -17,18 +17,18 @@ if not isdocker.check():
     if sys.stdout.isatty():
         print(NO_DOCKER, end='\n\n')
     DATABASE_ONLINE = False
-elif not DB_CONF.password:
+elif not DB_CONF['default'].password:
     if sys.stdout.isatty():
         print(NO_PASS, end='\n\n')
     DATABASE_ONLINE = False
 else:
     try:
         conn = psycopg2.connect(
-            host=DB_CONF.host,
-            port=DB_CONF.port,
-            dbname=DB_CONF.dbname,
-            user=DB_CONF.user,
-            password=DB_CONF.password,
+            host=DB_CONF['default'].host,
+            port=DB_CONF['default'].port,
+            dbname=DB_CONF['default'].dbname,
+            user=DB_CONF['default'].user,
+            password=DB_CONF['default'].password,
         )
         conn.close()
     except psycopg2.OperationalError:
