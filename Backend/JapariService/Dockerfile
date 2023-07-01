@@ -27,7 +27,6 @@ ENV UID=1000
 RUN apk update \
     && apk add --no-cache \
         curl \
-        vim \
         coreutils \
         sudo \
     && echo "%wheel ALL=(ALL) ALL" | EDITOR='tee -a' visudo
@@ -70,12 +69,11 @@ WORKDIR $BASE_DIR
 # Set up a venv and resolve the dependencies
 RUN python -m venv "$BASE_DIR/venv"
 ENV PATH="$BASE_DIR/venv/bin:$BASE_DIR:$PATH"
-COPY --chown="$UID:$GID" --chmod=775 Pipfile requirements.txt ./
+COPY --chown="$UID:$GID" --chmod=775 requirements.txt ./
 RUN pip install --no-cache -r requirements.txt
 
 
-COPY --chown="$USER:$GROUP" --chmod=775 \
-     Dockerfile docker-compose.yaml pytest.ini manage.py ./
+COPY --chown="$USER:$GROUP" --chmod=775 pytest.ini manage.py ./
 COPY --chown="$USER:$GROUP" --chmod=775 JapariService/ ./JapariService
 COPY --chown="$USER:$GROUP" --chmod=775 apps/ ./apps
 # </Files setup>

@@ -74,5 +74,10 @@ services:
       timeout: 5s
       retries: 2
       start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 500M
     restart: on-failure
     stop_grace_period: 10s

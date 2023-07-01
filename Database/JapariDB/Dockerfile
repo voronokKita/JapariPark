@@ -33,7 +33,6 @@ ENV POSTGRES_DB=japari_park_default
 RUN apk update \
     && apk add --no-cache \
         curl \
-        vim \
         sudo \
     && echo "%wheel ALL=(ALL) ALL" | EDITOR='tee -a' visudo \
     && echo "%postgres ALL=(ALL) ALL" | EDITOR='tee -a' visudo
@@ -75,7 +74,6 @@ RUN mkdir --mode=775 $BASE_DIR \
     && mkdir --mode=775 $CONFIGS_DIR \
     && chown "$UID:$GID" $BASE_DIR $LOGS_DIR $CONFIGS_DIR
 
-COPY --chown="$UID:$GID" --chmod=555 Dockerfile docker-compose.yaml requirements.txt ./
 COPY --chown="$UID:$GID" --chmod=555 ./initdb /docker-entrypoint-initdb.d
 # </Files setup>
 
