@@ -63,6 +63,9 @@ configs:
   japari_data_conf:
     file: ./Database/JapariDB/configs/postgresql.conf
 
+  pgadmin_conf:
+    file: ./Frontend/pgAdmin/configs/pgadmin_config.py
+
 
 services:
   # <<<Database layer>>>
@@ -120,6 +123,11 @@ services:
       timeout: 5s
       retries: 2
       start_period: 15s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.6'
+          memory: 600M
     restart: on-failure
     stop_grace_period: 10s
 
@@ -175,6 +183,11 @@ services:
       timeout: 5s
       retries: 2
       start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 500M
     restart: on-failure
     stop_grace_period: 10s
 
@@ -204,6 +217,11 @@ services:
       timeout: 5s
       retries: 2
       start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.4'
+          memory: 500M
     restart: on-failure
     stop_grace_period: 10s
 
@@ -212,13 +230,11 @@ services:
     container_name: FriendsWebNginx
     stdin_open: true
     tty: true
-    # depends_on:
-    #   friends_web_app:
-    #     condition: service_started
-    #   japari_service:
-    #     condition: service_started
-    #   japari_db:
-    #     condition: service_started
+    depends_on:
+      friends_web_app:
+        condition: service_started
+      japari_db:
+        condition: service_healthy
     build:
       context: ./Frontend/FriendsWeb/
       dockerfile: ./NGINX/Dockerfile
@@ -249,6 +265,11 @@ services:
       timeout: 5s
       retries: 2
       start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.4'
+          memory: 500M
     restart: on-failure
     stop_grace_period: 10s
 
@@ -275,6 +296,12 @@ services:
         uid: '5050'
         gid: '5050'
         mode: 0400
+    configs:
+      - source: pgadmin_conf
+        target:  /pgadmin4/config_local.py
+        uid: '5050'
+        gid: '5050'
+        mode: 0440
     environment:
       - PGADMIN_DEFAULT_PASSWORD_FILE=/run/secrets/pgadmin_pass
     ports:
@@ -287,10 +314,15 @@ services:
         aliases:
           - pgadmin.api
     healthcheck:
-      test: ["CMD-SHELL", "curl -fs http://pgadmin.api/login -o /dev/null || exit 1"]
+      test: ["CMD-SHELL", "curl -fs http://pgadmin.api/misc/ping -o /dev/null || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 2
       start_period: 20s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.4'
+          memory: 500M
     restart: on-failure
     stop_grace_period: 10s

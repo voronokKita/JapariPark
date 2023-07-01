@@ -19,6 +19,11 @@ secrets:
     file: ./secrets/.pgadmin_pass.secret
 
 
+configs:
+  pgadmin_conf:
+    file: ./configs/pgadmin_config.py
+
+
 services:
   japari_pgadmin:
     container_name: pgAdmin
@@ -42,6 +47,12 @@ services:
         uid: '5050'
         gid: '5050'
         mode: 0400
+    configs:
+      - source: pgadmin_conf
+        target:  /pgadmin4/config_local.py
+        uid: '5050'
+        gid: '5050'
+        mode: 0440
     environment:
       - PGADMIN_DEFAULT_PASSWORD_FILE=/run/secrets/pgadmin_pass
     ports:
@@ -54,10 +65,15 @@ services:
         aliases:
           - pgadmin.api
     healthcheck:
-      test: ["CMD-SHELL", "curl -fs http://pgadmin.api/login -o /dev/null || exit 1"]
+      test: ["CMD-SHELL", "curl -fs http://pgadmin.api/misc/ping -o /dev/null || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 2
       start_period: 20s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.4'
+          memory: 500M
     restart: on-failure
     stop_grace_period: 10s
