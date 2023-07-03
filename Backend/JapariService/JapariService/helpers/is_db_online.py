@@ -15,11 +15,11 @@ NO_CONNECT = ("[ WARNING: can't connect to the remote database, " +
 
 if not isdocker.check():
     if sys.stdout.isatty():
-        print(NO_DOCKER, end='\n\n')
+        print(NO_DOCKER)
     DATABASE_ONLINE = False
 elif not DB_CONF['default'].password:
     if sys.stdout.isatty():
-        print(NO_PASS, end='\n\n')
+        print(NO_PASS)
     DATABASE_ONLINE = False
 else:
     try:

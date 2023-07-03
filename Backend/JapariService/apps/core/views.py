@@ -12,7 +12,7 @@ from rest_framework.generics import (
 from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
-from apps.core.models import ListEntry
+from apps.core.models import TestEntry
 from apps.core.serializers import ListEntrySrz, UserSrz
 from apps.core.permissions import IsOwnerOrReadOnly
 
@@ -36,7 +36,7 @@ def entry_list(request):
     :returns: RestResponse
     """
     if request.method == 'GET':
-        entries = ListEntry.objects.all()
+        entries = TestEntry.objects.all()
         serialized = ListEntrySrz(entries, many=True)
         return RestResponse(serialized.data)
 
@@ -63,8 +63,8 @@ def entry_detail(request, pk):
     :returns: RestResponse
     """
     try:
-        entry = ListEntry.objects.get(pk=pk)
-    except ListEntry.DoesNotExist:
+        entry = TestEntry.objects.get(pk=pk)
+    except TestEntry.DoesNotExist:
         return RestResponse(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
@@ -93,7 +93,7 @@ class EntryListView(ListCreateAPIView):
     List-read and create.
     """
 
-    queryset = ListEntry.objects.all()
+    queryset = TestEntry.objects.all()
     serializer_class = ListEntrySrz
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
@@ -109,7 +109,7 @@ class EntryDetailView(RetrieveUpdateDestroyAPIView):
     Read, update, delete.
     """
 
-    queryset = ListEntry.objects.all()
+    queryset = TestEntry.objects.all()
     serializer_class = ListEntrySrz
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
@@ -122,7 +122,7 @@ class EntryViewSet(ModelViewSet):
     `update` and `destroy` actions.
     """
 
-    queryset = ListEntry.objects.all()
+    queryset = TestEntry.objects.all()
     serializer_class = ListEntrySrz
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 

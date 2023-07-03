@@ -6,19 +6,20 @@ from django.conf import settings
 
 BASE_DIR = settings.BASE_DIR
 SETTINGS_DIR = BASE_DIR / 'JapariService'
-APPS_CONF = settings.APPS_CONF
+APP_CONF = settings.APP_CONF
 
 
 class TestCoreAppResources(SimpleTestCase):
     """Check that I didn't miss anything."""
 
-    app_dir = APPS_CONF.core['dir']
+    app_dir = APP_CONF['core'].dir
     resources = (
         app_dir / 'app.py',
         app_dir / 'admin.py',
         app_dir / 'urls.py',
         app_dir / 'views.py',
-        app_dir / 'models.py',
+        app_dir / 'models',
+        app_dir / 'dbrouter.py',
         app_dir / 'serializers.py',
         app_dir / 'permissions.py',
     )
@@ -52,14 +53,14 @@ class TestProjectResources(SimpleTestCase):
         BASE_DIR / 'JapariService',
         BASE_DIR / 'apps',
 
-        APPS_CONF.core['dir'],
-        APPS_CONF.accounts['dir'],
-        APPS_CONF.friends['dir'],
+        APP_CONF['accounts'].dir,
+        APP_CONF['friends'].dir,
 
         SETTINGS_DIR / 'helpers',
         SETTINGS_DIR / 'pathfinder.py',
-        SETTINGS_DIR / 'appsconf.py',
+        SETTINGS_DIR / 'appconf.py',
         SETTINGS_DIR / 'dbconf.py',
+        SETTINGS_DIR / 'dbrouter.py',
         SETTINGS_DIR / 'settings.py',
         SETTINGS_DIR / 'urls.py',
         SETTINGS_DIR / 'wsgi.py',

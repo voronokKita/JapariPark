@@ -2,7 +2,7 @@
 
 requests
 psycopg2-binary
-Django>=4.0.0,<5.0.0
+Django>=4.2.0,<5.0.0
 djangorestframework>=3.0.0,<4.0.0
 daphne>=4.0.0,<5.0.0
 

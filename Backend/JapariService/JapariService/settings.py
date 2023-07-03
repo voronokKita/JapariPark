@@ -1,7 +1,7 @@
 """Django's settings for JapariService."""
 from JapariService.pathfinder import BASE_DIR
 
-from JapariService.appsconf import APPS_CONF
+from JapariService.appconf import APP_CONF, CONTRIB_APPS
 from JapariService.dbconf import DB_CONF
 from JapariService.helpers import secret_key, is_db_online
 
@@ -12,12 +12,7 @@ DEBUG = True
 SECRET_KEY = secret_key.getkey()
 
 
-ALLOWED_HOSTS = [
-    '[::1]',
-    '127.0.0.1',
-    'localhost',
-    'japari-service.rest',
-]
+ALLOWED_HOSTS = []
 INTERNAL_IPS = [
     '[::1]',
     '127.0.0.1',
@@ -87,7 +82,10 @@ TEMPLATES = [
 ]
 
 
-# Database setup
+# <database>
+# Default primary key field type
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 if is_db_online.check():
     DATABASES = {
         'default': {
@@ -160,6 +158,12 @@ else:
         },
     }
 
+DATABASE_ROUTERS = [
+    'apps.core.dbrouter.CoreRouter',
+    'JapariService.dbrouter.DefaultRouter',
+]
+# </database>
+
 
 # Password validation
 django_validators = 'django.contrib.auth.password_validation'
@@ -189,9 +193,6 @@ SHORT_DATE_FORMAT = 'Y.n.j P'
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = 'static/'
-
-# Default primary key field type
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # <misc>

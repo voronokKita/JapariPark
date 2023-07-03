@@ -6,7 +6,7 @@ from rest_framework.serializers import (
     HyperlinkedRelatedField, HyperlinkedIdentityField,
 )
 
-from apps.core.models import ListEntry
+from apps.core.models import TestEntry
 
 
 class UserSrz(HyperlinkedModelSerializer):
@@ -34,5 +34,5 @@ class ListEntrySrz(HyperlinkedModelSerializer):
     class Meta:
         """Meta settings."""
 
-        model = ListEntry
+        model = TestEntry
         fields = ('pk', 'entry_text', 'owner', 'url', 'pub_date')

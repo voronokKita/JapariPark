@@ -4,13 +4,13 @@ from django.urls import reverse
 
 from django.conf import settings
 
-APPS_CONF = settings.APPS_CONF
+APP_CONF = settings.APP_CONF
 
 
 class TestFriendsResources(SimpleTestCase):
     """Check that I didn't miss anything."""
 
-    app_dir = APPS_CONF.friends['dir']
+    app_dir = APP_CONF['friends'].dir
     resources = (
         app_dir / 'app.py',
         app_dir / 'admin.py',
