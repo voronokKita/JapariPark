@@ -39,7 +39,7 @@ services:
     volumes:
       - type: bind
         source: ./mnt-logs
-        target: /JapariService/logs
+        target: /JapariService/mnt-logs
       - type: bind
         source: ./mnt-data
         target: /JapariService/mnt-data
