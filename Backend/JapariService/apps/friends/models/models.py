@@ -1,5 +1,6 @@
-"""The JapariService core - db models."""
+"""Japari Park: Friends - db models."""
 from django.utils import timezone
+from django.urls import reverse
 from django.db.models import (
     Manager, Model, SmallAutoField,
     CharField, DateTimeField,
@@ -25,14 +26,14 @@ class TestEntry(Model):
     class Meta:
         """Anything that’s not a field."""
 
-        db_table = 'test_core'
-        verbose_name = 'test core-app entry'
-        verbose_name_plural = 'test core-app entries'
+        db_table = 'test_friends'
+        verbose_name = 'test friends-app entry'
+        verbose_name_plural = 'test friends-app entries'
         ordering = ['pub_date']
         get_latest_by = ['pub_date']
 
     def __str__(self):
-        return f'test core entry #{self.pk}'
+        return f'test friends entry #{self.pk}'
 
     def __repr__(self):
         return f'TestEntry(text={self.text}, date={self.pub_date})'

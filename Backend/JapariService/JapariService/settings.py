@@ -33,7 +33,7 @@ INSTALLED_APPS = [
 
     'apps.core.apps.CoreConfig',
     'apps.accounts.app.AccountsConfig',
-    'apps.friends.app.FriendsConfig',
+    'apps.friends.apps.FriendsConfig',
 ]
 
 MIDDLEWARE = [
