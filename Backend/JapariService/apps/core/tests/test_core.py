@@ -14,7 +14,7 @@ class TestCoreAppResources(SimpleTestCase):
 
     app_dir = APP_CONF['core'].dir
     resources = (
-        app_dir / 'app.py',
+        app_dir / 'apps.py',
         app_dir / 'admin.py',
         app_dir / 'urls.py',
         app_dir / 'dbrouter.py',

@@ -31,7 +31,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
 
-    'apps.core.app.CoreConfig',
+    'apps.core.apps.CoreConfig',
     'apps.accounts.app.AccountsConfig',
     'apps.friends.app.FriendsConfig',
 ]

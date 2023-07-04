@@ -8,6 +8,7 @@ class CoreConfig(AppConfig):
     name = 'apps.core'
     label = 'core'
     verbose_name = 'JapariService core'
+    default = True
 
     def ready(self):
         """
