@@ -1,5 +1,5 @@
 """Django's settings for JapariService."""
-from JapariService.pathfinder import BASE_DIR
+from JapariService.pathfinder import BASE_DIR, SECRETS_DIR
 
 from JapariService.appconf import APP_CONF, CONTRIB_APPS
 from JapariService.dbconf import DB_CONF
@@ -7,7 +7,6 @@ from JapariService.helpers import secret_key, is_db_online
 
 # Context switch
 DEBUG = True
-
 
 SECRET_KEY = secret_key.getkey()
 

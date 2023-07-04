@@ -3,10 +3,8 @@ from django.utils import timezone
 from django.urls import reverse
 from django.db.models import (
     Manager, Model, SmallAutoField,
-    CharField, DateTimeField, ForeignKey,
-    CASCADE,
+    CharField, DateTimeField,
 )
-from django.contrib.auth.models import User
 
 
 class TestEntry(Model):
@@ -23,11 +21,6 @@ class TestEntry(Model):
     pub_date = DateTimeField(
         'date published', default=timezone.localtime,
         blank=True, editable=False,
-    )
-    owner = ForeignKey(
-        User, on_delete=CASCADE,
-        related_name='test_core_entry_set',
-        verbose_name='test core-app entries',
     )
 
     class Meta:
@@ -47,4 +40,4 @@ class TestEntry(Model):
 
     def get_absolute_url(self):
         """Generate a path to the instance."""
-        return reverse('core:api/entries', kwargs={'pk': self.pk})
+        return reverse('core:test-core-entries', kwargs={'pk': self.pk})

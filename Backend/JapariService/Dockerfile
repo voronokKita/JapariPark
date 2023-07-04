@@ -73,7 +73,7 @@ COPY --chown="$UID:$GID" --chmod=775 requirements.txt ./
 RUN pip install --no-cache -r requirements.txt
 
 
-COPY --chown="$USER:$GROUP" --chmod=775 pytest.ini manage.py ./
+COPY --chown="$USER:$GROUP" --chmod=775 manage.py migrate.py pytest.ini ./
 COPY --chown="$USER:$GROUP" --chmod=775 JapariService/ ./JapariService
 COPY --chown="$USER:$GROUP" --chmod=775 apps/ ./apps
 # </Files setup>

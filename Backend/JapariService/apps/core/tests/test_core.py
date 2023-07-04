@@ -17,11 +17,13 @@ class TestCoreAppResources(SimpleTestCase):
         app_dir / 'app.py',
         app_dir / 'admin.py',
         app_dir / 'urls.py',
-        app_dir / 'views.py',
-        app_dir / 'models',
         app_dir / 'dbrouter.py',
         app_dir / 'serializers.py',
         app_dir / 'permissions.py',
+
+        app_dir / 'views',
+        app_dir / 'models',
+        app_dir / 'helpers',
     )
 
     def test_core_app_files(self):
@@ -50,6 +52,7 @@ class TestProjectResources(SimpleTestCase):
         BASE_DIR / 'pytest.ini',
 
         BASE_DIR / 'manage.py',
+        BASE_DIR / 'migrate.py',
         BASE_DIR / 'JapariService',
         BASE_DIR / 'apps',
 
