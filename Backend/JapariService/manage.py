@@ -6,9 +6,9 @@ from pathlib import Path
 
 from django.core.management import execute_from_command_line
 
-base_dir = Path(__file__).resolve().parent.as_posix()
-if base_dir not in sys.path:
-    sys.path.insert(0, base_dir)
+
+if (basedir := Path(__file__).resolve().parent.as_posix()) not in sys.path:
+    sys.path.insert(0, basedir)
 
 
 def main():

@@ -4,6 +4,8 @@ import sys
 import subprocess
 from pathlib import Path
 
+from JapariService.helpers import printer
+
 pt = sys.executable
 workdir = Path(__file__).resolve().parent
 
@@ -18,4 +20,4 @@ commands = (
 for cmd in commands:
     subprocess.call(cmd, executable=sys.executable,
                     cwd=workdir.as_posix(), shell=False)
-    print()
+    printer.write('')
