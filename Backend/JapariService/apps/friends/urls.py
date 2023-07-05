@@ -1,4 +1,4 @@
-"""Japari Park: Friends router."""
+"""Japari Park: Friends - url router."""
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 

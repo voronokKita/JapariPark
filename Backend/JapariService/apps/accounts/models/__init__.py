@@ -1,2 +1,2 @@
-"""Core models."""
+"""Accounts models."""
 from .models import TestEntry

@@ -2,9 +2,9 @@
 from django.http import HttpResponse, HttpRequest
 
 
-def ping(request: HttpRequest) -> HttpResponse:
+def ping(request: HttpRequest):
     """
-    Ping-pong.
+    Ping-pong text.
 
     :returns: a plain text
     """

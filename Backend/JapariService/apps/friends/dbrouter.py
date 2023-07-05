@@ -1,8 +1,8 @@
 """
-Database router for Friends app.
+Database router for Japari Park: Friends.
 
-Each model must be passed to one of two sets:
-`main_models` or `posts_models`.
+Each model._meta.model_name must be passed to one of two sets:
+`main_model_namespace` or `posts_model_namespace`.
 """
 from apps.friends.models import TestEntry, TestPost
 

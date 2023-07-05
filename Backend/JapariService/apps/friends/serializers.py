@@ -1,4 +1,4 @@
-"""JapariService - REST serializers."""
+"""Japari Park: Friends - REST serializers."""
 from rest_framework.serializers import ModelSerializer
 from apps.friends.models import TestEntry, TestPost
 

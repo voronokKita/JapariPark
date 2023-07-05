@@ -15,8 +15,11 @@ class TestAccountsResources(SimpleTestCase):
         app_dir / 'app.py',
         app_dir / 'admin.py',
         app_dir / 'urls.py',
-        app_dir / 'views.py',
-        app_dir / 'models.py',
+        app_dir / 'dbrouter.py',
+        app_dir / 'serializers.py',
+
+        app_dir / 'views',
+        app_dir / 'models',
     )
 
     def test_accounts_files(self):

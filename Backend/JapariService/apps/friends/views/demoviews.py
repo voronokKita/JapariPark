@@ -1,4 +1,4 @@
-"""JapariService - Friends test views."""
+"""Japari Park: Friends - test views."""
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 

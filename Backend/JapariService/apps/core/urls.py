@@ -11,7 +11,6 @@ viewset_router = DefaultRouter()
 viewset_router.register('test-core-entries',
                         TestEntryViewSet, basename='test-entry')
 
-
 urlpatterns = [
     path('ping', ping, name='service-ping'),
 
