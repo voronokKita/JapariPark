@@ -158,6 +158,7 @@ else:
     }
 
 DATABASE_ROUTERS = [
+    'apps.friends.dbrouter.FriendsRouter',
     'apps.core.dbrouter.CoreRouter',
     'JapariService.dbrouter.DefaultRouter',
 ]

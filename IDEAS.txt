@@ -40,6 +40,7 @@ Git:
 + Sphinx & autodoc + pycharm/tools
 + Автоматическая генерация.
 - Размещение на GitHub Pages.
+- Django admindocs
 
 
 GitHub:
