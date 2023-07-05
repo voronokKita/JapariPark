@@ -1,10 +1,14 @@
 """Resolves Django's secret key."""
 import secrets
 
-from JapariService.pathfinder import SECRETS_DIR
-from JapariService.helpers import printer
+from JapariService.pathfinder import SECRETS_DIR, BASE_DIR
+from JapariService.helpers import printer, isdocker
 
-SECRET = SECRETS_DIR / 'django_secret'
+
+if isdocker.check():
+    SECRET = SECRETS_DIR / 'django_secret'
+else:
+    SECRET = BASE_DIR / 'secrets' / '.django.secret'
 
 
 def getkey() -> str:

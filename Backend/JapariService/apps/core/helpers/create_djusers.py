@@ -1,11 +1,8 @@
 """Create some users from the start."""
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.db import transaction
-from JapariService.helpers import isdocker, istestrun, printer
-
-BASE_DIR = settings.BASE_DIR
-SECRETS_DIR = settings.SECRETS_DIR
+from django.db import transaction, OperationalError
+from JapariService.helpers import printer
 
 User = get_user_model()
 
@@ -16,10 +13,12 @@ def get_superuser_pass():
 
     Will return "qwerty" if OSError.
     """
-    if isdocker.check():
-        passwordpath = SECRETS_DIR / 'django_superuser_pass'
+    if settings.ISDOCKER:
+        path = settings.SECRETS_DIR / 'django_superuser_pass'
+        passwordpath = path
     else:
-        passwordpath = BASE_DIR / 'secrets' / '.django-superuser-pass.secret'
+        path = settings.BASE_DIR / 'secrets' / '.django-superuser-pass.secret'
+        passwordpath = path
 
     try:
         with passwordpath.open('r') as fl:
@@ -46,6 +45,9 @@ def create_superuser():
 
 def run():
     """Create some users, if passable."""
-    if istestrun.check():
+    if settings.ISTESTRUN:
         return
-    create_superuser()
+    try:
+        create_superuser()
+    except OperationalError:
+        pass
