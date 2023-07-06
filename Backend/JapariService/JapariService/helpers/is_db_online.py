@@ -1,9 +1,8 @@
 """Check for the DB accessibility."""
-import sys
 import psycopg2
 
 from JapariService.dbconf import DB_CONF
-from JapariService.helpers import isdocker
+from JapariService.helpers import isdocker, printer
 
 NO_PASS = ("[ WARNING: a database password not found, " +
            "initializing the local database. ]")
@@ -14,12 +13,10 @@ NO_CONNECT = ("[ WARNING: can't connect to the remote database, " +
 
 
 if not isdocker.check():
-    if sys.stdout.isatty():
-        print(NO_DOCKER, end='\n\n')
+    printer.write(NO_DOCKER)
     DATABASE_ONLINE = False
 elif not DB_CONF['default'].password:
-    if sys.stdout.isatty():
-        print(NO_PASS, end='\n\n')
+    printer.write(NO_PASS)
     DATABASE_ONLINE = False
 else:
     try:
@@ -31,9 +28,8 @@ else:
             password=DB_CONF['default'].password,
         )
         conn.close()
-    except psycopg2.OperationalError:
-        if sys.stdout.isatty():
-            print(NO_CONNECT, end='\n\n')
+    except Exception:
+        printer.write(NO_CONNECT)
         DATABASE_ONLINE = False
     else:
         DATABASE_ONLINE = True

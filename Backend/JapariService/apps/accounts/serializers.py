@@ -1,6 +1,6 @@
-"""JapariService - REST serializers."""
+"""Japari Park: Accounts - REST serializers."""
 from rest_framework.serializers import ModelSerializer
-from apps.core.models import TestEntry
+from apps.accounts.models import TestEntry
 
 
 class TestEntrySrz(ModelSerializer):

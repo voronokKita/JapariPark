@@ -19,23 +19,23 @@ DataBaseConfig = namedtuple(
     field_names=('dbname', 'host', 'port', 'user', 'password'),
 )
 
-DB_DEFAULT = 'japari_park_default'
-DB_ACCOUNTS = 'japari_park_accounts'
-DB_FRIENDS = 'japari_friends'
-DB_FRIENDS_POSTS = 'japari_friends_posts'
+DEFAULT_DB = 'japari_park_default'
+ACCOUNTS_DB = 'japari_park_accounts'
+FRIENDS_DB = 'japari_friends'
+FRIENDS_POSTS_DB = 'japari_friends_posts'
 
 
 DB_CONF = {
     'default': DataBaseConfig(
-        DB_DEFAULT, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD,
+        DEFAULT_DB, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD,
     ),
     'accounts': DataBaseConfig(
-        DB_ACCOUNTS, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD,
+        ACCOUNTS_DB, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD,
     ),
     'friends': DataBaseConfig(
-        DB_FRIENDS, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD,
+        FRIENDS_DB, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD,
     ),
     'friends-posts': DataBaseConfig(
-        DB_FRIENDS_POSTS, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD,
+        FRIENDS_POSTS_DB, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD,
     ),
 }

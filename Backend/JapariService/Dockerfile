@@ -1,9 +1,9 @@
 FROM python:3.11-alpine3.17
 
 LABEL name="JapariService"
-LABEL description="Japari Park - The backend Django application with Daphne server."
+LABEL description="Japari Park: Service - The backend Django application with Daphne server."
 LABEL author="github.com/voronokKita"
-LABEL logs="Mount /JapariService/logs to get them."
+LABEL logs="Mount /JapariService/mnt-logs to get them."
 LABEL secrets="Needs BuildX or BuildKit on, like: \
 `$ MYSECRET=qwerty DOCKER_BUILDKIT=1 docker build --secret id=japari_service_build_pass,env=MYSECRET`"
 
@@ -13,9 +13,9 @@ LABEL secrets="Needs BuildX or BuildKit on, like: \
 EXPOSE 80
 ENV DAPHNE_PORT=80
 ENV BASE_DIR=/JapariService
-ENV LOGS_DIR=/JapariService/logs
-ENV CONFIGS_DIR=/JapariService/configs
+ENV LOGS_DIR=/JapariService/mnt-logs
 ENV LOCAL_DATA=/JapariService/mnt-data
+ENV CONFIGS_DIR=/JapariService/configs
 
 ENV GROUP=luckybot
 ENV USER=luckybot
@@ -73,7 +73,7 @@ COPY --chown="$UID:$GID" --chmod=775 requirements.txt ./
 RUN pip install --no-cache -r requirements.txt
 
 
-COPY --chown="$USER:$GROUP" --chmod=775 pytest.ini manage.py ./
+COPY --chown="$USER:$GROUP" --chmod=775 manage.py migrate.py pytest.ini ./
 COPY --chown="$USER:$GROUP" --chmod=775 JapariService/ ./JapariService
 COPY --chown="$USER:$GROUP" --chmod=775 apps/ ./apps
 # </Files setup>
@@ -85,7 +85,11 @@ COPY --chown="$USER:$GROUP" --chmod=775 apps/ ./apps
 
 ENTRYPOINT ["/JapariService/venv/bin/python", "-OO", "-m"]
 CMD [ "daphne", \
-      "--root-path=/JapariService", \
       "-b", "0.0.0.0", \
       "-p", "80", \
+      "--server-name", "jservice_daphne_one", \
+      "--http-timeout", "10", \
+      "--root-path=/JapariService", \
+      "--access-log", "./mnt-logs/serving/daphne-access.log", \
+      "--log-fmt", "[%(asctime)s, %(name)s, %(levelname)s]: %(message)s", \
       "JapariService.asgi:app" ]

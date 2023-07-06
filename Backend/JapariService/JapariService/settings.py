@@ -1,28 +1,45 @@
-"""Django's settings for JapariService."""
-from JapariService.pathfinder import BASE_DIR
+"""Django's settings for Japari Service."""
+from JapariService.pathfinder import BASE_DIR, SECRETS_DIR, APPS_DIR
 
-from JapariService.appsconf import APPS_CONF
+from JapariService.appconf import APP_CONF, CONTRIB_APPS
 from JapariService.dbconf import DB_CONF
-from JapariService.helpers import secret_key, is_db_online
+from JapariService.helpers import (
+    secret_key, is_db_online, isdocker,
+    ismanage, istestrun,
+)
 
 # Context switch
 DEBUG = True
 
+DEBUG_PROPAGATE_EXCEPTIONS = False
 
 SECRET_KEY = secret_key.getkey()
 
+ROOT_URLCONF = 'JapariService.urls'
+APPEND_SLASH = True
+PREPEND_WWW = False
 
+WSGI_APPLICATION = 'JapariService.wsgi.application'
+ASGI_APPLICATION = 'JapariService.asgi.application'
+
+
+# Some context flags
+ISDOCKER = isdocker.check()
+ISMANAGE = ismanage.check()
+ISTESTRUN = istestrun.check()
+
+
+# Host settings
 ALLOWED_HOSTS = [
     '[::1]',
     '127.0.0.1',
     'localhost',
-    'japari-service.rest',
+    '.japari-service.rest',
 ]
 INTERNAL_IPS = [
     '[::1]',
     '127.0.0.1',
 ]
-
 
 # Application definition
 INSTALLED_APPS = [
@@ -37,11 +54,12 @@ INSTALLED_APPS = [
 
     'rest_framework',
 
-    'apps.core.app.CoreConfig',
+    'apps.core.apps.CoreConfig',
     'apps.accounts.app.AccountsConfig',
-    'apps.friends.app.FriendsConfig',
+    'apps.friends.apps.FriendsConfig',
 ]
 
+# Middleware settings
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -52,6 +70,16 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# Cache settings
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    },
+}
+CACHE_MIDDLEWARE_ALIAS = 'default'
+
+
+# Django Rest Framework
 drf_permissions = 'rest_framework.permissions'
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
@@ -59,17 +87,8 @@ REST_FRAMEWORK = {
     ],
 }
 
-if DEBUG:
-    INSTALLED_APPS.append('debug_toolbar')
-    MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
 
-
-ROOT_URLCONF = 'JapariService.urls'
-
-WSGI_APPLICATION = 'JapariService.wsgi.application'
-ASGI_APPLICATION = 'JapariService.asgi.application'
-
-
+# Templates settings
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -87,7 +106,10 @@ TEMPLATES = [
 ]
 
 
-# Database setup
+# <Databases>
+# Default primary key field type
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 if is_db_online.check():
     DATABASES = {
         'default': {
@@ -98,6 +120,8 @@ if is_db_online.check():
             'HOST': DB_CONF['default'].host,
             'PORT': DB_CONF['default'].port,
             'ATOMIC_REQUESTS': True,
+            'AUTOCOMMIT': True,
+            'CONN_MAX_AGE': 0,
             'TEST': {
                 'NAME': 'test_default',
             },
@@ -110,6 +134,8 @@ if is_db_online.check():
             'HOST': DB_CONF['accounts'].host,
             'PORT': DB_CONF['accounts'].port,
             'ATOMIC_REQUESTS': True,
+            'AUTOCOMMIT': True,
+            'CONN_MAX_AGE': 0,
             'TEST': {
                 'NAME': 'test_accounts',
             },
@@ -122,6 +148,8 @@ if is_db_online.check():
             'HOST': DB_CONF['friends'].host,
             'PORT': DB_CONF['friends'].port,
             'ATOMIC_REQUESTS': True,
+            'AUTOCOMMIT': True,
+            'CONN_MAX_AGE': 0,
             'TEST': {
                 'NAME': 'test_friends',
             },
@@ -133,7 +161,9 @@ if is_db_online.check():
             'PASSWORD': DB_CONF['friends-posts'].password,
             'HOST': DB_CONF['friends-posts'].host,
             'PORT': DB_CONF['friends-posts'].port,
-            'ATOMIC_REQUESTS': True,
+            'ATOMIC_REQUESTS': False,
+            'AUTOCOMMIT': True,
+            'CONN_MAX_AGE': 0,
             'TEST': {
                 'NAME': 'test_friends_posts',
             },
@@ -160,6 +190,14 @@ else:
         },
     }
 
+DATABASE_ROUTERS = [
+    'apps.friends.dbrouter.FriendsRouter',
+    'apps.accounts.dbrouter.AccountsRouter',
+    'apps.core.dbrouter.CoreRouter',
+    'JapariService.dbrouter.DefaultRouter',
+]
+# </Databases>
+
 
 # Password validation
 django_validators = 'django.contrib.auth.password_validation'
@@ -171,30 +209,27 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# <internationalization>
-DEFAULT_CHARSET = 'utf-8'
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'Europe/Moscow'
+# Internationalization
+USE_TZ = True
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
-USE_TZ = True
 USE_L10N = False
 
-DATE_FORMAT = 'Y.n.j'
-TIME_FORMAT = 'G:i:s'
-DATETIME_FORMAT = 'Y.n.j G:i:s'
-SHORT_DATE_FORMAT = 'Y.n.j P'
-# </internationalization>
+DEFAULT_CHARSET = 'utf-8'
+LANGUAGE_CODE = 'en-us'
+
+DATE_FORMAT = 'Y.m.d'
+TIME_FORMAT = 'G:i:s e'
+DATETIME_FORMAT = 'Y.m.d G:i:s e'
+SHORT_DATE_FORMAT = 'Y.n.j P e'
+FIRST_DAY_OF_WEEK = 1
 
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = 'static/'
 
-# Default primary key field type
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-# <misc>
-APPEND_SLASH = False
-PREPEND_WWW = False
-# </misc>
+if DEBUG:
+    INSTALLED_APPS.append('debug_toolbar')
+    MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')

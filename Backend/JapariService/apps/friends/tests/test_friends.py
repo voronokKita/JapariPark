@@ -4,19 +4,22 @@ from django.urls import reverse
 
 from django.conf import settings
 
-APPS_CONF = settings.APPS_CONF
+APP_CONF = settings.APP_CONF
 
 
 class TestFriendsResources(SimpleTestCase):
     """Check that I didn't miss anything."""
 
-    app_dir = APPS_CONF.friends['dir']
+    app_dir = APP_CONF['friends'].dir
     resources = (
-        app_dir / 'app.py',
+        app_dir / 'apps.py',
         app_dir / 'admin.py',
         app_dir / 'urls.py',
-        app_dir / 'views.py',
-        app_dir / 'models.py',
+        app_dir / 'dbrouter.py',
+        app_dir / 'serializers.py',
+
+        app_dir / 'models',
+        app_dir / 'views',
     )
 
     def test_accounts_files(self):

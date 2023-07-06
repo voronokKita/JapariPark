@@ -47,6 +47,8 @@ secrets:
     file: ./Backend/JapariService/secrets/.docker-build.secret
   japari_service_django_secret:
     file: ./Backend/JapariService/secrets/.django.secret
+  japari_service_django_superuser_pass:
+    file: ./Backend/JapariService/secrets/.django-superuser-pass.secret
   japari_service_postgres_pass:
     file: ./Backend/JapariService/secrets/.postgres_pass.secret
 
@@ -148,13 +150,18 @@ services:
     volumes:
       - type: bind
         source: ./Backend/JapariService/mnt-logs
-        target: /JapariService/logs
+        target: /JapariService/mnt-logs
       - type: bind
         source: ./Backend/JapariService/mnt-data
         target: /JapariService/mnt-data
     secrets:
       - source: japari_service_django_secret
         target: /run/secrets/django_secret
+        uid: '1000'
+        gid: '1000'
+        mode: 0400
+      - source: japari_service_django_superuser_pass
+        target: /run/secrets/django_superuser_pass
         uid: '1000'
         gid: '1000'
         mode: 0400
