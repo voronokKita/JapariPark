@@ -211,26 +211,19 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 USE_TZ = True
-TIME_ZONE = 'Europe/Moscow'
-
-DEFAULT_CHARSET = 'utf-8'
-LANGUAGE_CODE = 'en-us'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 USE_L10N = False
 
+DEFAULT_CHARSET = 'utf-8'
+LANGUAGE_CODE = 'en-us'
+
 DATE_FORMAT = 'Y.m.d'
-TIME_FORMAT = 'G:i:s'
-DATETIME_FORMAT = 'Y.m.d_G:i:s e z'
-SHORT_DATE_FORMAT = 'Y.n.j P'
+TIME_FORMAT = 'G:i:s e'
+DATETIME_FORMAT = 'Y.m.d G:i:s e'
+SHORT_DATE_FORMAT = 'Y.n.j P e'
 FIRST_DAY_OF_WEEK = 1
-
-
-# CSRF
-CSRF_COOKIE_DOMAIN = '.japari-park.fun'
-CSRF_COOKIE_SECURE = False
-CSRF_USE_SESSIONS = False
-CSRF_COOKIE_AGE = 31449600
 
 
 # Static files (CSS, JavaScript, Images)

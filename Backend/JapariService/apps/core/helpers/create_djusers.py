@@ -1,7 +1,7 @@
 """Create some users from the start."""
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.db import transaction, OperationalError
+from django.db import transaction
 from JapariService.helpers import printer
 
 User = get_user_model()
@@ -49,5 +49,5 @@ def run():
         return
     try:
         create_superuser()
-    except OperationalError:
+    except Exception:
         pass

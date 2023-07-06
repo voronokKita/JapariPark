@@ -28,7 +28,7 @@ else:
             password=DB_CONF['default'].password,
         )
         conn.close()
-    except psycopg2.OperationalError:
+    except Exception:
         printer.write(NO_CONNECT)
         DATABASE_ONLINE = False
     else:
