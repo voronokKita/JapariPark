@@ -1,10 +1,10 @@
 user  luckybot;
 worker_processes  2;
 
-error_log  /FriendsWebNginx/logs/nginx_error.log  error;
-error_log  /FriendsWebNginx/logs/nginx_notice.log  notice;
+error_log  /FriendsWebNginx/mnt-logs/nginx_error.log  error;
+error_log  /FriendsWebNginx/mnt-logs/nginx_notice.log  notice;
 
-pid  /FriendsWebNginx/logs/nginx.pid;
+pid  /FriendsWebNginx/mnt-logs/nginx.pid;
 
 
 events {
@@ -19,7 +19,7 @@ http {
                       '$status $body_bytes_sent "$http_referer" '
                       '"$http_user_agent" "$http_x_forwarded_for"';
 
-    access_log  /FriendsWebNginx/logs/nginx_access.log  main;
+    access_log  /FriendsWebNginx/mnt-logs/nginx_access.log  main;
 
     sendfile  on;
 

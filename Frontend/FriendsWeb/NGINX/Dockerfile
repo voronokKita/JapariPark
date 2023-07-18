@@ -1,20 +1,24 @@
 FROM nginx:1.25-alpine3.17
 
-LABEL author="github.com/voronokKita"
+LABEL name="FriendsWebNginx"
 LABEL description="A composite container - part of the FriendsWeb application, \
 to host NGINX reverse-proxy."
-LABEL secrets="Needs BuildX or BuildKit on, like: \
-`$ MYSECRET=qwerty DOCKER_BUILDKIT=1 docker build --secret id=friends_web_user_pass,env=MYSECRET`"
+LABEL author="github.com/voronokKita"
 LABEL logs="Mount /FriendsWebNginx/logs to get them."
+LABEL secrets="Needs BuildX or BuildKit on, like: \
+`$ MYSECRET=qwerty DOCKER_BUILDKIT=1 docker build --secret id=friends_web_build_pass,env=MYSECRET`"
 
 
-# < as root >
-# < working with environment >
+# <Environment setup>
+EXPOSE 80
+ENV NGINX_PORT=80
 ENV NGINX_BIN=/usr/sbin/nginx
 ENV NGINX_CONF=/etc/nginx
+
 ENV BASE_DIR=/FriendsWebNginx
-ENV LOGS_DIR=/FriendsWebNginx/logs
+ENV LOGS_DIR=/FriendsWebNginx/mnt-logs
 ENV STATIC_DIR=/FriendsWebNginx/staticfiles
+
 ENV USER=luckybot
 ENV GROUP=luckybot
 ENV UID=1000
@@ -24,13 +28,13 @@ ENV GID=1000
 # Add some tools and sudo
 RUN apk update \
     && apk add --no-cache \
-        sudo \
         curl \
-        vim \
+        coreutils \
+        sudo \
     && echo "%wheel ALL=(ALL) ALL" | EDITOR='tee -a' visudo
 
 
-# Set up a new user & group
+# <User setup>
 RUN addgroup $GROUP --gid $GID \
     && adduser \
         --disabled-password \
@@ -41,52 +45,35 @@ RUN addgroup $GROUP --gid $GID \
         $USER
 
 # Setup user's password, requires BuildX or BuildKit
-RUN --mount=type=secret,id=friends_web_user_pass,target=/run/secrets/user_pass,required=true \
+RUN --mount=type=secret,id=friends_web_build_pass,target=/run/secrets/user_pass,required=true \
     echo "$USER:$(cat /run/secrets/user_pass)" | chpasswd
 
-# Add the user to the administrators group;
-# add to the network connections management;
-# add user to sudoers;
-# set NOPASSWD for the `sudo nginx` command:
+# Add to the administrators group and to the sudoers
 RUN addgroup $USER wheel \
-    && addgroup $USER netdev \
-    && echo "$USER ALL=(ALL) ALL" | EDITOR='tee -a' visudo \
-    && echo "$USER ALL=(ALL) NOPASSWD: $NGINX_BIN" | EDITOR='tee -a' visudo \
-    && echo "%$GID ALL=(ALL) NOPASSWD: $NGINX_BIN" | EDITOR='tee -a' visudo
+    && echo "$USER ALL=(ALL) ALL" | EDITOR='tee -a' visudo
+# </User setup>
+# </Environment setup>
 
 
-# < working with files >
+# <Files setup>
+RUN mkdir --mode=775 $BASE_DIR \
+    && mkdir --mode=775 $LOGS_DIR \
+    && mkdir --mode=775 $STATIC_DIR \
+    && chown "$UID:$GID" $BASE_DIR $LOGS_DIR $STATIC_DIR
+
 WORKDIR "$BASE_DIR"
+COPY --chown="$USER:$GROUP" --chmod=775 ./NGINX ./
 
-COPY --chown="$USER:$GROUP" --chmod=764 ./NGINX ./
-
-# Resolve file & dir permissions;
-# setup NGINX configs:
-RUN chown "$USER:$GROUP" "$BASE_DIR" \
-    && mv "$NGINX_CONF/nginx.conf" "$NGINX_CONF/nginx.conf.backup" \
+# Setup NGINX configs
+RUN mv "$NGINX_CONF/nginx.conf" "$NGINX_CONF/nginx.conf.backup" \
     && cp "$BASE_DIR/configs/nginx.conf.template" "$NGINX_CONF/nginx.conf" \
-    && mkdir --mode=744 "$NGINX_CONF/site-available" \
+    && mkdir --mode=755 "$NGINX_CONF/site-available" \
     && cp "$BASE_DIR/configs/friends.conf.template" "$NGINX_CONF/site-available/friends.conf"
 
-
-# < as the user >
-USER $USER
-ENV PATH="$BASE_DIR:$PATH"
-
-# Make dirs for the logs and secrets
-RUN mkdir --mode=777 "$BASE_DIR/logs" \
-    && mkdir "$BASE_DIR/secrets"
-
-COPY --chown="$USER:$GROUP" --chmod=764 docker-compose.yaml ./
-COPY --chown="$USER:$GROUP" --chmod=764 ./staticfiles ./staticfiles
+COPY --chown="$USER:$GROUP" --chmod=775 ./staticfiles ./staticfiles
+# </Files setup>
 
 
-# Serving
-EXPOSE 80/tcp
-ENV NGINX_PORT=80
-
-# Entry into the eternal work
-# ENTRYPOINT ["tail", "-f", "/dev/null"]
-
-ENTRYPOINT ["/usr/bin/sudo", "/usr/sbin/nginx"]
+# << Serving >>
+ENTRYPOINT ["/usr/sbin/nginx"]
 CMD ["-g", "daemon off;"]

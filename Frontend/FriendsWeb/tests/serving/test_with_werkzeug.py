@@ -1,11 +1,13 @@
 """Test the Flask app with Werkzeug server."""
 import requests
+import pytest
 
 from tests import context
-from helpers.context import CONTEXT
-from friends.settings import WERKZEUG_TESTPORT
+from FriendsWeb.settings import TESTPORT
+from FriendsWeb.helpers import in_github_ci
 
 
+@pytest.mark.skip(reason='deprecated')
 class TestThroughBaseWSGIServer:
     """Test the Flask app with Werkzeug server."""
 
@@ -13,11 +15,11 @@ class TestThroughBaseWSGIServer:
 
     def test_flask_app_ping(self, werkzeug_server):
         """Simple text response."""
-        if CONTEXT.in_github_ci:
+        if in_github_ci.check():
             return True
 
         response = requests.get(
-            f'http://127.0.0.1:{WERKZEUG_TESTPORT}/ping',
+            f'http://127.0.0.1:{TESTPORT}/ping',
             timeout=5,
         )
         assert response.status_code == 200

@@ -52,7 +52,7 @@ secrets:
   japari_service_postgres_pass:
     file: ./Backend/JapariService/secrets/.postgres_pass.secret
 
-  friends_web_user_pass:
+  friends_web_build_pass:
     file: ./Frontend/FriendsWeb/secrets/.docker-build.secret
 
   pgadmin_build_pass:
@@ -207,12 +207,12 @@ services:
     build:
       context: ./Frontend/FriendsWeb/
       secrets:
-        - friends_web_user_pass
+        - friends_web_build_pass
     image: friends_web
     volumes:
       - type: bind
-        source: ./Frontend/FriendsWeb/logs
-        target: /FriendsWeb/logs
+        source: ./Frontend/FriendsWeb/mnt-logs
+        target: /FriendsWeb/mnt-logs
     # ports: 5000:80
     networks:
       friends_web_bridge:
@@ -220,7 +220,7 @@ services:
           - friends-web.app
     healthcheck:
       test: ["CMD-SHELL", "curl -fs http://frinds-web.app/ping -o /dev/null || exit 1"]
-      interval: 3m
+      interval: 30s
       timeout: 5s
       retries: 2
       start_period: 10s
@@ -246,12 +246,12 @@ services:
       context: ./Frontend/FriendsWeb/
       dockerfile: ./NGINX/Dockerfile
       secrets:
-        - friends_web_user_pass
+        - friends_web_build_pass
     image: friends_web_proxy
     volumes:
       - type: bind
-        source: ./Frontend/FriendsWeb/logs/servers
-        target: /FriendsWebNginx/logs
+        source: ./Frontend/FriendsWeb/mnt-logs/servers
+        target: /FriendsWebNginx/mnt-logs
     ports:
       - target: 80
         published: 8080
@@ -268,7 +268,7 @@ services:
           - friends-web.rest
     healthcheck:
       test: ["CMD-SHELL", "curl -fs http://friends-web.rest/proxy/ping/ -o /dev/null || exit 1"]
-      interval: 3m
+      interval: 30s
       timeout: 5s
       retries: 2
       start_period: 10s

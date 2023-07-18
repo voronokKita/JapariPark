@@ -1,18 +1,22 @@
 FROM python:3.11-alpine3.17
 
-LABEL author="github.com/voronokKita"
+LABEL name="FriendsWeb"
 LABEL description="The Flask application with Gunicorn server. \
 Intended to be used with a reverse proxy."
+LABEL author="github.com/voronokKita"
+LABEL logs="Mount /FriendsWeb/mnt-logs to get them."
 LABEL secrets="Needs BuildX or BuildKit on, like: \
-`$ MYSECRET=qwerty DOCKER_BUILDKIT=1 docker build --secret id=friends_web_user_pass,env=MYSECRET`"
-LABEL logs="Mount /FriendsWeb/logs to get them."
+`$ MYSECRET=qwerty DOCKER_BUILDKIT=1 docker build --secret id=friends_web_build_pass,env=MYSECRET`"
 
 
-# < as root >
-# < working with the environment >
+# << as root >>
+# <Environment setup>
+EXPOSE 80
+ENV GUNICORN_PORT=80
 ENV BASE_DIR=/FriendsWeb
-ENV LOGS_DIR=/FriendsWeb/logs
-ENV HTML_DIR=/FriendsWeb/templates
+ENV LOGS_DIR=/FriendsWeb/mnt-logs
+ENV TEMPLATES_DIR=/FriendsWeb/templates
+
 ENV GROUP=luckybot
 ENV USER=luckybot
 ENV GID=1000
@@ -22,14 +26,13 @@ ENV UID=1000
 # Add some tools and sudo
 RUN apk update \
     && apk add --no-cache \
-        sudo \
         curl \
-        vim \
         coreutils \
+        sudo \
     && echo "%wheel ALL=(ALL) ALL" | EDITOR='tee -a' visudo
 
 
-# Set up a new user & group
+# <User setup>
 RUN addgroup $GROUP --gid $GID \
     && adduser \
         --disabled-password \
@@ -40,56 +43,48 @@ RUN addgroup $GROUP --gid $GID \
         $USER
 
 # Setup user's password, requires BuildX or BuildKit
-RUN --mount=type=secret,id=friends_web_user_pass,target=/run/secrets/user_pass,required=true \
+RUN --mount=type=secret,id=friends_web_build_pass,target=/run/secrets/user_pass,required=true \
     echo "$USER:$(cat /run/secrets/user_pass)" | chpasswd
 
-# Add to the administrators group;
-# add to the network connections management;
-# add user to sudoers:
+# Add to the administrators group and to the sudoers
 RUN addgroup $USER wheel \
-    && addgroup $USER netdev \
     && echo "$USER ALL=(ALL) ALL" | EDITOR='tee -a' visudo
+# </User setup>
+# </Environment setup>
 
 
-# < as the user >
+# <Files setup>
+# Make the base dir and dirs for the logs and templates
+RUN mkdir --mode=775 $BASE_DIR \
+    && mkdir --mode=775 $LOGS_DIR \
+    && mkdir --mode=775 $TEMPLATES_DIR \
+    && chown "$UID:$GID" $BASE_DIR $LOGS_DIR $TEMPLATES_DIR \
+    && touch "$BASE_DIR/indocker"
+
+
+# << as the user >>
 USER $USER
-
-# Make the base dir;
-# set up a venv:
 WORKDIR "$BASE_DIR"
-RUN chown "$USER:$GROUP" "$BASE_DIR" \
-    && python -m venv "$BASE_DIR/venv"
 
+# Set up a venv and resolve the dependencies
+RUN python -m venv "$BASE_DIR/venv"
 ENV PATH="$BASE_DIR/venv/bin:$BASE_DIR:$PATH"
-
-# Resolve dependencies
-COPY --chown="$USER:$GROUP" --chmod=764 Pipfile requirements.txt ./
+COPY --chown="$UID:$GID" --chmod=775 requirements.txt ./
 RUN pip install --no-cache -r requirements.txt
 
-
-# < working with files >
-# Touch an indocker flag-file;
-# and make dirs for the logs and secrets:
-RUN touch indocker \
-    && mkdir --mode=777 "$BASE_DIR/logs" \
-    && mkdir "$BASE_DIR/secrets"
-
-COPY --chown="$USER:$GROUP" --chmod=764 \
-     Dockerfile docker-compose.yaml manage.py ./
-COPY --chown="$USER:$GROUP" --chmod=764 ./friends ./friends
-COPY --chown="$USER:$GROUP" --chmod=764 ./helpers ./helpers
-COPY --chown="$USER:$GROUP" --chmod=764 ./templates ./templates
-COPY --chown="$USER:$GROUP" --chmod=764 ./tests ./tests
+COPY --chown="$USER:$GROUP" --chmod=775 manage.py ./
+COPY --chown="$USER:$GROUP" --chmod=775 ./manager ./manager
+COPY --chown="$USER:$GROUP" --chmod=775 ./FriendsWeb ./FriendsWeb
+COPY --chown="$USER:$GROUP" --chmod=775 ./templates ./templates
+# </Files setup>
 
 
-# Serving
-ENV GUNICORN_PORT=80
-
+# << Serving >>
 # Entry into the eternal work
 # ENTRYPOINT ["tail", "-f", "/dev/null"]
 
 ENTRYPOINT ["/FriendsWeb/venv/bin/python", "-OO", "-m"]
 CMD [ "gunicorn", \
-      "friends.wsgi:app", \
+      "FriendsWeb.wsgi:app", \
       "-w", "2", \
       "--bind", "0.0.0.0:80" ]

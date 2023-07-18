@@ -6,7 +6,7 @@ docker network create --driver=bridge friends_web_bridge
 # Context: the FriendsWeb base dir
 DOCKER_BUILDKIT=1 \
     docker build \
-        --secret id=friends_web_user_pass,src=./secrets/.docker-build.secret \
+        --secret id=friends_web_build_pass,src=./secrets/.docker-build.secret \
         --file ./NGINX/Dockerfile \
         --tag friends_web_proxy \
         .

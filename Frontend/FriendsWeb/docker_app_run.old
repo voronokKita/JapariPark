@@ -5,7 +5,7 @@ docker network create --driver=bridge friends_web_bridge
 # Build
 DOCKER_BUILDKIT=1 \
     docker build \
-        --secret id=friends_web_user_pass,src=./secrets/.docker-build.secret \
+        --secret id=friends_web_build_pass,src=./secrets/.docker-build.secret \
         --file Dockerfile \
         --tag friends_web_app \
         .

@@ -1,3 +1,2 @@
 """Things to help manage Friends."""
-
-__all__ = []
+from manager import command_line

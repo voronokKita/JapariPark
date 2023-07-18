@@ -2,7 +2,7 @@
 from pathlib import Path
 from flask import Flask
 
-from friends.settings import BASE_DIR
+from FriendsWeb.settings import BASE_DIR, DEBUG
 
 
 APP = Flask(
@@ -16,8 +16,15 @@ APP.config.update(
     LOGGER_NAME='friends_web_logger',
 )
 
-APP.config.update(
-    ENV='development',
-    DEBUG=True,
-    TESTING=True,
-)
+if DEBUG:
+    APP.config.update(
+        ENV='development',
+        DEBUG=True,
+        TESTING=True,
+    )
+else:
+    APP.config.update(
+        ENV='production',
+        DEBUG=False,
+        TESTING=False,
+    )

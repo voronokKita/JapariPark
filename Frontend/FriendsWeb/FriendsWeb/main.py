@@ -8,21 +8,22 @@ Includes a set of functions to run various
 application configurations manually;
 intended for testing.
 """
-import sys
+from FriendsWeb.urls import APP
 
-from friends.urls import APP
+from FriendsWeb.helpers import printer
+from FriendsWeb.helpers.gunicorn_wrapper import GunicornWrapper
+from FriendsWeb.settings import TESTPORT, DEBUG
 
-from friends.gunicorn_wrapper import GunicornWrapper
-from friends.settings import GUNICORN_TESTPORT, WERKZEUG_TESTPORT
+if DEBUG:
+    printer.write('[Running in a debug mode]')
 
 
 def print_warning(func):
     """Warn about potential risks."""
     def wrapper(*args, **kwargs):
-        if sys.stdout.isatty():
-            wrn = ("[WARNING: Don't use this start method in a production, " +
-                   "- use the WSGI interface]")
-            print(wrn, end='\n\n')
+        wrn = ("[WARNING: Don't use this start method in a production, " +
+               "- use the WSGI interface]\n")
+        printer.write(wrn)
         return func(*args, **kwargs)
     return wrapper
 
@@ -31,7 +32,7 @@ def print_warning(func):
 def run_werkzeug_server():
     """Run a Werkzeug mini-server through a Flask runner."""
     APP.run(
-        host='::', port=WERKZEUG_TESTPORT,
+        host='::', port=TESTPORT,
         debug=True, load_dotenv=False,
     )
 
@@ -40,7 +41,7 @@ def run_werkzeug_server():
 def run_gunicorn_server():
     """Run a normal server."""
     options = {
-        'bind': f'[::]:{GUNICORN_TESTPORT}',
+        'bind': f'[::]:{TESTPORT}',
         'workers': 2, 'timeout': 1,
     }
     try:

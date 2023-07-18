@@ -5,14 +5,15 @@ https://docs.gunicorn.org/en/stable/custom.html
 """
 from gunicorn.app.base import BaseApplication
 
+DEFAULTS = {'bind': '0.0.0.0:8080', 'workers': 2, 'timeout': 1}
+
 
 class GunicornWrapper(BaseApplication):
     """Interface to set up and run a server from a script."""
 
     def __init__(self, app=None, options=None):
         self.application = app
-        defaults = {'bind': '127.0.0.1:8080', 'workers': 2, 'timeout': 1}
-        self.options = options or defaults
+        self.options = options or DEFAULTS
 
         super().__init__()
 
@@ -23,5 +24,5 @@ class GunicornWrapper(BaseApplication):
                 self.cfg.set(key.lower(), value)
 
     def load(self):
-        """Return an application from __init__()."""
+        """Return an application instance."""
         return self.application

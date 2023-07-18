@@ -1,5 +1,5 @@
 """The WSGI interface."""
-from friends.main import APP
+from FriendsWeb.main import APP
 
 
 app = APP
