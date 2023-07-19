@@ -13,6 +13,7 @@ from FriendsWeb.urls import APP
 from FriendsWeb.helpers import printer
 from FriendsWeb.helpers.gunicorn_wrapper import GunicornWrapper
 from FriendsWeb.settings import TESTPORT, DEBUG
+from FriendsWeb.pathfinder import TEMPLATES_DIR
 
 if DEBUG:
     printer.write('[Running in a debug mode]')
@@ -41,8 +42,19 @@ def run_werkzeug_server():
 def run_gunicorn_server():
     """Run a normal server."""
     options = {
-        'bind': f'[::]:{TESTPORT}',
-        'workers': 2, 'timeout': 1,
+        'bind': f'0.0.0.0:{TESTPORT}',
+        'workers': 2,
+        'reload': True,
+        'reload_extra_files': [TEMPLATES_DIR.as_posix()],
+        'preload_app': False,
+        'daemon': False,
+        'timeout': 10,
+        'graceful_timeout': 5,
+        'keepalive': 5,
+        'accesslog': '-',
+        'errorlog': '-',
+        'loglevel': 'info',
+        'access_log_format': '%(t)s: %(m)s %(U)s %(s)s - %(h)s %(a)s',
     }
     try:
         GunicornWrapper(app=APP, options=options).run()

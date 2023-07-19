@@ -1,7 +1,7 @@
 # Japari Park
 #
 # * Frontend
-#   -- FriendsWeb p:8080
+#   -- FriendsWeb + proxy p:8080
 #   -- AccountsWeb p:4242
 #   -- pgAdmin p:5050 user:admin@mail.net
 #
@@ -67,6 +67,9 @@ configs:
 
   pgadmin_conf:
     file: ./Frontend/pgAdmin/configs/pgadmin_config.py
+
+  friends_web_server_conf:
+    file: ./Frontend/FriendsWeb/configs/gunicorn.conf.py
 
 
 services:
@@ -213,7 +216,12 @@ services:
       - type: bind
         source: ./Frontend/FriendsWeb/mnt-logs
         target: /FriendsWeb/mnt-logs
-    # ports: 5000:80
+    configs:
+      - source: friends_web_server_conf
+        target: /FriendsWeb/configs/gunicorn.conf.py
+        uid: '1000'
+        gid: '1000'
+        mode: 0550
     networks:
       friends_web_bridge:
         aliases:

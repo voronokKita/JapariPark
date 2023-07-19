@@ -19,6 +19,11 @@ secrets:
     file: ./secrets/.docker-build.secret
 
 
+configs:
+  friends_web_server_conf:
+    file: ./configs/gunicorn.conf.py
+
+
 services:
   # Gunicorn server
   friends_web_app:
@@ -34,6 +39,12 @@ services:
       - type: bind
         source: ./mnt-logs
         target: /FriendsWeb/mnt-logs
+    configs:
+      - source: friends_web_server_conf
+        target: /FriendsWeb/configs/gunicorn.conf.py
+        uid: '1000'
+        gid: '1000'
+        mode: 0550
     networks:
       friends_web_bridge:
         aliases:
