@@ -23,13 +23,6 @@ configs:
   friends_web_server_conf:
     file: ./configs/gunicorn.conf.py
 
-  friends_web_nginx_conf:
-    file: ./NGINX/configs/nginx.conf
-  friends_web_nginx_proxy_conf:
-    file: ./NGINX/configs/friends.conf
-  friends_web_nginx_internal_conf:
-    file: ./NGINX/configs/blank.conf
-
 
 services:
   # Gunicorn server
@@ -80,22 +73,6 @@ services:
       - type: bind
         source: ./mnt-logs/nginx
         target: /FriendsWebNginx/mnt-logs
-    configs:
-      - source: friends_web_nginx_conf
-        target: /etc/nginx/nginx.conf
-        uid: '1000'
-        gid: '1000'
-        mode: 0555
-      - source: friends_web_nginx_proxy_conf
-        target: /etc/nginx/site-available/friends.conf
-        uid: '1000'
-        gid: '1000'
-        mode: 0555
-      - source: friends_web_nginx_internal_conf
-        target: /etc/nginx/site-available/internal_api.conf
-        uid: '1000'
-        gid: '1000'
-        mode: 0555
     ports:
       - target: 80
         published: 8080

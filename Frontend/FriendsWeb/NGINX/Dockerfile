@@ -12,15 +12,18 @@ LABEL secrets="Needs BuildX or BuildKit, like: \
 # <Environment setup>
 EXPOSE 8080
 EXPOSE 80
-ENV INTERNAL_PORT=8080
+ENV API_PORT=8080
 ENV EXTERNAL_PORT=80
 
 ENV NGINX_BIN=/usr/sbin/nginx
-ENV NGINX_DIR=/etc/nginx/
+ENV NGINX_DIR=/etc/nginx
 
 ENV BASE_DIR=/FriendsWebNginx
 ENV LOGS_DIR=/FriendsWebNginx/mnt-logs
-ENV STATIC_DIR=/FriendsWebNginx/staticfiles
+ENV HTML_DIR=/FriendsWebNginx/www
+ENV IMAGES_DIR=/FriendsWebNginx/images
+ENV STYLES_DIR=/FriendsWebNginx/styles
+ENV SCRIPTS_DIR=/FriendsWebNginx/scripts
 
 ENV USER=luckybot
 ENV GROUP=luckybot
@@ -62,29 +65,27 @@ RUN addgroup $USER wheel \
 
 
 # <Files setup>
-RUN chmod -R 755 $NGINX_DIR \
-    && chown -R "$UID:$GID" $NGINX_DIR \
-    && mv $NGINX_DIR/nginx.conf $NGINX_DIR/nginx.conf.backup \
-    && mkdir --mode=755 $NGINX_DIR/site-available \
-    \
-    && mkdir --mode=775 $BASE_DIR \
+RUN mkdir --mode=775 $BASE_DIR \
     && mkdir --mode=775 $LOGS_DIR \
     && chown "$UID:$GID" $BASE_DIR $LOGS_DIR
 
-
 WORKDIR "$BASE_DIR"
-COPY --chown="$USER:$GROUP" --chmod=755 ./NGINX/ping.html ./ping.html
-COPY --chown="$USER:$GROUP" --chmod=555 ./NGINX/configs/nginx.conf $NGINX_DIR/nginx.conf
-COPY --chown="$USER:$GROUP" --chmod=555 ./NGINX/configs/friends.conf $NGINX_DIR/site-available/friends.conf
-COPY --chown="$USER:$GROUP" --chmod=555 ./NGINX/configs/internal_api.conf $NGINX_DIR/site-available/internal_api.conf
 
-COPY --chown="$USER:$GROUP" --chmod=555 ./staticfiles $STATIC_DIR
+COPY --chown="$USER:$GROUP" --chmod=755 ./NGINX/configs/default $NGINX_DIR
+
+COPY --chown="$USER:$GROUP" --chmod=555 ./staticfiles/html $HTML_DIR
+COPY --chown="$USER:$GROUP" --chmod=555 ./staticfiles/images $IMAGES_DIR
+COPY --chown="$USER:$GROUP" --chmod=555 ./staticfiles/styles $STYLES_DIR
+COPY --chown="$USER:$GROUP" --chmod=555 ./staticfiles/scripts $SCRIPTS_DIR
 # </Files setup>
 
 
 # << Serving >>
 USER $USER
 ENV PATH="$BASE_DIR:$PATH"
+
+# debug
+# ENTRYPOINT ["tail", "-f", "/dev/null"]
 
 ENTRYPOINT ["/usr/bin/sudo", "/usr/sbin/nginx"]
 CMD ["-g", "daemon off;"]

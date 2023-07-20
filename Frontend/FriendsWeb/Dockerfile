@@ -65,10 +65,11 @@ RUN mkdir --mode=775 $BASE_DIR \
 
 USER $USER
 WORKDIR "$BASE_DIR"
+ENV PATH="$BASE_DIR:$PATH"
 
 # Set up a venv and resolve the dependencies
 RUN python -m venv "$BASE_DIR/venv"
-ENV PATH="$BASE_DIR/venv/bin:$BASE_DIR:$PATH"
+ENV PATH="$BASE_DIR/venv/bin:$PATH"
 COPY --chown="$UID:$GID" --chmod=775 requirements.txt ./
 RUN pip install --no-cache -r requirements.txt
 
