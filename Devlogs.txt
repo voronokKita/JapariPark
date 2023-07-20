@@ -1,3 +1,8 @@
+# 07.20 thu
+
+Работаю с настройками FriendWebNGINX.
+
+
 # 07.19 wed
 
 Настроил FriendWeb - gunicorn и его логи.

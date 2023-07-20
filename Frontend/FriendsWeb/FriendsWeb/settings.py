@@ -11,4 +11,4 @@ SITE_DOMAIN = 'friends.japari-park.fun'
 SITE_PORT = 8080
 TESTPORT = 5001
 
-BACKEND_URL = 'http://friends-web.proxy/backend-api'
+BACKEND_URL = 'http://friends-web.proxy/backend-api:8080'

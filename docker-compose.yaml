@@ -70,6 +70,12 @@ configs:
 
   friends_web_server_conf:
     file: ./Frontend/FriendsWeb/configs/gunicorn.conf.py
+  friends_web_nginx_conf:
+    file: ./Frontend/FriendsWeb/NGINX/configs/nginx.conf
+  friends_web_nginx_proxy_conf:
+    file: ./Frontend/FriendsWeb/NGINX/configs/friends.conf
+  friends_web_nginx_internal_conf:
+    file: ./Frontend/FriendsWeb/NGINX/configs/internal_api.conf
 
 
 services:
@@ -258,8 +264,24 @@ services:
     image: friends_web_proxy
     volumes:
       - type: bind
-        source: ./Frontend/FriendsWeb/mnt-logs/servers
+        source: ./Frontend/FriendsWeb/mnt-logs/nginx
         target: /FriendsWebNginx/mnt-logs
+    configs:
+      - source: friends_web_nginx_conf
+        target: /etc/nginx/nginx.conf
+        uid: '1000'
+        gid: '1000'
+        mode: 0555
+      - source: friends_web_nginx_proxy_conf
+        target: /etc/nginx/site-available/friends.conf
+        uid: '1000'
+        gid: '1000'
+        mode: 0555
+      - source: friends_web_nginx_internal_conf
+        target: /etc/nginx/site-available/internal_api.conf
+        uid: '1000'
+        gid: '1000'
+        mode: 0555
     ports:
       - target: 80
         published: 8080
