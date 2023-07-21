@@ -88,4 +88,3 @@ ENV PATH="$BASE_DIR:$PATH"
 # ENTRYPOINT ["tail", "-f", "/dev/null"]
 
 ENTRYPOINT ["/usr/bin/sudo", "/usr/sbin/nginx"]
-CMD ["-g", "daemon off;"]
