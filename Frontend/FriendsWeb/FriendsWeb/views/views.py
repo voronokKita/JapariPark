@@ -1,6 +1,7 @@
 """Japari Park: Friends - web views."""
 import requests
-from flask import render_template
+from flask import render_template, send_from_directory
+
 
 from FriendsWeb.settings import BACKEND_URL
 

@@ -4,11 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-requests = "*"
-Flask = ">=2.3.0,<3.0.0"
-gunicorn = ">=20.1.0,<21.0.0"
-Werkzeug = "*"
 pytest = "*"
+Werkzeug = "*"
+requests = "*"
+Flask = ">=2.3.0,<2.4.0"
+gunicorn = ">=20.0.0,<21.3.0"
 
 [dev-packages]
 

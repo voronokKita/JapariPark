@@ -1,8 +1,7 @@
 FROM python:3.11-alpine3.17
 
 LABEL name="FriendsWeb"
-LABEL description="The Flask application with Gunicorn server. \
-Intended to be used with a reverse proxy."
+LABEL description="Flask application with Gunicorn server."
 LABEL author="github.com/voronokKita"
 LABEL logs="Mount /FriendsWeb/mnt-logs to get them."
 LABEL secrets="Needs BuildX or BuildKit on, like: \
@@ -16,6 +15,7 @@ ENV BASE_DIR=/FriendsWeb
 ENV CONFIGS_DIR=/FriendsWeb/configs
 ENV LOGS_DIR=/FriendsWeb/mnt-logs
 ENV TEMPLATES_DIR=/FriendsWeb/templates
+ENV STATIC_DIR=/FriendsWeb/staticfiles
 
 ENV GROUP=luckybot
 ENV USER=luckybot
@@ -57,9 +57,10 @@ RUN addgroup $USER wheel \
 # Make the base dir and dirs for the logs and templates
 RUN mkdir --mode=775 $BASE_DIR \
     && mkdir --mode=775 $LOGS_DIR \
-    && mkdir --mode=775 $CONFIGS_DIR \
-    && mkdir --mode=775 $TEMPLATES_DIR \
-    && chown "$UID:$GID" $BASE_DIR $LOGS_DIR $CONFIGS_DIR $TEMPLATES_DIR \
+    && mkdir --mode=555 $CONFIGS_DIR \
+    && mkdir --mode=555 $TEMPLATES_DIR \
+    && mkdir --mode=555 $STATIC_DIR \
+    && chown "$UID:$GID" $BASE_DIR $LOGS_DIR $CONFIGS_DIR $TEMPLATES_DIR $STATIC_DIR \
     && touch "$BASE_DIR/indocker"
 
 
@@ -70,20 +71,20 @@ ENV PATH="$BASE_DIR:$PATH"
 # Set up a venv and resolve the dependencies
 RUN python -m venv "$BASE_DIR/venv"
 ENV PATH="$BASE_DIR/venv/bin:$PATH"
-COPY --chown="$UID:$GID" --chmod=775 requirements.txt ./
+COPY --chown="$UID:$GID" --chmod=555 requirements.txt ./
 RUN pip install --no-cache -r requirements.txt
 
-COPY --chown="$USER:$GROUP" --chmod=775 manage.py ./
-COPY --chown="$USER:$GROUP" --chmod=775 ./manager ./manager
-COPY --chown="$USER:$GROUP" --chmod=775 ./FriendsWeb ./FriendsWeb
-COPY --chown="$USER:$GROUP" --chmod=775 ./templates ./templates
-COPY --chown="$USER:$GROUP" --chmod=550 ./configs/gunicorn.conf.py ./configs/gunicorn.conf.py
+COPY --chown="$USER:$GROUP" --chmod=555 manage.py ./
+COPY --chown="$USER:$GROUP" --chmod=555 ./manager ./manager
+COPY --chown="$USER:$GROUP" --chmod=555 ./FriendsWeb ./FriendsWeb
+COPY --chown="$USER:$GROUP" --chmod=555 ./templates $TEMPLATES_DIR
+COPY --chown="$USER:$GROUP" --chmod=555 ./staticfiles $STATIC_DIR
+COPY --chown="$USER:$GROUP" --chmod=550 ./configs/gunicorn.conf.py $CONFIGS_DIR/gunicorn.conf.py
 # </Files setup>
 
 
 # << Serving >>
-# debug
-# ENTRYPOINT ["tail", "-f", "/dev/null"]
+# ENTRYPOINT ["tail", "-f", "/dev/null"]  # debug
 
 ENTRYPOINT ["/FriendsWeb/venv/bin/python", "-OO", "-m"]
 CMD [ "gunicorn", \

@@ -3,12 +3,11 @@ pgdata/
 pgadata/
 !data/
 !mnt-data/
+**/logs/*.json
 **/mnt-logs/*.json
 *.secret
-japari_park_default.sqlite3
-japari_park_accounts.sqlite3
-japari_friends.sqlite3
-japari_friends_posts.sqlite3
+*.sqlite3
+*.sqlite3-journal
 
 
 ### Sphinx ###
