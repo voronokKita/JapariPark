@@ -6,6 +6,7 @@ from FriendsWeb.pathfinder import BASE_DIR
 # main contex switch
 DEBUG = True
 TESTPORT = 5001
+SERV_STATIC = True
 
 
 SITE_DOMAIN = 'friends.japari-park.fun'
