@@ -5,6 +5,8 @@ from flask import render_template, send_from_directory, abort
 from FriendsWeb.pathfinder import STATIC_DIR
 from FriendsWeb.settings import BACKEND_URL, SERV_STATIC
 
+# TODO exceptions (TemplateNotFound, etc)
+
 
 def ping_view() -> tuple[str, int]:
     """

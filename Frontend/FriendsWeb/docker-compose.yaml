@@ -17,6 +17,8 @@ secrets:
 configs:
   friends_web_server_conf:
     file: ./configs/gunicorn.conf.py
+  friends_web_flask_conf:
+    file: ./configs/flask.conf.py
 
 
 services:
@@ -36,6 +38,11 @@ services:
     configs:
       - source: friends_web_server_conf
         target: /FriendsWeb/configs/gunicorn.conf.py
+        uid: '1000'
+        gid: '1000'
+        mode: 0550
+      - source: friends_web_flask_conf
+        target: /FriendsWeb/configs/flask.conf.py
         uid: '1000'
         gid: '1000'
         mode: 0550

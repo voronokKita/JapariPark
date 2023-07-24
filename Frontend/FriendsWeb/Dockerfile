@@ -4,8 +4,10 @@ LABEL name="FriendsWeb"
 LABEL description="Flask application with Gunicorn server."
 LABEL author="github.com/voronokKita"
 LABEL logs="Mount /FriendsWeb/mnt-logs to get them."
-LABEL secrets="Needs BuildX or BuildKit on, like: \
-`$ MYSECRET=qwerty DOCKER_BUILDKIT=1 docker build --secret id=friends_web_build_pass,env=MYSECRET`"
+LABEL config_gunicorn="/FriendsWeb/configs/gunicorn.conf.py"
+LABEL config_flask="/FriendsWeb/configs/flask.conf.py"
+LABEL container_user="luckybot, uid=1000"
+LABEL user_password="/run/secrets/user_pass"
 
 
 # <Environment setup>
@@ -15,7 +17,7 @@ ENV BASE_DIR=/FriendsWeb
 ENV CONFIGS_DIR=/FriendsWeb/configs
 ENV LOGS_DIR=/FriendsWeb/mnt-logs
 ENV TEMPLATES_DIR=/FriendsWeb/templates
-ENV STATIC_DIR=/FriendsWeb/staticfiles
+ENV STATIC_DIR=/FriendsWeb/static
 
 ENV GROUP=luckybot
 ENV USER=luckybot
@@ -43,7 +45,7 @@ RUN addgroup $GROUP --gid $GID \
         $USER
 
 # Setup user's password, requires BuildX or BuildKit
-RUN --mount=type=secret,id=friends_web_build_pass,target=/run/secrets/user_pass,required=true \
+RUN --mount=type=secret,id=friends_web_build_pass,target=/run/secrets/user_pass,required=false \
     echo "$USER:$(cat /run/secrets/user_pass)" | chpasswd
 
 # Add to the administrators group and to the sudoers
@@ -78,8 +80,9 @@ COPY --chown="$USER:$GROUP" --chmod=555 manage.py ./
 COPY --chown="$USER:$GROUP" --chmod=555 ./manager ./manager
 COPY --chown="$USER:$GROUP" --chmod=555 ./FriendsWeb ./FriendsWeb
 COPY --chown="$USER:$GROUP" --chmod=555 ./templates $TEMPLATES_DIR
-COPY --chown="$USER:$GROUP" --chmod=555 ./staticfiles $STATIC_DIR
+COPY --chown="$USER:$GROUP" --chmod=555 ./static $STATIC_DIR
 COPY --chown="$USER:$GROUP" --chmod=550 ./configs/gunicorn.conf.py $CONFIGS_DIR/gunicorn.conf.py
+COPY --chown="$USER:$GROUP" --chmod=550 ./configs/flask.conf.py $CONFIGS_DIR/flask.conf.py
 # </Files setup>
 
 

@@ -8,12 +8,12 @@ Includes a set of functions to run various
 application configurations manually;
 intended for testing.
 """
-from FriendsWeb.urls import APP
-
+from FriendsWeb.pathfinder import TEMPLATES_DIR
+from FriendsWeb.settings import TESTPORT, DEBUG
 from FriendsWeb.helpers import printer
 from FriendsWeb.helpers.gunicorn_wrapper import GunicornWrapper
-from FriendsWeb.settings import TESTPORT, DEBUG
-from FriendsWeb.pathfinder import TEMPLATES_DIR
+
+from FriendsWeb.urls import APP
 
 if DEBUG:
     printer.write('[Running in a debug mode]')
@@ -58,7 +58,7 @@ def run_gunicorn_server():
     }
     try:
         GunicornWrapper(app=APP, options=options).run()
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, SystemExit):
         pass
     except Exception as err:
         raise err

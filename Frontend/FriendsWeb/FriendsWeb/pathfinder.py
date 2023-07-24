@@ -11,5 +11,9 @@ if BASE_DIR.as_posix() not in sys.path:
 
 TEMPLATES_DIR = BASE_DIR / 'templates'
 STATIC_DIR = BASE_DIR / 'static'
-SECRETS_DIR = BASE_DIR / 'secrets'
 LOGS_DIR = BASE_DIR / 'mnt-logs'
+
+SECRETS_DIR = Path('/run/secrets').resolve()
+
+CONFIGS_DIR = BASE_DIR / 'configs'
+FLASK_CONFIG = CONFIGS_DIR / 'flask.conf.py'
