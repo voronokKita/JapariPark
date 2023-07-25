@@ -1,20 +1,15 @@
 """Entry points into the Friends application from the Web."""
-from FriendsWeb.flask_init import APP
 from FriendsWeb import views
 
-""" TODO
-add_url_rule(rule, endpoint=None, view_func=None,
-             provide_automatic_options=None, **options)
-app.add_url_rule("/", view_func=index)
-
-string accepts any text without a slash (the default)
-int accepts integers
-float like int but for floating point values
-path like the default but also accepts slashes
-any matches one of the items provided
-uuid accepts UUID strings
+"""
+string- accepts any text without a slash (the default)
+path- like the default but also accepts slashes
+float- like int but for floating point values
+any- matches one of the items provided
+uuid- accepts UUID strings
 """
 
+# TODO
 URL_SET = {
     # testing
     '/ping',
@@ -38,56 +33,21 @@ URL_SET = {
     '/<slug>/posts/<int>',
 }
 
-
-@APP.route('/ping', methods=['GET'])
-def ping():
-    """Ping-pong lite."""
-    return 'FriendsWeb: pong!', 200
-
-
-@APP.route('/ping-static', methods=['GET'])
-def ping_static():
-    """Ping-pong a normal html page with static content."""
-    return views.ping_view()
-
-
-@APP.route('/ping-backend', methods=['GET'])
-def ping_backend():
-    """Ping-pong the backend service."""
-    return views.ping_backend()
-
-
-@APP.route('/index/', methods=['GET'])
-def index():
-    """
-    Index page.
-
-    TODO
-    """
-    return 'TODO', 200
-
-
-@APP.route('/favicon.ico', methods=['GET'])
-def favicon():
-    """Return default favicon."""
-    return views.serv_favicon()
-
-
-@APP.route('/users/', methods=['GET'])
-def users():
-    """
-    Accounts management.
-
-    TODO
-    """
-    return 'TODO', 200
-
-
-@APP.route('/', methods=['GET'])
-def root():
-    """
-    Process main title page.
-
-    TODO
-    """
-    return 'TODO', 200
+router = (
+    {
+        'rule': '/ping', 'methods': ['GET'],
+        'view_func': views.ping_view,
+    },
+    {
+        'rule': '/ping-static', 'methods': ['GET'],
+        'view_func': views.ping_static_view,
+    },
+    {
+        'rule': '/ping-backend', 'methods': ['GET'],
+        'view_func': views.ping_backend,
+    },
+    {
+        'rule': '/favicon.ico', 'methods': ['GET'],
+        'view_func': views.serv_favicon,
+    },
+)

@@ -10,6 +10,15 @@ from FriendsWeb.settings import BACKEND_URL, SERV_STATIC
 
 def ping_view() -> tuple[str, int]:
     """
+    Ping-pong lite.
+
+    :returns: the plain text, 200-OK
+    """
+    return 'FriendsWeb: pong!', 200
+
+
+def ping_static_view() -> tuple[str, int]:
+    """
     Return rendered html page with static content for testing.
 
     :returns: the ping.html page, 200-OK

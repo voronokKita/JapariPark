@@ -4,7 +4,7 @@ from FriendsWeb.pathfinder import BASE_DIR
 
 
 # main contex switch
-DEBUG = True
+DEBUG = False
 TESTPORT = 5001
 SERV_STATIC = True
 

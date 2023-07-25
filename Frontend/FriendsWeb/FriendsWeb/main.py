@@ -13,7 +13,7 @@ from FriendsWeb.settings import TESTPORT, DEBUG
 from FriendsWeb.helpers import printer
 from FriendsWeb.helpers.gunicorn_wrapper import GunicornWrapper
 
-from FriendsWeb.urls import APP
+from FriendsWeb.flask_init import APP
 
 if DEBUG:
     printer.write('[Running in a debug mode]')
