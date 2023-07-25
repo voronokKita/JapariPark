@@ -10,8 +10,7 @@ name = "pypi"
 [packages]
 # Testing
 ## !do not run `pytest .` from the base repository dir
-## because it is an umbrella for other projects
-## and thus result in import errors
+## because it will result in import errors
 pytest = "*"
 
 # Linter

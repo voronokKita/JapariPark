@@ -1,7 +1,6 @@
 mnt-logs/
 logs/
 secrets/
-configs/
 data/
 mnt-data/
 pgdata/

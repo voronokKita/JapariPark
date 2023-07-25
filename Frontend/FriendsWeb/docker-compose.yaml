@@ -1,26 +1,27 @@
-# Frontend application of Japari Park: Friends
-# Gunicorn server + NGINX reverse-proxy
+# Frontend web-application of Japari Park: Friends
 # `docker compose up --detach --build`
-#
 name: japaripark-friend_web
 
 
 networks:
-  friends_web_bridge:
-    driver: bridge
-
   frontend_overlay:
     driver: overlay
     attachable: true
 
 
 secrets:
-  friends_web_user_pass:
+  friends_web_build_pass:
     file: ./secrets/.docker-build.secret
 
 
+configs:
+  friends_web_server_conf:
+    file: ./configs/gunicorn.conf.py
+  friends_web_flask_conf:
+    file: ./configs/flask.conf.py
+
+
 services:
-  # Gunicorn server
   friends_web_app:
     container_name: FriendsWeb
     stdin_open: true
@@ -28,59 +29,42 @@ services:
     build:
       context: .
       secrets:
-        - friends_web_user_pass
-    image: friends_web_app
+        - friends_web_build_pass
+    image: friends_web
     volumes:
       - type: bind
-        source: ./logs
-        target: /FriendsWeb/logs
-    networks:
-      friends_web_bridge:
-        aliases:
-          - friends-web.app
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://frinds-web.app/ping || exit 1"]
-      interval: 3m
-      timeout: 5s
-      retries: 2
-      start_period: 10s
-    restart: on-failure
-    stop_grace_period: 10s
-
-  # NGINX reverse-proxy
-  friends_web_nginx:
-    container_name: FriendsWebNginx
-    stdin_open: true
-    tty: true
-    build:
-      context: .
-      dockerfile: ./NGINX/Dockerfile
-      secrets:
-        - friends_web_user_pass
-    image: friends_web_proxy
-    volumes:
-      - type: bind
-        source: ./logs/servers
-        target: /FriendsWebNginx/logs
+        source: ./mnt-logs
+        target: /FriendsWeb/mnt-logs
+    configs:
+      - source: friends_web_server_conf
+        target: /FriendsWeb/configs/gunicorn.conf.py
+        uid: '1000'
+        gid: '1000'
+        mode: 0550
+      - source: friends_web_flask_conf
+        target: /FriendsWeb/configs/flask.conf.py
+        uid: '1000'
+        gid: '1000'
+        mode: 0550
     ports:
       - target: 80
         published: 8080
         protocol: tcp
         mode: host
     networks:
-      friends_web_bridge:
-        priority: 1
-        aliases:
-          - friends-web.proxy
       frontend_overlay:
-        priority: 0
         aliases:
           - friends-web.rest
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://friends-web.rest/proxy/ping/ || exit 1"]
-      interval: 3m
+      test: ["CMD-SHELL", "curl -fs http://friends-web.rest/ping -o /dev/null || exit 1"]
+      interval: 30s
       timeout: 5s
       retries: 2
       start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 800M
     restart: on-failure
     stop_grace_period: 10s

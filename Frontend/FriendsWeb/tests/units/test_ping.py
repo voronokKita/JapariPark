@@ -2,7 +2,7 @@
 import pytest
 
 from tests import context
-from friends.main import APP
+from FriendsWeb.main import APP
 
 
 class TestWithTestClient:

@@ -2,8 +2,8 @@
 import requests
 
 from tests import context
-from helpers.context import CONTEXT
-from friends.settings import GUNICORN_TESTPORT
+from FriendsWeb.settings import TESTPORT
+from FriendsWeb.helpers import in_github_ci
 
 
 class TestThroughGunicorn:
@@ -13,11 +13,11 @@ class TestThroughGunicorn:
 
     def test_flask_app_ping(self, gunicorn_server):
         """Simple text response."""
-        if CONTEXT.in_github_ci:
+        if in_github_ci.check():
             return True
 
         response = requests.get(
-            f'http://127.0.0.1:{GUNICORN_TESTPORT}/ping',
+            f'http://127.0.0.1:{TESTPORT}/ping',
             timeout=5,
         )
         assert response.status_code == 200

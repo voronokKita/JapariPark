@@ -1,12 +1,11 @@
 # This is an umbrella
 # for development of the whole project
 #
-# python>=3.10,<3.12
+# python >= 3.10.0, < 3.12.0
 
 # Testing
 ## !do not run `pytest .` from the base repository dir
-## because it is an umbrella for other projects
-## and thus result in import errors
+## because it will result in import errors
 pytest
 
 # Linter

@@ -2,13 +2,13 @@
 import os
 
 from tests.context import BASE_DIR
-from helpers.context import CONTEXT
+from FriendsWeb.helpers import isdocker
 
 
 def in_docker(func):
     """Skip if not in a container."""
     def wrapper(*args, **kwargs):
-        return func(*args, **kwargs) if CONTEXT.indocker else True
+        return func(*args, **kwargs) if isdocker.check() else True
     return wrapper
 
 
@@ -20,7 +20,7 @@ class TestDocker:
     @in_docker
     def test_files(self):
         """Check for files in Docker."""
-        app = BASE_DIR / 'friends' / '__init__.py'
+        app = BASE_DIR / 'FriendsWeb' / '__init__.py'
         assert app.exists() is True
 
     @in_docker
